@@ -1,4 +1,4 @@
-package com.ruskaof.client.main;
+package com.ruskaof.client;
 
 import com.ruskaof.client.utility.CollectionManager;
 import com.ruskaof.client.utility.CommandManager;

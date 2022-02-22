@@ -9,12 +9,11 @@ import java.io.PrintWriter;
 
 public class FileManager {
     private final String filename;
-    private final File file;
     private final PrintWriter printWriter;
 
     public FileManager(String filename) throws FileNotFoundException {
         this.filename = filename;
-        this.file = new File(filename);
+        File file = new File(filename);
         this.printWriter = new PrintWriter(file);
     }
 
