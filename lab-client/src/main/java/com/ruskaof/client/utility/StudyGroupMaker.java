@@ -1,12 +1,6 @@
 package com.ruskaof.client.utility;
 
-import com.ruskaof.client.data.Coordinates;
-import com.ruskaof.client.data.Country;
-import com.ruskaof.client.data.FormOfEducation;
-import com.ruskaof.client.data.Location;
-import com.ruskaof.client.data.Person;
-import com.ruskaof.client.data.Semester;
-import com.ruskaof.client.data.StudyGroup;
+import com.ruskaof.client.data.*;
 
 import java.util.function.Predicate;
 
@@ -82,7 +76,6 @@ public class StudyGroupMaker {
         this.collectionManager = collectionManager;
         this.asker = new Asker(userInputManager, outputManager);
     }
-
     public StudyGroup makeStudyGroup() {
         return askForStudyGroup();
     }
