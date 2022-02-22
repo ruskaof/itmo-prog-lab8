@@ -21,7 +21,7 @@ public class InfoCommand extends Command {
         } else {
             return new CommandResult(false, true, "Collection type: " + collectionManager.getMainData().getClass().toString() + "\n" +
                     "Number of elements: " + collectionManager.getMainData().size() + "\n" +
-                    "Creation date: " + collectionManager.getCreationDate() + "\n");
+                    "Creation date: " + collectionManager.getCreationDate());
         }
     }
 }

@@ -2,7 +2,8 @@ package com.ruskaof.client.commands;
 
 import com.ruskaof.client.data.StudyGroup;
 import com.ruskaof.client.utility.CollectionManager;
-import com.ruskaof.client.utility.FileManager;
+
+import java.util.StringJoiner;
 
 
 public class PrintAscendingCommand extends Command {
@@ -15,13 +16,12 @@ public class PrintAscendingCommand extends Command {
 
     @Override
     public CommandResult execute(String arg) {
-        StringBuilder output = new StringBuilder();
+        StringJoiner output = new StringJoiner("\n\n");
 
         for (StudyGroup studyGroup : collectionManager.getMainData()) {
-            output.append(studyGroup.toString()).append("\n\n");
+            output.add(studyGroup.toString());
         }
 
-        output.setLength(output.length() - 2);
         return new CommandResult(false, true, output.toString());
     }
 }

@@ -15,12 +15,12 @@ public class CommandManager {
         commands.add(new AddCommand(collectionManager, userInputManager, outputManager));
         commands.add(new SaveCommand(fileManager, collectionManager));
         commands.add(new ShowCommand(collectionManager));
-        commands.add(new UpdateCommand(fileManager, userInputManager));
+        commands.add(new UpdateCommand(collectionManager, userInputManager, outputManager));
         commands.add(new RemoveByIdCommand(collectionManager));
         commands.add(new ClearCommand(collectionManager));
         commands.add(new ExecuteScriptCommand(userInputManager));
         commands.add(new AddIfMinCommand(collectionManager, userInputManager, outputManager));
-        commands.add(new RemoveGreaterCommand(fileManager, userInputManager));
+        commands.add(new RemoveGreaterCommand(collectionManager, userInputManager, outputManager));
         commands.add(new MinByIDCommand(collectionManager));
         commands.add(new FilterLessThanSemesterEnumCommand(collectionManager));
         commands.add(new PrintAscendingCommand(collectionManager));

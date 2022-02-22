@@ -1,34 +1,24 @@
 package com.ruskaof.client.commands;
 
 import com.ruskaof.client.data.StudyGroup;
-import com.ruskaof.client.utility.FileManager;
-import com.ruskaof.client.utility.StudyGroupMaker;
-import com.ruskaof.client.utility.UserInputManager;
-
-import java.util.Set;
-import java.util.TreeSet;
+import com.ruskaof.client.utility.*;
 
 public class RemoveGreaterCommand extends Command {
-    public RemoveGreaterCommand(FileManager fileManager, UserInputManager userInputManager) {
+    public RemoveGreaterCommand(CollectionManager collectionManager, UserInputManager userInputManager
+            , OutputManager outputManager) {
         super("remove_greater");
-        this.fileManager = fileManager;
+        this.outputManager = outputManager;
+        this.collectionManager = collectionManager;
         this.userInputManager = userInputManager;
     }
 
-    private final FileManager fileManager;
+    private final OutputManager outputManager;
+    private final CollectionManager collectionManager;
     private final UserInputManager userInputManager;
 
     @Override
     public CommandResult execute(String arg) {
-//        Integer count = 0;
-//        StudyGroup studyGroup = new StudyGroupMaker(userInputManager).makeStudyGroup();
-//        Set<StudyGroup> iterData = new TreeSet<>(fileManager.getMainData());
-//        for (StudyGroup checkingStudyGroup : iterData) {
-//            if (studyGroup.compareTo(checkingStudyGroup) < 0) {
-//                fileManager.removeFromDataWithID(checkingStudyGroup);
-//                count++;
-//            }
-//        }
+        StudyGroup studyGroup = new StudyGroupMaker(userInputManager, outputManager, collectionManager).makeStudyGroup();
         return new CommandResult(false, true, "redo");
     }
 }

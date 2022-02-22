@@ -19,15 +19,14 @@ public class RemoveByIdCommand extends Command {
         try {
             intArg = Integer.parseInt(arg);
         } catch (NumberFormatException e) {
-            return new CommandResult(false, true, "redo");
+            return new CommandResult(false, false, "Your argument was incorrect. The command was not executed.");
         }
 
-        for (StudyGroup studyGroup : collectionManager.getMainData()) {
-            if (studyGroup.getId() == intArg) {
-                collectionManager.getMainData().remove(studyGroup);
-                return new CommandResult(false, true, "redo");
-            }
+
+        if(collectionManager.getMainData().removeIf(x -> x.getId() == intArg)) {
+            return new CommandResult(false, true, "The element was deleted successfully.");
+        } else {
+            return new CommandResult(false, false, "Could not find written id. The command was not executed");
         }
-        return new CommandResult(false, true, "redo");
     }
 }

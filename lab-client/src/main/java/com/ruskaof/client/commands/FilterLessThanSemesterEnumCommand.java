@@ -5,6 +5,8 @@ import com.ruskaof.client.data.Semester;
 import com.ruskaof.client.data.StudyGroup;
 import com.ruskaof.client.utility.CollectionManager;
 
+import java.util.StringJoiner;
+
 public class FilterLessThanSemesterEnumCommand extends Command {
 
     public FilterLessThanSemesterEnumCommand(CollectionManager collectionManager) {
@@ -16,7 +18,7 @@ public class FilterLessThanSemesterEnumCommand extends Command {
 
     @Override
     public CommandResult execute(String arg) {
-        StringBuilder output = new StringBuilder();
+        StringJoiner output = new StringJoiner("\n\n");
         Semester inpEnum;
         try {
             inpEnum = Semester.valueOf(arg);
@@ -26,10 +28,10 @@ public class FilterLessThanSemesterEnumCommand extends Command {
 
         for (StudyGroup studyGroup : collectionManager.getMainData()) {
             if (studyGroup.getSemesterEnum().compareTo(inpEnum) > 0) {
-                output.append(studyGroup).append("\n\n");
+                output.add(studyGroup.toString());
             }
         }
-        output.setLength(output.length() - 2);
+
         return new CommandResult(false, true, output.toString());
     }
 }

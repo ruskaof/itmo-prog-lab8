@@ -9,16 +9,16 @@ import com.ruskaof.client.utility.UserInputManager;
 
 
 public class AddCommand extends Command {
+    private final UserInputManager userInputManager;
+    private final OutputManager outputManager;
+    private final CollectionManager collectionManager;
+
     public AddCommand(CollectionManager collectionManager, UserInputManager userInputManager, OutputManager outputManager) {
         super("add");
         this.collectionManager = collectionManager;
         this.userInputManager = userInputManager;
         this.outputManager = outputManager;
     }
-
-    private final UserInputManager userInputManager;
-    private final OutputManager outputManager;
-    private final CollectionManager collectionManager;
 
     @Override
     public CommandResult execute(String arg) {

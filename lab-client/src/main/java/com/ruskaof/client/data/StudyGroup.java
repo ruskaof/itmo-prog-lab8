@@ -25,7 +25,8 @@ public class StudyGroup implements Comparable<StudyGroup> {
     }
 
 
-    private final int id; // >0, unique, automatic generation
+
+    private int id; // >0, unique, automatic generation
 
     private final String name; //not null, not empty
     private final Coordinates coordinates; //not null
@@ -75,6 +76,10 @@ public class StudyGroup implements Comparable<StudyGroup> {
         } else {
             return this.getId() - o.getId();
         }
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {

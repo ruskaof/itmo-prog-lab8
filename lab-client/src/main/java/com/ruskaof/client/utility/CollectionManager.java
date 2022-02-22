@@ -25,7 +25,7 @@ public class CollectionManager {
     }
 
     public int getMaxId() {
-        int maxId = Integer.MIN_VALUE;
+        int maxId = 0;
         for (StudyGroup studyGroup : mainData) {
             if (studyGroup.getId() > maxId) {
                 maxId = studyGroup.getId();
