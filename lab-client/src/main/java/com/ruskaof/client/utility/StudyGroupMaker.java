@@ -11,64 +11,6 @@ public class StudyGroupMaker {
     private final OutputManager outputManager;
     private final Asker asker;
     private final CollectionManager collectionManager;
-
-    public static class Asker {
-        private final UserInputManager userInputManager;
-        private final OutputManager outputManager;
-
-        public Asker(UserInputManager userInputManager, OutputManager outputManager) {
-            this.userInputManager = userInputManager;
-            this.outputManager = outputManager;
-        }
-
-        @SuppressWarnings("unchecked")
-        public <T> T ask(Predicate<Object> predicate,
-                         Class<?> type, String askMessage,
-                         String errorMessage,
-                         String wrongValueMessage,
-                         boolean nullable) {
-            outputManager.println(askMessage);
-            String input;
-
-            Object value;
-            do {
-                try {
-                    input = userInputManager.nextLine();
-                    if (input.equals("") && nullable) {
-                        return null;
-                    }
-                    if (type == Integer.class) {
-                        value = Integer.valueOf(input);
-                    } else if (type == Long.class) {
-                        value = Long.valueOf(input);
-                    } else if (type == Double.class) {
-                        value = Double.valueOf(input);
-                    } else if (type == Float.class) {
-                        value = Float.valueOf(input);
-                    } else if (type == String.class) {
-                        value = input;
-                    } else if (type == Country.class) {
-                        value = Country.valueOf(input);
-                    } else if (type == FormOfEducation.class) {
-                        value = FormOfEducation.valueOf(input);
-                    } else if (type == Semester.class) {
-                        value = Semester.valueOf(input);
-                    } else {
-                        throw new RuntimeException("bad type was written");
-                    }
-                } catch (IllegalArgumentException e) {
-                    outputManager.println(errorMessage);
-                    continue;
-                }
-                if (predicate.test(value)) {
-                    return (T) value;
-                } else {
-                    outputManager.println(wrongValueMessage);
-                }
-            } while (true);
-        }
-    }
-
     private final String errMessage = "Your enter was not correct type. Try again";
 
     public StudyGroupMaker(UserInputManager userInputManager, OutputManager outputManager, CollectionManager collectionManager) {
@@ -76,6 +18,7 @@ public class StudyGroupMaker {
         this.collectionManager = collectionManager;
         this.asker = new Asker(userInputManager, outputManager);
     }
+
     public StudyGroup makeStudyGroup() {
         return askForStudyGroup();
     }
@@ -103,9 +46,11 @@ public class StudyGroupMaker {
 
     private Coordinates askForCoordinates() {
         System.out.println("Enter coordinates data");
-        long x = asker.ask(arg -> ((Long) arg) > -896, Long.class, "Enter x (long)",
-                errMessage, "The long must be >-896. Try again", false);//> -896
-        Double y = asker.ask(arg -> ((Double) arg) <= 135, Double.class, "Enter y (Double)",
+        final long xLimitation = -896;
+        final double yLimitation = 135;
+        long x = asker.ask(arg -> ((Long) arg) > -xLimitation, Long.class, "Enter x (long)",
+                errMessage, "The long must be >-896. Try again", false); //> -896
+        Double y = asker.ask(arg -> ((Double) arg) <= yLimitation, Double.class, "Enter y (Double)",
                 errMessage, "The double must be <= 135. Try again", false); //<=135, not null
         return new Coordinates(x, y);
     }
@@ -138,4 +83,64 @@ public class StudyGroupMaker {
 
         return new Location(x, y, name);
     }
+
+    public static class Asker {
+
+        private final UserInputManager userInputManager;
+        private final OutputManager outputManager;
+
+
+        public Asker(UserInputManager userInputManager, OutputManager outputManager) {
+            this.userInputManager = userInputManager;
+            this.outputManager = outputManager;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T> T ask(Predicate<Object> predicate,
+                         Class<?> type, String askMessage,
+                         String errorMessage,
+                         String wrongValueMessage,
+                         boolean nullable) {
+            outputManager.println(askMessage);
+            String input;
+            Object value;
+            do {
+                try {
+                    input = userInputManager.nextLine();
+                    if ("".equals(input) && nullable) {
+                        return null;
+                    }
+                    if (type == Integer.class) {
+                        value = Integer.valueOf(input);
+                    } else if (type == Long.class) {
+                        value = Long.valueOf(input);
+                    } else if (type == Double.class) {
+                        value = Double.valueOf(input);
+                    } else if (type == Float.class) {
+                        value = Float.valueOf(input);
+                    } else if (type == String.class) {
+                        value = input;
+                    } else if (type == Country.class) {
+                        value = Country.valueOf(input);
+                    } else if (type == FormOfEducation.class) {
+                        value = FormOfEducation.valueOf(input);
+                    } else if (type == Semester.class) {
+                        value = Semester.valueOf(input);
+                    } else {
+                        throw new RuntimeException("bad type was written");
+                    }
+                } catch (IllegalArgumentException e) {
+                    outputManager.println(errorMessage);
+                    continue;
+                }
+                if (predicate.test(value)) {
+                    return (T) value; // always casts successfully
+                } else {
+                    outputManager.println(wrongValueMessage);
+                }
+            } while (true);
+        }
+
+    }
+
 }

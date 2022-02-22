@@ -3,6 +3,12 @@ package com.ruskaof.client.data;
 import java.util.Objects;
 
 public class Person {
+
+    private final String name; //not null, not empty
+    private final Integer height; //not null, >0
+    private final Country nationality; //not null
+    private final Location location; //not null
+
     public Person(String name, Integer height, Country nationality, Location location) {
         this.name = name;
         this.height = height;
@@ -10,25 +16,24 @@ public class Person {
         this.location = location;
     }
 
-    private String name; //not null, not empty
-    private Integer height; //not null, >0
-    private Country nationality; //not null
-    private Location location; //not null
-
     @Override
     public String toString() {
-        return "Person{" +
-                "name='" + name + '\'' +
-                ", height=" + height +
-                ", nationality=" + nationality +
-                ", location=" + location +
-                '}';
+        return "Person{"
+                + "name='" + name + '\''
+                + ", height=" + height
+                + ", nationality=" + nationality
+                + ", location=" + location
+                + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Person person = (Person) o;
         return Objects.equals(name, person.name) && Objects.equals(height, person.height) && nationality == person.nationality && Objects.equals(location, person.location);
     }

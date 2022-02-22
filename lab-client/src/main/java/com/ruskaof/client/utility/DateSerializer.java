@@ -1,11 +1,12 @@
 package com.ruskaof.client.utility;
 
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
-import java.util.Map;
 
 
 /**

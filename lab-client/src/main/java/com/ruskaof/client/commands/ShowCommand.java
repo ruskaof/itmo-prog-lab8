@@ -17,7 +17,9 @@ public class ShowCommand extends Command {
     @Override
     public CommandResult execute(String arg) {
         StringJoiner output = new StringJoiner("\n\n");
-        if (collectionManager.getMainData().isEmpty()) return new CommandResult(false, "Collection is empty");
+        if (collectionManager.getMainData().isEmpty()) {
+            return new CommandResult(false, "Collection is empty");
+        }
         for (StudyGroup studyGroup : collectionManager.getMainData()) {
             output.add(studyGroup.toString());
         }

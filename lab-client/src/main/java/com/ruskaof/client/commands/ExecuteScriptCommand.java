@@ -7,12 +7,12 @@ import java.io.FileNotFoundException;
 
 public class ExecuteScriptCommand extends Command {
 
+    private final UserInputManager userInputManager;
+
     public ExecuteScriptCommand(UserInputManager userInputManager) {
         super("execute_script");
         this.userInputManager = userInputManager;
     }
-
-    private final UserInputManager userInputManager;
 
     @Override
     public CommandResult execute(String arg) {

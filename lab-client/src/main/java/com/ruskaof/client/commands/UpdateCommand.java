@@ -7,16 +7,17 @@ import com.ruskaof.client.utility.StudyGroupMaker;
 import com.ruskaof.client.utility.UserInputManager;
 
 public class UpdateCommand extends Command {
+
+    private final OutputManager outputManager;
+    private final UserInputManager userInputManager;
+    private final CollectionManager collectionManager;
+
     public UpdateCommand(CollectionManager collectionManager, UserInputManager userInputManager, OutputManager outputManager) {
         super("update");
         this.userInputManager = userInputManager;
         this.collectionManager = collectionManager;
         this.outputManager = outputManager;
     }
-
-    private final OutputManager outputManager;
-    private final UserInputManager userInputManager;
-    private final CollectionManager collectionManager;
 
     @Override
     public CommandResult execute(String arg) {

@@ -4,6 +4,11 @@ package com.ruskaof.client.commands;
  * This is an abstract class for all the commands.
  */
 public abstract class Command {
+    /**
+     * String that is used to execute a command in console.
+     */
+    private final String name;
+
     protected Command(String name) {
         this.name = name;
     }
@@ -16,11 +21,6 @@ public abstract class Command {
      * @return returns a command result
      */
     public abstract CommandResult execute(String arg);
-
-    /**
-     * String that is used to execute a command in console.
-     */
-    final private String name;
 
     public String getName() {
         return name;

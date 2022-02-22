@@ -21,7 +21,7 @@ public class RemoveByIdCommand extends Command {
         }
 
 
-        if(collectionManager.getMainData().removeIf(x -> x.getId() == intArg)) {
+        if (collectionManager.getMainData().removeIf(x -> x.getId() == intArg)) {
             return new CommandResult(false, "The element was deleted successfully.");
         } else {
             return new CommandResult(false, "Could not find written id. The command was not executed");

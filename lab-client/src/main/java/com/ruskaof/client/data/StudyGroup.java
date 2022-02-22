@@ -7,6 +7,16 @@ import java.util.Objects;
 
 
 public class StudyGroup implements Comparable<StudyGroup> {
+
+    private final String name; //not null, not empty
+    private final Coordinates coordinates; //not null
+    private final java.time.LocalDate creationDate; //not null, automatic generation
+    private final Integer studentsCount; // >0, null-able
+    private final FormOfEducation formOfEducation; //not null
+    private final Semester semesterEnum; // null-able
+    private final Person groupAdmin; //not null
+    private int id; // >0, unique, automatic generation
+
     public StudyGroup(String name,
                       Coordinates coordinates,
                       Integer studentsCount,
@@ -24,30 +34,18 @@ public class StudyGroup implements Comparable<StudyGroup> {
         this.id = collectionManager.getMaxId() + 1;
     }
 
-
-
-    private int id; // >0, unique, automatic generation
-
-    private final String name; //not null, not empty
-    private final Coordinates coordinates; //not null
-    private final java.time.LocalDate creationDate; //not null, automatic generation
-    private final Integer studentsCount; // >0, null-able
-    private final FormOfEducation formOfEducation; //not null
-    private final Semester semesterEnum; // null-able
-    private final Person groupAdmin; //not null
-
     @Override
     public String toString() {
-        return "StudyGroup{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", coordinates=" + coordinates +
-                ", creationDate=" + creationDate +
-                ", studentsCount=" + studentsCount +
-                ", formOfEducation=" + formOfEducation +
-                ", semesterEnum=" + semesterEnum +
-                ", groupAdmin=" + groupAdmin +
-                '}';
+        return "StudyGroup{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", coordinates=" + coordinates
+                + ", creationDate=" + creationDate
+                + ", studentsCount=" + studentsCount
+                + ", formOfEducation=" + formOfEducation
+                + ", semesterEnum=" + semesterEnum
+                + ", groupAdmin=" + groupAdmin
+                + '}';
     }
 
     public Semester getSemesterEnum() {
@@ -88,8 +86,12 @@ public class StudyGroup implements Comparable<StudyGroup> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         StudyGroup that = (StudyGroup) o;
         return id == that.id && Objects.equals(name, that.name) && Objects.equals(coordinates, that.coordinates) && Objects.equals(creationDate, that.creationDate) && Objects.equals(studentsCount, that.studentsCount) && formOfEducation == that.formOfEducation && semesterEnum == that.semesterEnum && Objects.equals(groupAdmin, that.groupAdmin);
     }
@@ -98,5 +100,4 @@ public class StudyGroup implements Comparable<StudyGroup> {
     public int hashCode() {
         return Objects.hash(id, name, coordinates, creationDate, studentsCount, formOfEducation, semesterEnum, groupAdmin);
     }
-
 }

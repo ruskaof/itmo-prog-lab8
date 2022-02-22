@@ -9,7 +9,7 @@ public class CollectionManager {
     private TreeSet<StudyGroup> mainData = new TreeSet<>();
     private final LocalDate creationDate = LocalDate.now();
 
-    public void initialiseData(TreeSet<StudyGroup> treeSet){
+    public void initialiseData(TreeSet<StudyGroup> treeSet) {
         this.mainData = treeSet;
     }
 

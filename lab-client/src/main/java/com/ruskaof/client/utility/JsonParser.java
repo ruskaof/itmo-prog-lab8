@@ -18,7 +18,7 @@ public class JsonParser {
         Gson g = new GsonBuilder().registerTypeAdapter(java.time.LocalDate.class, new DateDeserializer()).create();
         Type type = new TypeToken<TreeSet<StudyGroup>>() {
         }.getType();
-        if (strData.equals("")) {
+        if ("".equals(strData)) {
             return new TreeSet<>();
         }
         return g.fromJson(strData, type);

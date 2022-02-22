@@ -9,12 +9,12 @@ import java.util.StringJoiner;
 
 public class FilterLessThanSemesterEnumCommand extends Command {
 
+    private final CollectionManager collectionManager;
+
     public FilterLessThanSemesterEnumCommand(CollectionManager collectionManager) {
         super("filter_less_than_semester_enum");
         this.collectionManager = collectionManager;
     }
-
-    private final CollectionManager collectionManager;
 
     @Override
     public CommandResult execute(String arg) {

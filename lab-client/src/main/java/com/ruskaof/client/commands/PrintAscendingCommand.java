@@ -7,12 +7,13 @@ import java.util.StringJoiner;
 
 
 public class PrintAscendingCommand extends Command {
+
+    private final CollectionManager collectionManager;
+
     public PrintAscendingCommand(CollectionManager collectionManager) {
         super("print_ascending");
         this.collectionManager = collectionManager;
     }
-
-    private final CollectionManager collectionManager;
 
     @Override
     public CommandResult execute(String arg) {

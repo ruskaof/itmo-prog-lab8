@@ -8,9 +8,9 @@ import com.ruskaof.client.utility.UserInputManager;
 
 
 public class AddIfMinCommand extends Command {
-    final private OutputManager outputManager;
-    final private CollectionManager collectionManager;
-    final private UserInputManager userInputManager;
+    private final OutputManager outputManager;
+    private final CollectionManager collectionManager;
+    private final UserInputManager userInputManager;
 
     public AddIfMinCommand(CollectionManager collectionManager, UserInputManager userInputManager, OutputManager outputManager) {
         super("add_if_min");

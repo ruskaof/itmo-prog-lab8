@@ -1,13 +1,13 @@
 package com.ruskaof.client.commands;
 
 public class CommandResult {
+    private final String output;
+    private final boolean exit;
+
     public CommandResult(boolean exit, String output) {
         this.exit = exit;
         this.output = output;
     }
-
-    private final boolean exit;
-    private final String output;
 
     public boolean isExit() {
         return exit;

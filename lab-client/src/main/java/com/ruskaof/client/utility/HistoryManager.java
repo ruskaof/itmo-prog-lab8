@@ -5,10 +5,11 @@ import java.util.StringJoiner;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class HistoryManager {
-    private final Queue<String> history = new ArrayBlockingQueue<String>(6);
+    private final int capacity = 6;
+    private final Queue<String> history = new ArrayBlockingQueue<>(capacity);
 
     public void addNote(String note) {
-        if (history.size() == 6) {
+        if (history.size() == capacity) {
             history.remove();
         }
         history.add(note);
