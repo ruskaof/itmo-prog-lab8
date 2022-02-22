@@ -1,6 +1,22 @@
 package com.ruskaof.client.utility;
 
-import com.ruskaof.client.commands.*;
+import com.ruskaof.client.commands.AddCommand;
+import com.ruskaof.client.commands.AddIfMinCommand;
+import com.ruskaof.client.commands.ClearCommand;
+import com.ruskaof.client.commands.Command;
+import com.ruskaof.client.commands.ExecuteScriptCommand;
+import com.ruskaof.client.commands.ExitCommand;
+import com.ruskaof.client.commands.FilterLessThanSemesterEnumCommand;
+import com.ruskaof.client.commands.HelpCommand;
+import com.ruskaof.client.commands.HistoryCommand;
+import com.ruskaof.client.commands.InfoCommand;
+import com.ruskaof.client.commands.MinByIDCommand;
+import com.ruskaof.client.commands.PrintAscendingCommand;
+import com.ruskaof.client.commands.RemoveByIdCommand;
+import com.ruskaof.client.commands.RemoveGreaterCommand;
+import com.ruskaof.client.commands.SaveCommand;
+import com.ruskaof.client.commands.ShowCommand;
+import com.ruskaof.client.commands.UpdateCommand;
 
 import java.util.HashSet;
 

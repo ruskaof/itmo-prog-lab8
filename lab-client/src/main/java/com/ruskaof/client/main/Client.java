@@ -1,6 +1,13 @@
 package com.ruskaof.client.main;
 
-import com.ruskaof.client.utility.*;
+import com.ruskaof.client.utility.CollectionManager;
+import com.ruskaof.client.utility.CommandManager;
+import com.ruskaof.client.utility.CommandRunManager;
+import com.ruskaof.client.utility.Console;
+import com.ruskaof.client.utility.FileManager;
+import com.ruskaof.client.utility.HistoryManager;
+import com.ruskaof.client.utility.OutputManager;
+import com.ruskaof.client.utility.UserInputManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +19,9 @@ public final class Client {
     }
 
     public static void main(String[] args) {
-        if (!new File(args[0]).exists()) {
-            System.out.println("File was not found");
+        final String filename = args[0];
+
+        if (!new File(filename).exists()) {
             return;
         }
 
@@ -22,7 +30,7 @@ public final class Client {
         final CollectionManager collectionManager = new CollectionManager();
         FileManager fileManager = null;
         try {
-            fileManager = new FileManager(args[0]);
+            fileManager = new FileManager(filename);
         } catch (FileNotFoundException e) {
             // never trows
             e.printStackTrace();
