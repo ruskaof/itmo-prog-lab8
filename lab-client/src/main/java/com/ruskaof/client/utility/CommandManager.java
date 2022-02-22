@@ -10,7 +10,9 @@ import java.util.HashSet;
 public class CommandManager {
     private final HashSet<Command> commands = new HashSet<Command>();
 
-    public CommandManager(FileManager fileManager, UserInputManager userInputManager, CollectionManager collectionManager, OutputManager outputManager) {
+    public CommandManager(FileManager fileManager, UserInputManager userInputManager,
+                          CollectionManager collectionManager, OutputManager outputManager,
+                          HistoryManager historyManager) {
         commands.add(new HelpCommand());
         commands.add(new AddCommand(collectionManager, userInputManager, outputManager));
         commands.add(new SaveCommand(fileManager, collectionManager));
@@ -26,6 +28,7 @@ public class CommandManager {
         commands.add(new PrintAscendingCommand(collectionManager));
         commands.add(new InfoCommand(collectionManager));
         commands.add(new ExitCommand());
+        commands.add(new HistoryCommand(historyManager));
     }
 
     public HashSet<Command> getCommands() {

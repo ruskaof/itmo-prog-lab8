@@ -1,7 +1,5 @@
 package com.ruskaof.client.commands;
 
-
-import com.ruskaof.client.data.StudyGroup;
 import com.ruskaof.client.utility.CollectionManager;
 
 public class ClearCommand extends Command {

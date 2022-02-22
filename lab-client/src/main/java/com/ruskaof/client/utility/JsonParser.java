@@ -8,7 +8,7 @@ import com.ruskaof.client.data.StudyGroup;
 import java.lang.reflect.Type;
 import java.util.TreeSet;
 
-public class Parser {
+public class JsonParser {
     public String serialize(TreeSet<StudyGroup> collectionData) {
         Gson g = new GsonBuilder().registerTypeAdapter(java.time.LocalDate.class, new DateSerializer()).create();
         return g.toJson(collectionData);

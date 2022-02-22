@@ -3,7 +3,6 @@ package com.ruskaof.client.main;
 import com.ruskaof.client.utility.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -22,12 +21,16 @@ public final class Client {
                 System.out.println("File was not found. Re-enter it");
             }
         }
+        final HistoryManager historyManager = new HistoryManager();
         final OutputManager outputManager = new OutputManager();
         final CollectionManager collectionManager = new CollectionManager();
         final FileManager fileManager = new FileManager(filename);
         final UserInputManager userInputManager = new UserInputManager();
-        final CommandManager commandManager = new CommandManager(fileManager, userInputManager, collectionManager, outputManager);
-        final Console console = new Console(fileManager, commandManager, userInputManager, collectionManager, outputManager);
+        final CommandManager commandManager = new CommandManager(fileManager, userInputManager, collectionManager, outputManager, historyManager);
+        final CommandRunManager commandRunManager = new CommandRunManager(commandManager, historyManager);
+        final Console console = new Console(fileManager,
+                userInputManager, collectionManager, outputManager,
+                commandRunManager);
         console.start();
     }
 }

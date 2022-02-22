@@ -2,7 +2,7 @@ package com.ruskaof.client.commands;
 
 import com.ruskaof.client.utility.CollectionManager;
 import com.ruskaof.client.utility.FileManager;
-import com.ruskaof.client.utility.Parser;
+import com.ruskaof.client.utility.JsonParser;
 
 public class SaveCommand extends Command {
     private final FileManager fileManager;
@@ -16,7 +16,7 @@ public class SaveCommand extends Command {
 
     @Override
     public CommandResult execute(String arg) {
-        fileManager.save(new Parser().serialize(collectionManager.getMainData()));
+        fileManager.save(new JsonParser().serialize(collectionManager.getMainData()));
         return new CommandResult(false, true, "The data was saved successfully");
     }
 }

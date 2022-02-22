@@ -1,12 +1,17 @@
 package com.ruskaof.client.commands;
 
-public class HistoryCommand extends Command{
-    public HistoryCommand() {
+import com.ruskaof.client.utility.HistoryManager;
+
+public class HistoryCommand extends Command {
+    private final HistoryManager historyManager;
+
+    public HistoryCommand(HistoryManager historyManager) {
         super("history");
+        this.historyManager = historyManager;
     }
 
     @Override
     public CommandResult execute(String arg) {
-        return null;
+        return new CommandResult(false, true, historyManager.niceToString());
     }
 }

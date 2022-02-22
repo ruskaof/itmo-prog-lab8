@@ -85,7 +85,7 @@ public class StudyGroupMaker {
         String name = asker.ask(arg -> ((String) arg).length() > 0, String.class, "Enter name (String)",
                 errMessage, "The string must not be empty", false);
 
-        Integer studentsCount = asker.ask(arg -> ((Integer) arg) > 0, Integer.class, "Enter studentsCount (int)",
+        Integer studentsCount = asker.ask(arg -> ((Integer) arg) > 0, Integer.class, "Enter studentsCount (int) (can be null)",
                 errMessage, "Your int must be >0. Try again", true); // >0, null-able
 
         FormOfEducation formOfEducation = asker.ask(arg -> true, FormOfEducation.class,
@@ -93,7 +93,7 @@ public class StudyGroupMaker {
                 errMessage, errMessage, false); //not null
 
         Semester semesterEnum = asker.ask(arg -> true, Semester.class,
-                "Enter semesterEnum (THIRD, FIFTH, SIXTH, SEVENTH)", errMessage, errMessage, true); // null-able
+                "Enter semesterEnum (THIRD, FIFTH, SIXTH, SEVENTH) (can be null)", errMessage, errMessage, true); // null-able
 
         Coordinates coordinates = askForCoordinates(); //not null
         Person groupAdmin = askForGroupAdmin(); //not null
@@ -119,8 +119,8 @@ public class StudyGroupMaker {
         Integer height = asker.ask(arg -> ((Integer) arg) > 0, Integer.class, "Enter height (Integer)",
                 errMessage, "The integer must be >0. Try again", false);
 
-        Country nationality = asker.ask(arg -> true, Country.class, "Enter country (RUSSIA, SPAIN, INDIA, THAILAND, NORTH_KOREA)",
-                errMessage, errMessage, false);
+        Country nationality = asker.ask(arg -> true, Country.class, "Enter country (RUSSIA, SPAIN, INDIA, THAILAND, NORTH_KOREA) (can be null)",
+                errMessage, errMessage, true);
 
         Location location = askForLocation();
 
@@ -130,7 +130,7 @@ public class StudyGroupMaker {
     private Location askForLocation() {
         System.out.println("Enter location data");
         String name = asker.ask(arg -> ((String) arg).length() > 0, String.class, "Enter name (String)",
-                errMessage, "The string must not be empty. Try again", false);
+                errMessage, "The string must not be empty. Try again", true);
         float x = asker.ask(arg -> true, Float.class, "Enter x (float)", errMessage,
                 errMessage, false);
         long y = asker.ask(arg -> true, Long.class, "Enter y (long)", errMessage,

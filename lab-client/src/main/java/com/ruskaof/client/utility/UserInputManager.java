@@ -22,12 +22,15 @@ public class UserInputManager {
                     return nextln;
                 }
             } catch (IOException e) {
+                // never throws exception
                 e.printStackTrace();
             }
 
         } else {
             return scanner.nextLine();
         }
+
+        // never returns ""
         return "";
     }
 
