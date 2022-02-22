@@ -1,6 +1,7 @@
 package com.ruskaof.client.utility;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.Scanner;
 
 /**
@@ -11,11 +12,17 @@ public class UserInputManager {
     private final Scanner scanner = new Scanner(System.in);
     private boolean readingFromFile = false;
 
+    /**
+     * This field is used to prevent recursion
+     */
+    private final HashSet<File> forbiddenFiles = new HashSet<>();
+
     public String nextLine() {
         if (readingFromFile) {
             try {
                 String nextln = bufferedReader.readLine();
                 if (nextln == null) {
+                    forbiddenFiles.clear();
                     readingFromFile = false;
                     return nextLine();
                 } else {
@@ -35,8 +42,13 @@ public class UserInputManager {
     }
 
     public void connectToFile(File file) throws FileNotFoundException {
-        readingFromFile = true;
-        bufferedReader = new BufferedReader(new FileReader(file));
+        if (forbiddenFiles.contains(file)) {
+            readingFromFile = false;
+        } else {
+            forbiddenFiles.add(file);
+            readingFromFile = true;
+            bufferedReader = new BufferedReader(new FileReader(file));
+        }
     }
 
 

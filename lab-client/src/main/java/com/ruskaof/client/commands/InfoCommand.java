@@ -14,12 +14,12 @@ public class InfoCommand extends Command {
     @Override
     public CommandResult execute(String arg) {
         if (!collectionManager.getMainData().isEmpty()) {
-            return new CommandResult(false, true, "Collection type: " + collectionManager.getMainData().getClass().toString() + "\n" +
+            return new CommandResult(false, "Collection type: " + collectionManager.getMainData().getClass().toString() + "\n" +
                     "Number of elements: " + collectionManager.getMainData().size() + "\n" +
                     "Creation date: " + collectionManager.getCreationDate() + "\n" +
                     "The biggest element has studentsCount = " + collectionManager.getMainData().last().getStudentsCount());
         } else {
-            return new CommandResult(false, true, "Collection type: " + collectionManager.getMainData().getClass().toString() + "\n" +
+            return new CommandResult(false, "Collection type: " + collectionManager.getMainData().getClass().toString() + "\n" +
                     "Number of elements: " + collectionManager.getMainData().size() + "\n" +
                     "Creation date: " + collectionManager.getCreationDate());
         }

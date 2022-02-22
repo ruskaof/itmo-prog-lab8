@@ -13,6 +13,6 @@ public class ClearCommand extends Command {
     @Override
     public CommandResult execute(String arg) {
         collectionManager.getMainData().clear();
-        return new CommandResult(false, true, "The collection was cleared successfully.");
+        return new CommandResult(false, "The collection was cleared successfully.");
     }
 }

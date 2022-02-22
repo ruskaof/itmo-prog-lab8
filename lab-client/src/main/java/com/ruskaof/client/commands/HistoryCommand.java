@@ -12,6 +12,6 @@ public class HistoryCommand extends Command {
 
     @Override
     public CommandResult execute(String arg) {
-        return new CommandResult(false, true, historyManager.niceToString());
+        return new CommandResult(false, historyManager.niceToString());
     }
 }

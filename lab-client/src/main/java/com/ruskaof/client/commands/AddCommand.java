@@ -24,6 +24,6 @@ public class AddCommand extends Command {
     public CommandResult execute(String arg) {
         StudyGroup studyGroup = new StudyGroupMaker(userInputManager, outputManager, collectionManager).makeStudyGroup();
         collectionManager.getMainData().add(studyGroup);
-        return new CommandResult(false, true, "The element was added successfully");
+        return new CommandResult(false, "The element was added successfully");
     }
 }

@@ -22,16 +22,20 @@ public class FilterLessThanSemesterEnumCommand extends Command {
         Semester inpEnum;
         try {
             inpEnum = Semester.valueOf(arg);
-        } catch (Exception e) {
-            return new CommandResult(false, true, "redo");
+        } catch (IllegalArgumentException e) {
+            return new CommandResult(false, "Your argument was incorrect");
         }
 
         for (StudyGroup studyGroup : collectionManager.getMainData()) {
-            if (studyGroup.getSemesterEnum().compareTo(inpEnum) > 0) {
+            Semester semesterEnum = studyGroup.getSemesterEnum();
+            if (semesterEnum == null) {
+                semesterEnum = Semester.THIRD;
+            }
+            if (semesterEnum.compareTo(inpEnum) < 0) {
                 output.add(studyGroup.toString());
             }
         }
 
-        return new CommandResult(false, true, output.toString());
+        return new CommandResult(false, output.toString());
     }
 }

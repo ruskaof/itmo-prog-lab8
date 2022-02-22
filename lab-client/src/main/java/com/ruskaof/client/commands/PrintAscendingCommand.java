@@ -22,6 +22,6 @@ public class PrintAscendingCommand extends Command {
             output.add(studyGroup.toString());
         }
 
-        return new CommandResult(false, true, output.toString());
+        return new CommandResult(false, output.toString());
     }
 }

@@ -1,7 +1,10 @@
 package com.ruskaof.client.commands;
 
 import com.ruskaof.client.data.StudyGroup;
-import com.ruskaof.client.utility.*;
+import com.ruskaof.client.utility.CollectionManager;
+import com.ruskaof.client.utility.OutputManager;
+import com.ruskaof.client.utility.StudyGroupMaker;
+import com.ruskaof.client.utility.UserInputManager;
 
 public class RemoveGreaterCommand extends Command {
     public RemoveGreaterCommand(CollectionManager collectionManager, UserInputManager userInputManager
@@ -19,6 +22,7 @@ public class RemoveGreaterCommand extends Command {
     @Override
     public CommandResult execute(String arg) {
         StudyGroup studyGroup = new StudyGroupMaker(userInputManager, outputManager, collectionManager).makeStudyGroup();
-        return new CommandResult(false, true, "redo");
+        collectionManager.getMainData().removeIf(x -> x.compareTo(studyGroup) > 0);
+        return new CommandResult(false, "Bigger elements were removed successfully");
     }
 }

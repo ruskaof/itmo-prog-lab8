@@ -7,6 +7,6 @@ public class ExitCommand extends Command{
 
     @Override
     public CommandResult execute(String arg) {
-        return new CommandResult(true, true, "Exiting...");
+        return new CommandResult(true, "Exiting...");
     }
 }

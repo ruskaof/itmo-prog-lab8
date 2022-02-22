@@ -17,6 +17,6 @@ public class SaveCommand extends Command {
     @Override
     public CommandResult execute(String arg) {
         fileManager.save(new JsonParser().serialize(collectionManager.getMainData()));
-        return new CommandResult(false, true, "The data was saved successfully");
+        return new CommandResult(false, "The data was saved successfully");
     }
 }

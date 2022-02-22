@@ -23,11 +23,11 @@ public class AddIfMinCommand extends Command {
     public CommandResult execute(String arg) {
         StudyGroup studyGroup = new StudyGroupMaker(userInputManager, outputManager, collectionManager).makeStudyGroup();
 
-        if (collectionManager.getMainData().isEmpty() || studyGroup.compareTo(collectionManager.getMainData().first()) < 0) {
+        if (collectionManager.getMainData().isEmpty() || studyGroup.compareTo(collectionManager.getMainData().first()) > 0) {
             collectionManager.getMainData().add(studyGroup);
-            return new CommandResult(false, true, "The element was added successfully");
+            return new CommandResult(false, "The element was added successfully");
         } else {
-            return new CommandResult(false, true, "The element was not min, so it was not added");
+            return new CommandResult(false, "The element was not min, so it was not added");
         }
     }
 }

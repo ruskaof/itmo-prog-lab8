@@ -22,7 +22,7 @@ public class CommandRunManager {
             }
         }
         if (commandResult == null) {
-            return new CommandResult(false, false, "This command was not found. Please use \"help\" to know about available commands");
+            return new CommandResult(false, "This command was not found. Please use \"help\" to know about available commands");
         }
         return commandResult;
     }

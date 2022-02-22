@@ -8,7 +8,7 @@ import java.util.HashSet;
  * Class for storing commands objects.
  */
 public class CommandManager {
-    private final HashSet<Command> commands = new HashSet<Command>();
+    private final HashSet<Command> commands = new HashSet<>();
 
     public CommandManager(FileManager fileManager, UserInputManager userInputManager,
                           CollectionManager collectionManager, OutputManager outputManager,

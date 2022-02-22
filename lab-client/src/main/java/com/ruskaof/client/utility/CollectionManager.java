@@ -1,10 +1,8 @@
 package com.ruskaof.client.utility;
 
-import com.ruskaof.client.data.Location;
 import com.ruskaof.client.data.StudyGroup;
 
 import java.time.LocalDate;
-import java.util.Set;
 import java.util.TreeSet;
 
 public class CollectionManager {

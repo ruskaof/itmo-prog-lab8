@@ -98,4 +98,5 @@ public class StudyGroup implements Comparable<StudyGroup> {
     public int hashCode() {
         return Objects.hash(id, name, coordinates, creationDate, studentsCount, formOfEducation, semesterEnum, groupAdmin);
     }
+
 }

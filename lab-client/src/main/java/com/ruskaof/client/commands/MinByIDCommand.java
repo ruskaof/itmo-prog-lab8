@@ -25,6 +25,6 @@ public class MinByIDCommand extends Command {
         }
 
         assert minIdStudyGroup != null;
-        return new CommandResult(false, true, minIdStudyGroup.toString());
+        return new CommandResult(false, minIdStudyGroup.toString());
     }
 }

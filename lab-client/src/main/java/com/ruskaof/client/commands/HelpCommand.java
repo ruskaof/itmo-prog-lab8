@@ -7,7 +7,7 @@ public class HelpCommand extends Command {
 
     @Override
     public CommandResult execute(String arg) {
-        return new CommandResult(false, true,
+        return new CommandResult(false,
                 "help : gives information about available commands\n" +
                         "info : gives information about collection\n" +
                         "show : shows every element in collection with string\n" +
