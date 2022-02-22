@@ -4,6 +4,7 @@ import com.ruskaof.client.data.Location;
 import com.ruskaof.client.data.StudyGroup;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class CollectionManager {
@@ -21,5 +22,15 @@ public class CollectionManager {
 
     public TreeSet<StudyGroup> getMainData() {
         return mainData;
+    }
+
+    public int getMaxId() {
+        int maxId = Integer.MIN_VALUE;
+        for (StudyGroup studyGroup : mainData) {
+            if (studyGroup.getId() > maxId) {
+                maxId = studyGroup.getId();
+            }
+        }
+        return maxId;
     }
 }

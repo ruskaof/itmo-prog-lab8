@@ -2,7 +2,10 @@ package com.ruskaof.client.commands;
 
 
 import com.ruskaof.client.data.StudyGroup;
-import com.ruskaof.client.utility.*;
+import com.ruskaof.client.utility.CollectionManager;
+import com.ruskaof.client.utility.OutputManager;
+import com.ruskaof.client.utility.StudyGroupMaker;
+import com.ruskaof.client.utility.UserInputManager;
 
 
 public class AddCommand extends Command {
@@ -19,7 +22,7 @@ public class AddCommand extends Command {
 
     @Override
     public CommandResult execute(String arg) {
-        StudyGroup studyGroup = new StudyGroupMaker(userInputManager, outputManager).makeStudyGroup();
+        StudyGroup studyGroup = new StudyGroupMaker(userInputManager, outputManager, collectionManager).makeStudyGroup();
         collectionManager.getMainData().add(studyGroup);
         return new CommandResult(false, true, "The element was added successfully");
     }

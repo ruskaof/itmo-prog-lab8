@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 public class StudyGroupMaker {
     private final OutputManager outputManager;
     private final Asker asker;
+    private final CollectionManager collectionManager;
 
     public static class Asker {
         private final UserInputManager userInputManager;
@@ -76,8 +77,9 @@ public class StudyGroupMaker {
 
     private final String errMessage = "Your enter was not correct type. Try again";
 
-    public StudyGroupMaker(UserInputManager userInputManager, OutputManager outputManager) {
+    public StudyGroupMaker(UserInputManager userInputManager, OutputManager outputManager, CollectionManager collectionManager) {
         this.outputManager = outputManager;
+        this.collectionManager = collectionManager;
         this.asker = new Asker(userInputManager, outputManager);
     }
 
@@ -102,9 +104,8 @@ public class StudyGroupMaker {
 
         Coordinates coordinates = askForCoordinates(); //not null
         Person groupAdmin = askForGroupAdmin(); //not null
-        return new StudyGroup(name,
-                coordinates,
-                studentsCount, formOfEducation, semesterEnum, groupAdmin);
+        return new StudyGroup(name, coordinates, studentsCount,
+                formOfEducation, semesterEnum, groupAdmin, collectionManager);
     }
 
     private Coordinates askForCoordinates() {

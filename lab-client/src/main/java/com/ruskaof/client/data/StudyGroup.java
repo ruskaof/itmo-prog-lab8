@@ -1,11 +1,9 @@
 package com.ruskaof.client.data;
 
 
-import com.ruskaof.client.exceptions.IdAlreadyPresentException;
+import com.ruskaof.client.utility.CollectionManager;
 
-import java.util.HashSet;
 import java.util.Objects;
-
 
 
 public class StudyGroup implements Comparable<StudyGroup> {
@@ -15,7 +13,7 @@ public class StudyGroup implements Comparable<StudyGroup> {
                       FormOfEducation formOfEducation,
                       Semester semesterEnum,
                       Person groupAdmin,
-                      Integer id) throws IdAlreadyPresentException {
+                      CollectionManager collectionManager) {
         this.name = name;
         this.coordinates = coordinates;
         this.studentsCount = studentsCount;
@@ -23,44 +21,11 @@ public class StudyGroup implements Comparable<StudyGroup> {
         this.semesterEnum = semesterEnum;
         this.groupAdmin = groupAdmin;
         this.creationDate = java.time.LocalDate.now();
-
-
-        if(StudyGroup.usedIDs.contains(id)) {
-            throw new IdAlreadyPresentException("Please use another id for this init. Entered id was already used");
-        }
-        this.id = id;
+        this.id = collectionManager.getMaxId() + 1;
     }
 
 
-    public StudyGroup(String name,
-                      Coordinates coordinates,
-                      Integer studentsCount,
-                      FormOfEducation formOfEducation,
-                      Semester semesterEnum,
-                      Person groupAdmin) {
-        this.name = name;
-        this.coordinates = coordinates;
-        this.studentsCount = studentsCount;
-        this.formOfEducation = formOfEducation;
-        this.semesterEnum = semesterEnum;
-        this.groupAdmin = groupAdmin;
-        this.creationDate = java.time.LocalDate.now();
-
-        this.id = 0;
-        for (int i = 1; i < Integer.MAX_VALUE; i++) {
-            if (!usedIDs.contains(i)) {
-                this.id = i;
-                break;
-            }
-        }
-    }
-
-
-
-    public static HashSet<Integer> usedIDs = new HashSet<>();
-
-
-    private int id; // >0, unique, automatic generation
+    private final int id; // >0, unique, automatic generation
 
     private final String name; //not null, not empty
     private final Coordinates coordinates; //not null
