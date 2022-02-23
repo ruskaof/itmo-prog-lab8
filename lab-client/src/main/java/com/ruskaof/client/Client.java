@@ -21,7 +21,7 @@ public final class Client {
     public static void main(String[] args) {
         final OutputManager outputManager = new OutputManager();
         if (args.length == 0) {
-            outputManager.println("This command needs a path to a .json file");
+            outputManager.println("This program needs a path to a .json file");
             return;
         }
         final String filename = args[0];
