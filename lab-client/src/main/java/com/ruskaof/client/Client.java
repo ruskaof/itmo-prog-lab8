@@ -22,6 +22,7 @@ public final class Client {
         final String filename = args[0];
 
         if (!new File(filename).exists()) {
+            System.out.println("The file does not exist");
             return;
         }
 

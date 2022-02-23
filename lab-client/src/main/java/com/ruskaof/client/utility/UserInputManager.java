@@ -49,9 +49,9 @@ public class UserInputManager {
         if (forbiddenFiles.contains(file)) {
             readingFromFile = false;
         } else {
+            bufferedReader = new BufferedReader(new FileReader(file));
             forbiddenFiles.add(file);
             readingFromFile = true;
-            bufferedReader = new BufferedReader(new FileReader(file));
         }
     }
 

@@ -4,6 +4,7 @@ import com.ruskaof.client.utility.UserInputManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ExecuteScriptCommand extends Command {
 

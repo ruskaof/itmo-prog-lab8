@@ -54,7 +54,7 @@ public class StudyGroupMaker {
         System.out.println("Enter coordinates data");
         final long xLimitation = -896;
         final double yLimitation = 135;
-        long x = asker.ask(arg -> ((Long) arg) > -xLimitation, Long.class, "Enter x (long)",
+        long x = asker.ask(arg -> ((Long) arg) > xLimitation, Long.class, "Enter x (long)",
                 errMessage, "The long must be >-896. Try again", false); //> -896
         Double y = asker.ask(arg -> ((Double) arg) <= yLimitation, Double.class, "Enter y (Double)",
                 errMessage, "The double must be <= 135. Try again", false); //<=135, not null
@@ -80,7 +80,7 @@ public class StudyGroupMaker {
 
     private Location askForLocation() {
         System.out.println("Enter location data");
-        String name = asker.ask(arg -> ((String) arg).length() > 0, String.class, "Enter name (String)",
+        String name = asker.ask(arg -> ((String) arg).length() > 0, String.class, "Enter name (String) (can be null)",
                 errMessage, "The string must not be empty. Try again", true);
         float x = asker.ask(arg -> true, Float.class, "Enter x (float)", errMessage,
                 errMessage, false);
