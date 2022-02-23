@@ -20,9 +20,10 @@ public final class Client {
 
     public static void main(String[] args) {
         final OutputManager outputManager = new OutputManager();
+        if (args.length == 0) {
+            outputManager.println("This command needs a path to a .json file");
+        }
         final String filename = args[0];
-
-
         if (!new File(filename).exists()) {
             outputManager.println("The file does not exist");
             return;
