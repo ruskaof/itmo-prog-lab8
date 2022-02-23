@@ -1,9 +1,11 @@
 package com.ruskaof.client.utility;
 
 import com.ruskaof.client.commands.CommandResult;
+import com.ruskaof.client.data.StudyGroup;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.TreeSet;
 
 
 /**
@@ -31,7 +33,9 @@ public class Console {
      * Loads data into fileManager.mainData (a TreeSet) and starts listening to user command input
      */
     public void start() throws IOException {
-        collectionManager.initialiseData(new JsonParser().deSerialize(fileManager.read()));
+        String stringData = fileManager.read();
+        TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
+        collectionManager.initialiseData(studyGroups);
         startCommandCycle();
     }
 

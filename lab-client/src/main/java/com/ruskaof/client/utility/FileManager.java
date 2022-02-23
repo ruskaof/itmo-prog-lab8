@@ -1,7 +1,6 @@
 package com.ruskaof.client.utility;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,12 +8,9 @@ import java.io.PrintWriter;
 
 public class FileManager {
     private final String filename;
-    private final PrintWriter printWriter;
 
     public FileManager(String filename) throws FileNotFoundException {
         this.filename = filename;
-        File file = new File(filename);
-        this.printWriter = new PrintWriter(file);
     }
 
     public String read() throws IOException {
@@ -27,7 +23,8 @@ public class FileManager {
         return strData.toString();
     }
 
-    public void save(String text) {
+    public void save(String text) throws FileNotFoundException {
+        PrintWriter printWriter = new PrintWriter(filename);
         printWriter.write(text);
         printWriter.close();
     }
