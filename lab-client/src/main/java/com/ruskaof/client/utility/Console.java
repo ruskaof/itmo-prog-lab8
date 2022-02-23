@@ -1,5 +1,6 @@
 package com.ruskaof.client.utility;
 
+import com.google.gson.JsonSyntaxException;
 import com.ruskaof.client.commands.CommandResult;
 import com.ruskaof.client.data.StudyGroup;
 
@@ -34,8 +35,13 @@ public class Console {
      */
     public void start() throws IOException {
         String stringData = fileManager.read();
-        TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
-        collectionManager.initialiseData(studyGroups);
+        try {
+            TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
+            collectionManager.initialiseData(studyGroups);
+        } catch (JsonSyntaxException | IllegalArgumentException e) {
+            outputManager.println("Data file was not correct");
+            return;
+        }
         startCommandCycle();
     }
 

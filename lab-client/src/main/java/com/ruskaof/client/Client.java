@@ -19,15 +19,21 @@ public final class Client {
     }
 
     public static void main(String[] args) {
+        final OutputManager outputManager = new OutputManager();
         final String filename = args[0];
 
+
         if (!new File(filename).exists()) {
-            System.out.println("The file does not exist");
+            outputManager.println("The file does not exist");
+            return;
+        }
+
+        if (!filename.endsWith(".json")) {
+            outputManager.println("This program only works with json files");
             return;
         }
 
         final HistoryManager historyManager = new HistoryManager();
-        final OutputManager outputManager = new OutputManager();
         final CollectionManager collectionManager = new CollectionManager();
         FileManager fileManager = null;
         try {
