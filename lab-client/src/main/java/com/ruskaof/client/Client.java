@@ -22,6 +22,7 @@ public final class Client {
         final OutputManager outputManager = new OutputManager();
         if (args.length == 0) {
             outputManager.println("This command needs a path to a .json file");
+            return;
         }
         final String filename = args[0];
         if (!new File(filename).exists()) {
