@@ -18,7 +18,7 @@ public class ExecuteScriptCommand extends Command {
     public CommandResult execute(String arg) {
         try {
             userInputManager.connectToFile(new File(arg));
-            return new CommandResult(false, "The script was executed successfully.");
+            return new CommandResult(false, "Starting to execute script...");
         } catch (FileNotFoundException e) {
             return new CommandResult(false, "The file was not found, the script was not executed.");
         }
