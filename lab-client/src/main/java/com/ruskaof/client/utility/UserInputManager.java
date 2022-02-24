@@ -5,8 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * This class is used for all the user input: keyboard and script execution
@@ -16,21 +15,21 @@ public class UserInputManager {
     private final Scanner scanner = new Scanner(System.in);
     private boolean readingFromFile = false;
 
-    /**
-     * This field is used to prevent recursion
-     */
-    private final HashSet<File> forbiddenFiles = new HashSet<>();
 
     public String nextLine() {
         if (readingFromFile) {
             try {
-                String nextln = bufferedReader.readLine();
-                if (nextln == null) {
-                    forbiddenFiles.clear();
+                String input = bufferedReader.readLine();
+                if (input == null) {
                     readingFromFile = false;
                     return nextLine();
+
                 } else {
-                    return nextln;
+                    // to prevent recursion "execute_script" command is banned while reading from file
+                    if (input.startsWith("execute_script") && readingFromFile) {
+                        return nextLine();
+                    }
+                    return input;
                 }
             } catch (IOException e) {
                 // never throws exception
@@ -46,12 +45,7 @@ public class UserInputManager {
     }
 
     public void connectToFile(File file) throws FileNotFoundException {
-        if (forbiddenFiles.contains(file)) {
-            readingFromFile = false;
-        } else {
-            bufferedReader = new BufferedReader(new FileReader(file));
-            forbiddenFiles.add(file);
-            readingFromFile = true;
-        }
+        bufferedReader = new BufferedReader(new FileReader(file));
+        readingFromFile = true;
     }
 }
