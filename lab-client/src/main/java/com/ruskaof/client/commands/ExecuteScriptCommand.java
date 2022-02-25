@@ -21,6 +21,8 @@ public class ExecuteScriptCommand extends Command {
             return new CommandResult(false, "Starting to execute script...");
         } catch (FileNotFoundException e) {
             return new CommandResult(false, "The file was not found, the script was not executed.");
+        } catch (UnsupportedOperationException e) {
+            return new CommandResult(false, e.getMessage());
         }
     }
 }

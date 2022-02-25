@@ -25,10 +25,6 @@ public class UserInputManager {
                     return nextLine();
 
                 } else {
-                    // to prevent recursion "execute_script" command is banned while reading from file
-                    if (input.startsWith("execute_script") && readingFromFile) {
-                        return nextLine();
-                    }
                     return input;
                 }
             } catch (IOException e) {
@@ -44,7 +40,10 @@ public class UserInputManager {
         return "";
     }
 
-    public void connectToFile(File file) throws FileNotFoundException {
+    public void connectToFile(File file) throws FileNotFoundException, UnsupportedOperationException {
+        if (readingFromFile) {
+            throw new UnsupportedOperationException("Using inner execute_script is unsupported due to recursion risks");
+        }
         bufferedReader = new BufferedReader(new FileReader(file));
         readingFromFile = true;
     }
