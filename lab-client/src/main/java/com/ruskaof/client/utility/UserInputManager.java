@@ -5,7 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.Scanner;
+import java.util.Stack;
 
 /**
  * This class is used for all the user input: keyboard and script execution
@@ -44,7 +45,6 @@ public class UserInputManager {
     }
 
     public void connectToFile(File file) throws FileNotFoundException, UnsupportedOperationException {
-
         if (currentFiles.contains(file)) {
             throw new UnsupportedOperationException("The file was not executed due to recursion");
         } else {
