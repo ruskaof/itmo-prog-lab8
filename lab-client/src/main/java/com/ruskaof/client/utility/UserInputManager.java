@@ -11,22 +11,25 @@ import java.util.*;
  * This class is used for all the user input: keyboard and script execution
  */
 public class UserInputManager {
-    private BufferedReader bufferedReader;
     private final Scanner scanner = new Scanner(System.in);
-    private boolean readingFromFile = false;
+    private final Stack<BufferedReader> currentFilesReaders = new Stack<>();
+    private final Stack<File> currentFiles = new Stack<>();
+
 
 
     public String nextLine() {
-        if (readingFromFile) {
+        if (!currentFilesReaders.isEmpty()) {
             try {
-                String input = bufferedReader.readLine();
+                String input = currentFilesReaders.peek().readLine();
                 if (input == null) {
-                    readingFromFile = false;
+                    currentFiles.pop();
+                    currentFilesReaders.pop();
                     return nextLine();
-
                 } else {
                     return input;
                 }
+
+
             } catch (IOException e) {
                 // never throws exception
                 e.printStackTrace();
@@ -41,10 +44,14 @@ public class UserInputManager {
     }
 
     public void connectToFile(File file) throws FileNotFoundException, UnsupportedOperationException {
-        if (readingFromFile) {
-            throw new UnsupportedOperationException("Using inner execute_script is unsupported due to recursion risks");
+
+        if (currentFiles.contains(file)) {
+            throw new UnsupportedOperationException("The file was not executed due to recursion");
+        } else {
+            BufferedReader newReader = new BufferedReader(new FileReader(file));
+            currentFiles.push(file);
+            currentFilesReaders.push(newReader);
         }
-        bufferedReader = new BufferedReader(new FileReader(file));
-        readingFromFile = true;
     }
+
 }
