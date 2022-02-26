@@ -124,7 +124,7 @@ public class StudyGroupMaker {
                     continue;
                 }
                 if (predicate.test(value)) {
-                    return value; // always casts successfully
+                    return value;
                 } else {
                     outputManager.println(wrongValueMessage);
                 }
