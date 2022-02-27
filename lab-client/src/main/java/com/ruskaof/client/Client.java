@@ -1,5 +1,6 @@
 package com.ruskaof.client;
 
+import com.google.gson.JsonSyntaxException;
 import com.ruskaof.client.utility.CollectionManager;
 import com.ruskaof.client.utility.CommandManager;
 import com.ruskaof.client.utility.CommandRunManager;
@@ -9,8 +10,6 @@ import com.ruskaof.client.utility.HistoryManager;
 import com.ruskaof.client.utility.OutputManager;
 import com.ruskaof.client.utility.UserInputManager;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public final class Client {
@@ -19,31 +18,22 @@ public final class Client {
     }
 
     public static void main(String[] args) {
+
         final OutputManager outputManager = new OutputManager();
+
         if (args.length == 0) {
-            outputManager.println("This program needs a path to a .json file");
-            return;
-        }
-        final String filename = args[0];
-        if (!new File(filename).exists()) {
-            outputManager.println("The file does not exist");
+            outputManager.println("This program needs a file in argument to work with.");
             return;
         }
 
-        if (!filename.endsWith(".json")) {
-            outputManager.println("This program only works with json files");
+        if (!args[0].endsWith(".json")) {
+            outputManager.println("This program can only work with .json file.");
             return;
         }
 
         final HistoryManager historyManager = new HistoryManager();
         final CollectionManager collectionManager = new CollectionManager();
-        FileManager fileManager = null;
-        try {
-            fileManager = new FileManager(filename);
-        } catch (FileNotFoundException e) {
-            // never trows
-            e.printStackTrace();
-        }
+        final FileManager fileManager = new FileManager(args[0]);
         final UserInputManager userInputManager = new UserInputManager();
         final CommandManager commandManager = new CommandManager(fileManager, userInputManager, collectionManager, outputManager, historyManager);
         final CommandRunManager commandRunManager = new CommandRunManager(commandManager, historyManager);
@@ -53,8 +43,11 @@ public final class Client {
         try {
             console.start();
         } catch (IOException e) {
-            // never throws
-            e.printStackTrace();
+            outputManager.println("Could not read the file. Check if it is available.");
+        } catch (JsonSyntaxException | IllegalArgumentException e) {
+            outputManager.println("The file does not keep data in correct format.");
+        } catch (Exception e) {
+            outputManager.println("Could not execute the program");
         }
     }
 }

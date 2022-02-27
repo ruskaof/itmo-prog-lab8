@@ -33,15 +33,12 @@ public class Console {
     /**
      * Loads data into fileManager.mainData (a TreeSet) and starts listening to user command input
      */
-    public void start() throws IOException {
+    public void start() throws IllegalArgumentException, JsonSyntaxException, IOException {
         String stringData = fileManager.read();
-        try {
-            TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
-            collectionManager.initialiseData(studyGroups);
-        } catch (JsonSyntaxException | IllegalArgumentException e) {
-            outputManager.println("Data file was not correct");
-            return;
-        }
+
+        TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
+        collectionManager.initialiseData(studyGroups);
+
         startCommandCycle();
     }
 

@@ -8,6 +8,7 @@ import com.ruskaof.client.data.Person;
 import com.ruskaof.client.data.Semester;
 import com.ruskaof.client.data.StudyGroup;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -30,19 +31,18 @@ public class StudyGroupMaker {
     }
 
     private StudyGroup askForStudyGroup() {
-        System.out.println("Enter studyGroup data");
-        String name = asker.ask(arg -> ((String) arg).length() > 0, String.class, "Enter name (String)",
-                errMessage, "The string must not be empty", false);
+        outputManager.println("Enter studyGroup data");
+        String name = asker.ask(arg -> ((String) arg).length() > 0, "Enter name (String)",
+                errMessage, "The string must not be empty", x -> x, false);
 
-        Integer studentsCount = asker.ask(arg -> ((Integer) arg) > 0, Integer.class, "Enter studentsCount (int) (can be null)",
-                errMessage, "Your int must be >0. Try again", true); // >0, null-able
+        Integer studentsCount = asker.ask(arg -> ((Integer) arg) > 0, "Enter studentsCount (int) (can be null)",
+                errMessage, "Your int must be >0. Try again", Integer::parseInt, true); // >0, null-able
 
-        FormOfEducation formOfEducation = asker.ask(arg -> true, FormOfEducation.class,
-                "Enter formOfEducation (DISTANCE_EDUCATION, FULL_TIME_EDUCATION, EVENING_CLASSES)",
-                errMessage, errMessage, false); //not null
+        FormOfEducation formOfEducation = asker.ask(arg -> true, "Enter formOfEducation (DISTANCE_EDUCATION, FULL_TIME_EDUCATION, EVENING_CLASSES)",
+                errMessage, errMessage, FormOfEducation::valueOf, false); //not null
 
-        Semester semesterEnum = asker.ask(arg -> true, Semester.class,
-                "Enter semesterEnum (THIRD, FIFTH, SIXTH, SEVENTH) (can be null)", errMessage, errMessage, true); // null-able
+        Semester semesterEnum = asker.ask(arg -> true, "Enter semesterEnum (THIRD, FIFTH, SIXTH, SEVENTH) (can be null)",
+                errMessage, errMessage, Semester::valueOf, true); // null-able
 
         Coordinates coordinates = askForCoordinates(); //not null
         Person groupAdmin = askForGroupAdmin(); //not null
@@ -51,27 +51,27 @@ public class StudyGroupMaker {
     }
 
     private Coordinates askForCoordinates() {
-        System.out.println("Enter coordinates data");
+        outputManager.println("Enter coordinates data");
         final long xLimitation = -896;
         final double yLimitation = 135;
-        long x = asker.ask(arg -> ((Long) arg) > xLimitation, Long.class, "Enter x (long)",
-                errMessage, "The long must be >-896. Try again", false); //> -896
-        Double y = asker.ask(arg -> ((Double) arg) <= yLimitation, Double.class, "Enter y (Double)",
-                errMessage, "The double must be <= 135. Try again", false); //<=135, not null
+        long x = asker.ask(arg -> ((Long) arg) > xLimitation, "Enter x (long)",
+                errMessage, "The long must be >-896. Try again", Long::parseLong, false); //> -896
+        Double y = asker.ask(arg -> ((Double) arg) <= yLimitation, "Enter y (Double)",
+                errMessage, "The double must be <= 135. Try again", Double::parseDouble, false); //<=135, not null
         return new Coordinates(x, y);
     }
 
     private Person askForGroupAdmin() {
         outputManager.println("Enter groupAdminData");
 
-        String name = asker.ask(arg -> ((String) arg).length() > 0, String.class, "Enter name (String)",
-                errMessage, "The string must not be empty. Try again", false);
+        String name = asker.ask(arg -> ((String) arg).length() > 0, "Enter name (String)",
+                errMessage, "The string must not be empty. Try again", x -> x, false);
 
-        Integer height = asker.ask(arg -> ((Integer) arg) > 0, Integer.class, "Enter height (Integer)",
-                errMessage, "The integer must be >0. Try again", false);
+        Integer height = asker.ask(arg -> ((Integer) arg) > 0, "Enter height (Integer)",
+                errMessage, "The integer must be >0. Try again", Integer::parseInt, false);
 
-        Country nationality = asker.ask(arg -> true, Country.class, "Enter country (RUSSIA, SPAIN, INDIA, THAILAND, NORTH_KOREA) (can be null)",
-                errMessage, errMessage, true);
+        Country nationality = asker.ask(arg -> true, "Enter country (RUSSIA, SPAIN, INDIA, THAILAND, NORTH_KOREA) (can be null)",
+                errMessage, errMessage, Country::valueOf, true);
 
         Location location = askForLocation();
 
@@ -80,12 +80,12 @@ public class StudyGroupMaker {
 
     private Location askForLocation() {
         System.out.println("Enter location data");
-        String name = asker.ask(arg -> ((String) arg).length() > 0, String.class, "Enter name (String) (can be null)",
-                errMessage, "The string must not be empty. Try again", true);
-        float x = asker.ask(arg -> true, Float.class, "Enter x (float)", errMessage,
-                errMessage, false);
-        long y = asker.ask(arg -> true, Long.class, "Enter y (long)", errMessage,
-                errMessage, false);
+        String name = asker.ask(arg -> ((String) arg).length() > 0, "Enter name (String) (can be null)",
+                errMessage, "The string must not be empty. Try again", x -> x, true);
+        float x = asker.ask(arg -> true, "Enter x (float)", errMessage,
+                errMessage, Float::parseFloat, false);
+        long y = asker.ask(arg -> true, "Enter y (long)", errMessage,
+                errMessage, Long::parseLong, false);
 
         return new Location(x, y, name);
     }
@@ -101,52 +101,34 @@ public class StudyGroupMaker {
             this.outputManager = outputManager;
         }
 
-        @SuppressWarnings("unchecked")
         public <T> T ask(Predicate<Object> predicate,
-                         Class<?> type, String askMessage,
+                         String askMessage,
                          String errorMessage,
                          String wrongValueMessage,
+                         Function<String, T> converter,
                          boolean nullable) {
             outputManager.println(askMessage);
             String input;
-            Object value;
+            T value;
             do {
                 try {
                     input = userInputManager.nextLine();
                     if ("".equals(input) && nullable) {
                         return null;
                     }
-                    if (type == Integer.class) {
-                        value = Integer.valueOf(input);
-                    } else if (type == Long.class) {
-                        value = Long.valueOf(input);
-                    } else if (type == Double.class) {
-                        value = Double.valueOf(input);
-                    } else if (type == Float.class) {
-                        value = Float.valueOf(input);
-                    } else if (type == String.class) {
-                        value = input;
-                    } else if (type == Country.class) {
-                        value = Country.valueOf(input);
-                    } else if (type == FormOfEducation.class) {
-                        value = FormOfEducation.valueOf(input);
-                    } else if (type == Semester.class) {
-                        value = Semester.valueOf(input);
-                    } else {
-                        throw new RuntimeException("bad type was written");
-                    }
+
+                    value = converter.apply(input);
+
                 } catch (IllegalArgumentException e) {
                     outputManager.println(errorMessage);
                     continue;
                 }
                 if (predicate.test(value)) {
-                    return (T) value; // always casts successfully
+                    return value;
                 } else {
                     outputManager.println(wrongValueMessage);
                 }
             } while (true);
         }
-
     }
-
 }

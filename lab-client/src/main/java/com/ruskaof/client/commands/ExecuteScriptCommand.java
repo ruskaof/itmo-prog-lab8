@@ -3,7 +3,7 @@ package com.ruskaof.client.commands;
 import com.ruskaof.client.utility.UserInputManager;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ExecuteScriptCommand extends Command {
 
@@ -19,8 +19,8 @@ public class ExecuteScriptCommand extends Command {
         try {
             userInputManager.connectToFile(new File(arg));
             return new CommandResult(false, "Starting to execute script...");
-        } catch (FileNotFoundException e) {
-            return new CommandResult(false, "The file was not found, the script was not executed.");
+        } catch (IOException e) {
+            return new CommandResult(false, "There was a problem opening the file. Check if it is available and you have written it in the command arg correctly.");
         } catch (UnsupportedOperationException e) {
             return new CommandResult(false, e.getMessage());
         }

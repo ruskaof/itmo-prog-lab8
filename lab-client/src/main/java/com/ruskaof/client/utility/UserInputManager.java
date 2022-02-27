@@ -2,7 +2,6 @@ package com.ruskaof.client.utility;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
@@ -44,7 +43,7 @@ public class UserInputManager {
         return "";
     }
 
-    public void connectToFile(File file) throws FileNotFoundException, UnsupportedOperationException {
+    public void connectToFile(File file) throws IOException, UnsupportedOperationException {
         if (currentFiles.contains(file)) {
             throw new UnsupportedOperationException("The file was not executed due to recursion");
         } else {
