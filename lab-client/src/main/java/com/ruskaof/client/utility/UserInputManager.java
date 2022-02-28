@@ -23,7 +23,7 @@ public class UserInputManager {
                 String input = currentFilesReaders.peek().readLine();
                 if (input == null) {
                     currentFiles.pop();
-                    currentFilesReaders.pop();
+                    currentFilesReaders.pop().close();
                     return nextLine();
                 } else {
                     return input;

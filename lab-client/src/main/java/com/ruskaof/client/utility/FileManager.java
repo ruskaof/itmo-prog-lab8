@@ -14,15 +14,12 @@ public class FileManager {
     }
 
     public String read() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
         StringBuilder strData = new StringBuilder();
         String line;
-        try {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
             while ((line = bufferedReader.readLine()) != null) {
                 strData.append(line);
             }
-        } finally {
-            bufferedReader.close();
         }
         return strData.toString();
     }

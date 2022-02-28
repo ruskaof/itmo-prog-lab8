@@ -79,7 +79,7 @@ public class StudyGroupMaker {
     }
 
     private Location askForLocation() {
-        System.out.println("Enter location data");
+        outputManager.println("Enter location data");
         String name = asker.ask(arg -> ((String) arg).length() > 0, "Enter name (String) (can be null)",
                 errMessage, "The string must not be empty. Try again", x -> x, true);
         float x = asker.ask(arg -> true, "Enter x (float)", errMessage,
