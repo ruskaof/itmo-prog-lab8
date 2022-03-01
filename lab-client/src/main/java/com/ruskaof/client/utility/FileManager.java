@@ -25,8 +25,8 @@ public class FileManager {
     }
 
     public void save(String text) throws FileNotFoundException {
-        PrintWriter printWriter = new PrintWriter(filename);
-        printWriter.write(text);
-        printWriter.close();
+        try (PrintWriter printWriter = new PrintWriter(filename)) {
+            printWriter.write(text);
+        }
     }
 }

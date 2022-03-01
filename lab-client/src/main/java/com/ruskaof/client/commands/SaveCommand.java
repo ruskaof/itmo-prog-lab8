@@ -21,7 +21,7 @@ public class SaveCommand extends Command {
         try {
             fileManager.save(new JsonParser().serialize(collectionManager.getMainData()));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            return new CommandResult(false, "There was a problem saving a file. Please restart the program with another one");
         }
         return new CommandResult(false, "The data was saved successfully");
     }
