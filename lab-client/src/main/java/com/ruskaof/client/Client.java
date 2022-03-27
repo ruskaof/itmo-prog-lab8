@@ -1,53 +1,50 @@
 package com.ruskaof.client;
 
-import com.google.gson.JsonSyntaxException;
-import com.ruskaof.client.utility.CollectionManager;
-import com.ruskaof.client.utility.CommandManager;
-import com.ruskaof.client.utility.CommandRunManager;
-import com.ruskaof.client.utility.Console;
-import com.ruskaof.client.utility.FileManager;
-import com.ruskaof.client.utility.HistoryManager;
-import com.ruskaof.client.utility.OutputManager;
-import com.ruskaof.client.utility.UserInputManager;
+import com.ruskaof.client.util.ConnectionManager;
+import com.ruskaof.client.util.Console;
+import com.ruskaof.common.util.InputManager;
+import com.ruskaof.common.util.OutputManager;
 
-import java.io.IOException;
+import java.net.SocketException;
+import java.util.Collection;
+import java.util.HashSet;
 
 public final class Client {
+    private static final int SERVER_PORT = 3223;
+    private static final int CLIENT_PORT = 2332;
+
+    private static final Collection<String> LIST_OF_COMMANDS = new HashSet<>();
+
     private Client() {
         throw new UnsupportedOperationException("This is an utility class and can not be instantiated");
     }
 
     public static void main(String[] args) {
+        LIST_OF_COMMANDS.add("add");
+        LIST_OF_COMMANDS.add("add_if_min");
+        LIST_OF_COMMANDS.add("clear");
+        LIST_OF_COMMANDS.add("exit");
+        LIST_OF_COMMANDS.add("help");
+        LIST_OF_COMMANDS.add("history");
+        LIST_OF_COMMANDS.add("info");
+        LIST_OF_COMMANDS.add("min_by_id");
+        LIST_OF_COMMANDS.add("print_ascending");
+        LIST_OF_COMMANDS.add("remove_by_id");
+        LIST_OF_COMMANDS.add("remove_greater");
+        LIST_OF_COMMANDS.add("show");
+        LIST_OF_COMMANDS.add("update");
 
-        final OutputManager outputManager = new OutputManager();
+        OutputManager outputManager = new OutputManager(System.out);
 
-        if (args.length == 0) {
-            outputManager.println("This program needs a file in argument to work with.");
-            return;
-        }
-
-        if (!args[0].endsWith(".json")) {
-            outputManager.println("This program can only work with .json file.");
-            return;
-        }
-
-        final HistoryManager historyManager = new HistoryManager();
-        final CollectionManager collectionManager = new CollectionManager();
-        final FileManager fileManager = new FileManager(args[0]);
-        final UserInputManager userInputManager = new UserInputManager();
-        final CommandManager commandManager = new CommandManager(fileManager, userInputManager, collectionManager, outputManager, historyManager);
-        final CommandRunManager commandRunManager = new CommandRunManager(commandManager, historyManager);
-        final Console console = new Console(fileManager,
-                userInputManager, collectionManager, outputManager,
-                commandRunManager);
         try {
-            console.start();
-        } catch (IOException e) {
-            outputManager.println("Could not read the file. Check if it is available.");
-        } catch (JsonSyntaxException | IllegalArgumentException e) {
-            outputManager.println("The file does not keep data in correct format.");
-        } catch (Exception e) {
-            outputManager.println("Could not execute the program");
+            ConnectionManager connectionManager = new ConnectionManager(CLIENT_PORT, SERVER_PORT);
+            new Console(outputManager, new InputManager(System.in), connectionManager, LIST_OF_COMMANDS).start();
+        } catch (SocketException e) {
+            outputManager.println("Please change client socket. It is already used.");
+        } catch (ClassNotFoundException e) {
+            outputManager.println("Found incorrect data from server.");
         }
     }
+
+
 }
