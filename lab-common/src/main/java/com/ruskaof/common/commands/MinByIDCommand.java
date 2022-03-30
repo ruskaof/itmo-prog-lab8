@@ -32,7 +32,7 @@ public class MinByIDCommand extends Command {
         if (minIdStudyGroup == null) {
             return new CommandResultDto("Collection is empty");
         } else {
-            return new CommandResultDto(minIdStudyGroup.toString());
+            return new CommandResultDto(minIdStudyGroup);
         }
     }
 }

@@ -1,11 +1,10 @@
 package com.ruskaof.client.util;
 
+import com.ruskaof.client.ClientApp;
 import com.ruskaof.client.commands.ExecuteScriptCommand;
 import com.ruskaof.common.commands.*;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.ToServerDto;
-import com.ruskaof.common.util.InputManager;
-import com.ruskaof.common.util.OutputManager;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -14,16 +13,16 @@ import java.util.Collection;
 public class Console {
     private final OutputManager outputManager;
     private final InputManager inputManager;
-    private final ConnectionManager connectionManager;
+    private final ClientApp clientApp;
     private final StudyGroupMaker studyGroupMaker;
     private final Collection<String> listOfCommands;
 
 
-    public Console(OutputManager outputManager, InputManager inputManager, ConnectionManager connectionManager,
+    public Console(OutputManager outputManager, InputManager inputManager, ClientApp clientApp,
                    Collection<String> listOfCommands) {
         this.outputManager = outputManager;
         this.inputManager = inputManager;
-        this.connectionManager = connectionManager;
+        this.clientApp = clientApp;
         this.listOfCommands = listOfCommands;
         this.studyGroupMaker = new StudyGroupMaker(inputManager, outputManager);
     }
@@ -49,7 +48,7 @@ public class Console {
                 if ("execute_script".equals(commandName)) {
                     new ExecuteScriptCommand((String) commandArg).execute(inputManager);
                 } else {
-                    outputManager.println(connectionManager.sendCommand(new ToServerDto(getCommandObjectByName(commandName, commandArg, commandArg2))).getOutput());
+                    outputManager.println(clientApp.sendCommand(new ToServerDto(getCommandObjectByName(commandName, commandArg, commandArg2))).getOutput().toString());
                 }
             } else {
                 outputManager.println("command not found");

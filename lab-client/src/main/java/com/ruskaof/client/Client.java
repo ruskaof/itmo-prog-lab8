@@ -1,17 +1,15 @@
 package com.ruskaof.client;
 
-import com.ruskaof.client.util.ConnectionManager;
 import com.ruskaof.client.util.Console;
-import com.ruskaof.common.util.InputManager;
-import com.ruskaof.common.util.OutputManager;
+import com.ruskaof.client.util.InputManager;
+import com.ruskaof.client.util.OutputManager;
 
-import java.net.SocketException;
 import java.util.Collection;
 import java.util.HashSet;
 
 public final class Client {
-    private static final int SERVER_PORT = 3223;
-    private static final int CLIENT_PORT = 2332;
+    private static final int SERVER_PORT = 2743;
+    private static final int CLIENT_PORT = 3847;
 
     private static final Collection<String> LIST_OF_COMMANDS = new HashSet<>();
 
@@ -37,10 +35,8 @@ public final class Client {
         OutputManager outputManager = new OutputManager(System.out);
 
         try {
-            ConnectionManager connectionManager = new ConnectionManager(CLIENT_PORT, SERVER_PORT);
-            new Console(outputManager, new InputManager(System.in), connectionManager, LIST_OF_COMMANDS).start();
-        } catch (SocketException e) {
-            outputManager.println("Please change client socket. It is already used.");
+            ClientApp clientApp = new ClientApp(CLIENT_PORT, SERVER_PORT);
+            new Console(outputManager, new InputManager(System.in), clientApp, LIST_OF_COMMANDS).start();
         } catch (ClassNotFoundException e) {
             outputManager.println("Found incorrect data from server.");
         }

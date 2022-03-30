@@ -6,16 +6,18 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.dto.ToServerDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
-import com.ruskaof.common.util.JsonParser;
 import com.ruskaof.server.commands.SaveCommand;
 import com.ruskaof.server.util.FileManager;
+import com.ruskaof.server.util.JsonParser;
 import org.slf4j.Logger;
 
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.util.Objects;
+import java.util.Scanner;
 import java.util.TreeSet;
 
 public class ServerApp {
@@ -23,42 +25,16 @@ public class ServerApp {
     private final HistoryManager historyManager;
     private final CollectionManager collectionManager;
     private final FileManager fileManager;
-    private final DatagramSocket datagramSocket;
-    private final int clientPort;
-    private final ReceiveModule receiveModule;
-    private final ExecuteModule executeModule;
-    private final SendModule sendModule;
     private final Logger logger;
-    private boolean isWorking = false;
+    private final IsWorkingState isWorkingState = new IsWorkingState(false);
 
 
-    public ServerApp(HistoryManager historyManager, CollectionManager collectionManager, FileManager fileManager, int serverPort, int clientPort, Logger logger) throws SocketException {
+    public ServerApp(HistoryManager historyManager, CollectionManager collectionManager, FileManager fileManager, Logger logger) {
         this.logger = logger;
         this.collectionManager = collectionManager;
         this.historyManager = historyManager;
         this.fileManager = fileManager;
-        datagramSocket = new DatagramSocket(serverPort);
-        logger.info("Made a datagram socket");
-        this.clientPort = clientPort;
-        this.receiveModule = new ReceiveModule();
-        this.executeModule = new ExecuteModule();
-        this.sendModule = new SendModule();
     }
-
-    public static byte[] serialize(Object obj) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
-    }
-
-    /*
-    Серверное приложение должно состоять из следующих модулей (реализованных в виде одного или нескольких классов):
-    Модуль приёма подключений. (not needed)
-    Модуль чтения запроса.
-    Модуль обработки полученных команд.
-    Модуль отправки ответов клиенту.
-     */
 
     public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
@@ -66,51 +42,75 @@ public class ServerApp {
         return is.readObject();
     }
 
-    public void start() throws IOException, ClassNotFoundException {
+    public void start(int serverPort, int clientPort) throws IOException, ClassNotFoundException {
+        Scanner scanner = new Scanner(System.in);
+        try (DatagramChannel datagramChannel = DatagramChannel.open()) {
+            datagramChannel.bind(new InetSocketAddress("127.0.0.1", serverPort));
+            logger.info("Made a datagram channel");
 
-        String stringData = fileManager.read();
-        TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
-        collectionManager.initialiseData(studyGroups);
-        logger.info("Initialized collection, ready to receive data.");
+            String stringData = fileManager.read();
+            TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
+            collectionManager.initialiseData(studyGroups);
+            logger.info("Initialized collection, ready to receive data.");
 
+            isWorkingState.setValue(true);
 
-        isWorking = true;
+            datagramChannel.configureBlocking(false);
+            while (isWorkingState.getValue()) {
+                // Тут нужно как-то проверить, ввели ли в консоль сервера команду exit, чтобы остановить цикл.
+                // Как это сделать без создания второго потока - информацию мне найти не удалось
+                byte[] buf1 = new byte[BF_SIZE];
+                ByteBuffer receiveBuffer = ByteBuffer.wrap(buf1);
+                SocketAddress socketAddress = datagramChannel.receive(receiveBuffer);
 
-        while (isWorking) {
-            Command command = receiveModule.invoke();
-            logger.info("Received data from client: " + command.toString());
-            CommandResultDto commandResultDto = executeModule.invoke(command);
-            logger.info("Executed the command: " + commandResultDto.toString());
-            sendModule.invoke(commandResultDto);
-            logger.info("Send command result");
+                if (Objects.nonNull(socketAddress)) {
+                    // Receive
+                    ToServerDto toServerDto = (ToServerDto) deserialize(buf1);
+                    logger.info("received a data object: " + toServerDto.getCommand().toString());
+                    final Command command = (toServerDto).getCommand();
+
+                    // Execute
+                    CommandResultDto commandResultDto = command.execute(collectionManager, historyManager);
+                    logger.info("executed the command with result: " + commandResultDto.toString());
+
+                    // Send
+                    byte[] buf2 = serialize(commandResultDto);
+                    ByteBuffer sendBuffer = ByteBuffer.wrap(buf2);
+                    datagramChannel.send(sendBuffer, socketAddress);
+                    logger.info("sent the command result to the client");
+                }
+            }
+
+            System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
         }
-
-        System.out.println(new SaveCommand().execute(fileManager, collectionManager));
     }
 
-    class ReceiveModule {
-        public Command invoke() throws IOException, ClassNotFoundException {
-            byte[] buf = new byte[BF_SIZE];
-            DatagramPacket toReceivePacket = new DatagramPacket(buf, BF_SIZE);
-            datagramSocket.receive(toReceivePacket);
-            return ((ToServerDto) deserialize(toReceivePacket.getData())).getCommand();
+    /**
+     * Этот класс нужен, чтобы была теоретическая возможность выйти из цикла
+     * получения новых команд. Команды exit по тз нет вообще, но я посчитал, что лучше сделать так,
+     * чем примитив. Для того чтобы выйти из цикла будет достаточно лишь использовать метод
+     * setValue с аргументом false.
+     */
+    class IsWorkingState {
+        private Boolean value;
+
+        private IsWorkingState(Boolean initValue) {
+            this.value = initValue;
+        }
+
+        public Boolean getValue() {
+            return value;
+        }
+
+        public void setValue(Boolean value) {
+            this.value = value;
         }
     }
 
-    class ExecuteModule {
-        public CommandResultDto invoke(Command command) {
-            historyManager.addNote(command.getName());
-            return command.execute(collectionManager, historyManager);
-        }
-    }
-
-    class SendModule {
-        public void invoke(CommandResultDto commandResultDto) throws IOException {
-            byte[] toSend = serialize(commandResultDto);
-
-            final DatagramPacket datagramPacket = new DatagramPacket(toSend, toSend.length, InetAddress.getByName("127.0.0.1"), clientPort);
-
-            datagramSocket.send(datagramPacket);
-        }
+    public static byte[] serialize(Object obj) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        return out.toByteArray();
     }
 }

@@ -1,4 +1,4 @@
-package com.ruskaof.common.util;
+package com.ruskaof.server.util;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;

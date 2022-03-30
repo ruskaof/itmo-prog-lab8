@@ -21,14 +21,6 @@ public class ShowCommand extends Command {
             HistoryManager historyManager
     ) {
         // Stream api would not help
-        StringJoiner output = new StringJoiner("\n\n");
-        if (collectionManager.getMainData().isEmpty()) {
-            return new CommandResultDto("Collection is empty");
-        }
-        for (StudyGroup studyGroup : collectionManager.getMainData()) {
-            output.add(studyGroup.toString());
-        }
-
-        return new CommandResultDto(output.toString());
+        return new CommandResultDto(collectionManager.getMainData());
     }
 }

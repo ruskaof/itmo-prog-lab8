@@ -4,6 +4,9 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+
 
 public class InfoCommand extends Command {
 
@@ -18,14 +21,36 @@ public class InfoCommand extends Command {
     ) {
         // Stream api would not help
         if (!collectionManager.getMainData().isEmpty()) {
-            return new CommandResultDto("Collection type: " + collectionManager.getMainData().getClass().toString() + "\n"
-                    + "Number of elements: " + collectionManager.getMainData().size() + "\n"
-                    + "Creation date: " + collectionManager.getCreationDate() + "\n"
-                    + "The biggest element has studentsCount = " + collectionManager.getMainData().last().getStudentsCount());
+            return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
+                    collectionManager.getCreationDate(),
+                    collectionManager.getMainData().first().getStudentsCount())
+            );
         } else {
-            return new CommandResultDto("Collection type: " + collectionManager.getMainData().getClass().toString() + "\n"
-                    + "Number of elements: " + collectionManager.getMainData().size() + "\n"
-                    + "Creation date: " + collectionManager.getCreationDate());
+            return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
+                    collectionManager.getCreationDate(),
+                    0)
+            );
+        }
+    }
+
+    class InfoCommandResult implements Serializable {
+        private final int numberOfElements;
+        private final LocalDate creationDate;
+        private final int biggestStudentsCount;
+
+        public InfoCommandResult(int numberOfElements, LocalDate creationDate, int biggestStudentsCount) {
+            this.numberOfElements = numberOfElements;
+            this.creationDate = creationDate;
+            this.biggestStudentsCount = biggestStudentsCount;
+        }
+
+        @Override
+        public String toString() {
+            return "InfoCommandResult{" +
+                    "numberOfElements='" + numberOfElements + '\'' +
+                    ", creationDate=" + creationDate +
+                    ", biggestStudentsCount=" + biggestStudentsCount +
+                    '}';
         }
     }
 }

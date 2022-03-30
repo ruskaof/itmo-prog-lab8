@@ -3,13 +3,13 @@ package com.ruskaof.common.dto;
 import java.io.Serializable;
 
 public class CommandResultDto implements Serializable {
-    private final String output;
+    private final Serializable output;
 
-    public CommandResultDto(String output) {
+    public CommandResultDto(Serializable output) {
         this.output = output;
     }
 
-    public String getOutput() {
+    public Serializable getOutput() {
         return output;
     }
 

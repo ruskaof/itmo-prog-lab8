@@ -1,8 +1,6 @@
 package com.ruskaof.client.util;
 
 import com.ruskaof.common.data.*;
-import com.ruskaof.common.util.InputManager;
-import com.ruskaof.common.util.OutputManager;
 
 import java.util.function.Function;
 import java.util.function.Predicate;

@@ -1,4 +1,4 @@
-package com.ruskaof.common.util;
+package com.ruskaof.client.util;
 
 import java.io.*;
 import java.util.Scanner;
