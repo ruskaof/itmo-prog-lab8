@@ -64,7 +64,7 @@ public class ServerApp {
                         isWorkingState = false;
                     }
                     if ("save".equals(inp)) {
-                        new SaveCommand(fileManager).execute(collectionManager,historyManager);
+                        System.out.println(new SaveCommand(fileManager).execute(collectionManager,historyManager));
                     }
                 }
                 byte[] buf1 = new byte[BF_SIZE];
