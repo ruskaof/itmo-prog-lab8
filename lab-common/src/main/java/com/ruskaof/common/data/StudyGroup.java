@@ -15,6 +15,10 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
     private final Person groupAdmin; //not null
     private int id; // >0, unique, automatic generation
 
+    public String getName() {
+        return name;
+    }
+
     public StudyGroup(String name,
                       Coordinates coordinates,
                       Integer studentsCount,
