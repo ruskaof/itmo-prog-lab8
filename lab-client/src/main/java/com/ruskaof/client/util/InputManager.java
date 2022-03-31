@@ -29,8 +29,6 @@ public class InputManager {
                 } else {
                     return input;
                 }
-
-
             } catch (IOException e) {
                 // never throws exception
                 e.printStackTrace();

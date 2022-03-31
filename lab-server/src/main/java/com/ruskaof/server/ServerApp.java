@@ -21,6 +21,7 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.TreeSet;
 
 public class ServerApp {
@@ -58,7 +59,8 @@ public class ServerApp {
             datagramChannel.configureBlocking(false);
             while (isWorkingState.getValue()) {
                 // Тут нужно как-то проверить, ввели ли в консоль сервера команду exit, чтобы остановить цикл.
-                // Как это сделать без создания второго потока - информацию мне найти не удалось
+                // Как это сделать без создания второго потока - информацию мне найти не удалось.
+                // scanner.hasNext() не работает в данном случае :(
                 byte[] buf1 = new byte[BF_SIZE];
                 ByteBuffer receiveBuffer = ByteBuffer.wrap(buf1);
                 SocketAddress socketAddress = datagramChannel.receive(receiveBuffer);
