@@ -20,7 +20,7 @@ public class AddIfMinCommand extends Command {
         StudyGroup studyGroup = (StudyGroup) arg;
         studyGroup.setId(collectionManager.getMaxId() + 1);
 
-        // stream api would be worse in this case
+        // stream api would be worse in this case (I would lose TreeSet optimisation)
         if (collectionManager.getMainData().isEmpty() || studyGroup.compareTo(collectionManager.getMainData().first()) < 0) {
             collectionManager.getMainData().add(studyGroup);
             return new CommandResultDto("The element was added successfully");

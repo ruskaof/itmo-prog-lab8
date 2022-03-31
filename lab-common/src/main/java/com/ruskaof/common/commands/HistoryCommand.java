@@ -14,6 +14,7 @@ public class HistoryCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        // stream api would not help
         return new CommandResultDto(historyManager.niceToString());
     }
 }

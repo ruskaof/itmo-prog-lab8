@@ -1,11 +1,8 @@
 package com.ruskaof.common.commands;
 
-import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
-
-import java.util.StringJoiner;
 
 
 public class PrintAscendingCommand extends Command {
@@ -19,7 +16,7 @@ public class PrintAscendingCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-        // Stream api would not help
+        // Stream api would not help (Tree set is already sorted)
         return new CommandResultDto(collectionManager.getMainData());
     }
 }

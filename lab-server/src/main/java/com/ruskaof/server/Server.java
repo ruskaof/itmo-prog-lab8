@@ -33,7 +33,7 @@ public final class Server {
 
         try {
             serverApp = new ServerApp(historyManager, collectionManager, fileManager, LOGGER);
-            serverApp.start(SERVER_PORT, CLIENT_PORT);
+            serverApp.start(SERVER_PORT);
         } catch (IOException e) {
             e.printStackTrace();
             LOGGER.error("There was a problem with a datafile. Please check if it is available.");

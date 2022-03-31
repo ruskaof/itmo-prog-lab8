@@ -19,7 +19,7 @@ public class MinByIDCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-        // chad STREAM API!!!1
+        // STREAM API!!
         StudyGroup minIdStudyGroup = collectionManager.getMainData().stream().min(Comparator.comparingInt(StudyGroup::getId)).orElse(null);
 
 //        for (StudyGroup studyGroup : collectionManager.getMainData()) {

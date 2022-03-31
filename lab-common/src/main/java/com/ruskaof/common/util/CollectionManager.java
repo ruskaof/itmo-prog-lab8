@@ -6,11 +6,11 @@ import java.time.LocalDate;
 import java.util.TreeSet;
 
 public interface CollectionManager {
-    public void initialiseData(TreeSet<StudyGroup> treeSet);
+    void initialiseData(TreeSet<StudyGroup> treeSet);
 
-    public LocalDate getCreationDate();
+    LocalDate getCreationDate();
 
-    public TreeSet<StudyGroup> getMainData();
+    TreeSet<StudyGroup> getMainData();
 
-    public int getMaxId();
+    int getMaxId();
 }

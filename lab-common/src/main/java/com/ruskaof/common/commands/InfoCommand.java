@@ -33,12 +33,12 @@ public class InfoCommand extends Command {
         }
     }
 
-    class InfoCommandResult implements Serializable {
+    final class InfoCommandResult implements Serializable {
         private final int numberOfElements;
         private final LocalDate creationDate;
         private final int biggestStudentsCount;
 
-        public InfoCommandResult(int numberOfElements, LocalDate creationDate, int biggestStudentsCount) {
+        private InfoCommandResult(int numberOfElements, LocalDate creationDate, int biggestStudentsCount) {
             this.numberOfElements = numberOfElements;
             this.creationDate = creationDate;
             this.biggestStudentsCount = biggestStudentsCount;
@@ -46,11 +46,11 @@ public class InfoCommand extends Command {
 
         @Override
         public String toString() {
-            return "InfoCommandResult{" +
-                    "numberOfElements='" + numberOfElements + '\'' +
-                    ", creationDate=" + creationDate +
-                    ", biggestStudentsCount=" + biggestStudentsCount +
-                    '}';
+            return "InfoCommandResult{"
+                    + "numberOfElements='" + numberOfElements + '\''
+                    + ", creationDate=" + creationDate
+                    + ", biggestStudentsCount=" + biggestStudentsCount
+                    + '}';
         }
     }
 }

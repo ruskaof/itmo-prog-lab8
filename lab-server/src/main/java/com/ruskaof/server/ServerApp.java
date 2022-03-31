@@ -11,13 +11,16 @@ import com.ruskaof.server.util.FileManager;
 import com.ruskaof.server.util.JsonParser;
 import org.slf4j.Logger;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.TreeSet;
 
 public class ServerApp {
@@ -42,8 +45,7 @@ public class ServerApp {
         return is.readObject();
     }
 
-    public void start(int serverPort, int clientPort) throws IOException, ClassNotFoundException {
-        Scanner scanner = new Scanner(System.in);
+    public void start(int serverPort) throws IOException, ClassNotFoundException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.bind(new InetSocketAddress("127.0.0.1", serverPort));
             logger.info("Made a datagram channel");
@@ -52,9 +54,7 @@ public class ServerApp {
             TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
             collectionManager.initialiseData(studyGroups);
             logger.info("Initialized collection, ready to receive data.");
-
             isWorkingState.setValue(true);
-
             datagramChannel.configureBlocking(false);
             while (isWorkingState.getValue()) {
                 // Тут нужно как-то проверить, ввели ли в консоль сервера команду exit, чтобы остановить цикл.
@@ -85,13 +85,20 @@ public class ServerApp {
         }
     }
 
+    public static byte[] serialize(Object obj) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        return out.toByteArray();
+    }
+
     /**
      * Этот класс нужен, чтобы была теоретическая возможность выйти из цикла
      * получения новых команд. Команды exit по тз нет вообще, но я посчитал, что лучше сделать так,
      * чем примитив. Для того чтобы выйти из цикла будет достаточно лишь использовать метод
      * setValue с аргументом false.
      */
-    class IsWorkingState {
+    final class IsWorkingState {
         private Boolean value;
 
         private IsWorkingState(Boolean initValue) {
@@ -105,12 +112,5 @@ public class ServerApp {
         public void setValue(Boolean value) {
             this.value = value;
         }
-    }
-
-    public static byte[] serialize(Object obj) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
     }
 }

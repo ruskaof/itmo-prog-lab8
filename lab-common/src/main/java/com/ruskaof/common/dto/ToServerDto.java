@@ -5,7 +5,6 @@ import com.ruskaof.common.commands.Command;
 import java.io.Serializable;
 import java.util.Objects;
 
-// data class (tupaya java ne umeet ego delat sama)
 public class ToServerDto implements Serializable {
     private final Command command;
 

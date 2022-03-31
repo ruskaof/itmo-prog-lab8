@@ -2,7 +2,20 @@ package com.ruskaof.client.util;
 
 import com.ruskaof.client.ClientApp;
 import com.ruskaof.client.commands.ExecuteScriptCommand;
-import com.ruskaof.common.commands.*;
+import com.ruskaof.common.commands.AddCommand;
+import com.ruskaof.common.commands.AddIfMinCommand;
+import com.ruskaof.common.commands.ClearCommand;
+import com.ruskaof.common.commands.Command;
+import com.ruskaof.common.commands.FilterLessThanSemesterEnumCommand;
+import com.ruskaof.common.commands.HelpCommand;
+import com.ruskaof.common.commands.HistoryCommand;
+import com.ruskaof.common.commands.InfoCommand;
+import com.ruskaof.common.commands.MinByIDCommand;
+import com.ruskaof.common.commands.PrintAscendingCommand;
+import com.ruskaof.common.commands.RemoveByIdCommand;
+import com.ruskaof.common.commands.RemoveGreaterCommand;
+import com.ruskaof.common.commands.ShowCommand;
+import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.ToServerDto;
 
@@ -51,7 +64,7 @@ public class Console {
                     outputManager.println(clientApp.sendCommand(new ToServerDto(getCommandObjectByName(commandName, commandArg, commandArg2))).getOutput().toString());
                 }
             } else {
-                outputManager.println("command not found");
+                outputManager.println("The command was not found. Please use \"help\" to know about commands.");
             }
             input = readNextCommand();
         }
@@ -75,49 +88,33 @@ public class Console {
     }
 
     private Command getCommandObjectByName(String commandName, Serializable arg, String arg2) {
-        Command command = null;
+        Command command;
         switch (commandName) {
-            case "add":
-                command = new AddCommand((StudyGroup) arg);
+            case "add": command = new AddCommand((StudyGroup) arg);
                 break;
-            case "add_if_min":
-                command = new AddIfMinCommand((StudyGroup) arg);
+            case "add_if_min": command = new AddIfMinCommand((StudyGroup) arg);
                 break;
-            case "clear":
-                command = new ClearCommand();
+            case "clear": command = new ClearCommand();
                 break;
-            case "filter_less_than_semester_enum":
-                command = new FilterLessThanSemesterEnumCommand((String) arg);
+            case "filter_less_than_semester_enum": command = new FilterLessThanSemesterEnumCommand((String) arg);
                 break;
-            case "help":
-                command = new HelpCommand();
+            case "history": command = new HistoryCommand();
                 break;
-            case "history":
-                command = new HistoryCommand();
+            case "info": command = new InfoCommand();
                 break;
-            case "info":
-                command = new InfoCommand();
+            case "min_by_id": command = new MinByIDCommand((String) arg);
                 break;
-            case "min_by_id":
-                command = new MinByIDCommand((String) arg);
+            case "print_ascending": command = new PrintAscendingCommand();
                 break;
-            case "print_ascending":
-                command = new PrintAscendingCommand();
+            case "remove_by_id": command = new RemoveByIdCommand((String) arg);
                 break;
-            case "remove_by_id":
-                command = new RemoveByIdCommand((String) arg);
+            case "remove_greater": command = new RemoveGreaterCommand((StudyGroup) arg);
                 break;
-            case "remove_greater":
-                command = new RemoveGreaterCommand((StudyGroup) arg);
+            case "show": command = new ShowCommand();
                 break;
-            case "show":
-                command = new ShowCommand();
+            case "update": command = new UpdateCommand((StudyGroup) arg, arg2);
                 break;
-            case "update":
-                command = new UpdateCommand((StudyGroup) arg, arg2);
-                break;
-            default:
-                command = new HelpCommand();
+            default: command = new HelpCommand();
                 break;
         }
         return command;
