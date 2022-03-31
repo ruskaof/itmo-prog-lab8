@@ -30,7 +30,6 @@ public class ServerApp {
     private final CollectionManager collectionManager;
     private final FileManager fileManager;
     private final Logger logger;
-    private final IsWorkingState isWorkingState = new IsWorkingState(false);
 
 
     public ServerApp(HistoryManager historyManager, CollectionManager collectionManager, FileManager fileManager, Logger logger) {
@@ -55,12 +54,19 @@ public class ServerApp {
             TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
             collectionManager.initialiseData(studyGroups);
             logger.info("Initialized collection, ready to receive data.");
-            isWorkingState.setValue(true);
+            boolean isWorkingState = true;
             datagramChannel.configureBlocking(false);
-            while (isWorkingState.getValue()) {
-                // Тут нужно как-то проверить, ввели ли в консоль сервера команду exit, чтобы остановить цикл.
-                // Как это сделать без создания второго потока - информацию мне найти не удалось.
-                // scanner.hasNext() не работает в данном случае :(
+            while (isWorkingState) {
+                if (System.in.available() > 0) { // возможно, не лучшее решение, но другое мне найти не удалось
+                    Scanner scanner = new Scanner(System.in);
+                    final String inp = scanner.nextLine();
+                    if ("exit".equals(inp)) {
+                        isWorkingState = false;
+                    }
+                    if ("save".equals(inp)) {
+                        new SaveCommand(fileManager).execute(collectionManager,historyManager);
+                    }
+                }
                 byte[] buf1 = new byte[BF_SIZE];
                 ByteBuffer receiveBuffer = ByteBuffer.wrap(buf1);
                 SocketAddress socketAddress = datagramChannel.receive(receiveBuffer);
@@ -92,27 +98,5 @@ public class ServerApp {
         ObjectOutputStream os = new ObjectOutputStream(out);
         os.writeObject(obj);
         return out.toByteArray();
-    }
-
-    /**
-     * Этот класс нужен, чтобы была теоретическая возможность выйти из цикла
-     * получения новых команд. Команды exit по тз нет вообще, но я посчитал, что лучше сделать так,
-     * чем примитив. Для того чтобы выйти из цикла будет достаточно лишь использовать метод
-     * setValue с аргументом false.
-     */
-    final class IsWorkingState {
-        private Boolean value;
-
-        private IsWorkingState(Boolean initValue) {
-            this.value = initValue;
-        }
-
-        public Boolean getValue() {
-            return value;
-        }
-
-        public void setValue(Boolean value) {
-            this.value = value;
-        }
     }
 }
