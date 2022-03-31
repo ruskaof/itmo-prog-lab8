@@ -56,9 +56,9 @@ public class ServerApp {
             logger.info("Initialized collection, ready to receive data.");
             boolean isWorkingState = true;
             datagramChannel.configureBlocking(false);
+            Scanner scanner = new Scanner(System.in);
             while (isWorkingState) {
                 if (System.in.available() > 0) { // возможно, не лучшее решение, но другое мне найти не удалось
-                    Scanner scanner = new Scanner(System.in);
                     final String inp = scanner.nextLine();
                     if ("exit".equals(inp)) {
                         isWorkingState = false;
