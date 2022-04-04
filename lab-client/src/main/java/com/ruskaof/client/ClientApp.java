@@ -29,10 +29,10 @@ public final class ClientApp {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
 
             // Send
-            datagramChannel.bind(new InetSocketAddress("127.0.0.1", clientPort));
+            datagramChannel.bind(new InetSocketAddress(IP, clientPort));
             byte[] buf1 = serialize(toServerDto);
             ByteBuffer sendBuffer = ByteBuffer.wrap(buf1);
-            SocketAddress socketAddress = new InetSocketAddress("127.0.0.1", serverPort);
+            SocketAddress socketAddress = new InetSocketAddress(IP, serverPort);
             datagramChannel.send(sendBuffer, socketAddress);
 
             // Receive
