@@ -45,9 +45,9 @@ public class ServerApp {
         return is.readObject();
     }
 
-    public void start(int serverPort) throws IOException, ClassNotFoundException {
+    public void start(int serverPort, String IP) throws IOException, ClassNotFoundException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
-            datagramChannel.bind(new InetSocketAddress("127.0.0.1", serverPort));
+            datagramChannel.bind(new InetSocketAddress(IP, serverPort));
             logger.info("Made a datagram channel");
 
             String stringData = fileManager.read();
@@ -67,13 +67,13 @@ public class ServerApp {
                         System.out.println(new SaveCommand(fileManager).execute(collectionManager,historyManager));
                     }
                 }
-                byte[] buf1 = new byte[BF_SIZE];
-                ByteBuffer receiveBuffer = ByteBuffer.wrap(buf1);
-                SocketAddress socketAddress = datagramChannel.receive(receiveBuffer);
+                byte[] receiveBuffer = new byte[BF_SIZE];
+                ByteBuffer receiveWrapperBuffer = ByteBuffer.wrap(receiveBuffer);
+                SocketAddress socketAddress = datagramChannel.receive(receiveWrapperBuffer);
 
                 if (Objects.nonNull(socketAddress)) {
                     // Receive
-                    ToServerDto toServerDto = (ToServerDto) deserialize(buf1);
+                    ToServerDto toServerDto = (ToServerDto) deserialize(receiveBuffer);
                     logger.info("received a data object: " + toServerDto.getCommand().toString());
                     final Command command = (toServerDto).getCommand();
 
@@ -82,9 +82,9 @@ public class ServerApp {
                     logger.info("executed the command with result: " + commandResultDto.toString());
 
                     // Send
-                    byte[] buf2 = serialize(commandResultDto);
-                    ByteBuffer sendBuffer = ByteBuffer.wrap(buf2);
-                    datagramChannel.send(sendBuffer, socketAddress);
+                    byte[] sendBuffer = serialize(commandResultDto);
+                    ByteBuffer sendWrapBuffer = ByteBuffer.wrap(sendBuffer);
+                    datagramChannel.send(sendWrapBuffer, socketAddress);
                     logger.info("sent the command result to the client");
                 }
             }

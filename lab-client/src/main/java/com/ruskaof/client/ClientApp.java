@@ -17,10 +17,12 @@ public final class ClientApp {
     private static final int BF_SIZE = 2048;
     private final int clientPort;
     private final int serverPort;
+    private final String IP;
 
-    public ClientApp(int clientPort, int serverPort) {
+    public ClientApp(int clientPort, int serverPort, String IP) {
         this.clientPort = clientPort;
         this.serverPort = serverPort;
+        this.IP = IP;
     }
 
     public CommandResultDto sendCommand(ToServerDto toServerDto) throws ClassNotFoundException {
