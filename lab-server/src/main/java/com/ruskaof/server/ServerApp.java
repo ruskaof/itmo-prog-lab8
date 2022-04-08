@@ -45,11 +45,10 @@ public class ServerApp {
         return is.readObject();
     }
 
-    public void start(int serverPort, String IP) throws IOException, ClassNotFoundException {
+    public void start(int serverPort, String ip) throws IOException, ClassNotFoundException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
-            datagramChannel.bind(new InetSocketAddress(IP, serverPort));
+            datagramChannel.bind(new InetSocketAddress(ip, serverPort));
             logger.info("Made a datagram channel");
-
             String stringData = fileManager.read();
             TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
             collectionManager.initialiseData(studyGroups);
@@ -64,25 +63,19 @@ public class ServerApp {
                         isWorkingState = false;
                     }
                     if ("save".equals(inp)) {
-                        System.out.println(new SaveCommand(fileManager).execute(collectionManager,historyManager));
+                        System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
                     }
                 }
                 byte[] receiveBuffer = new byte[BF_SIZE];
                 ByteBuffer receiveWrapperBuffer = ByteBuffer.wrap(receiveBuffer);
                 SocketAddress socketAddress = datagramChannel.receive(receiveWrapperBuffer);
-
                 if (Objects.nonNull(socketAddress)) {
-                    // Receive
-                    ToServerDto toServerDto = (ToServerDto) deserialize(receiveBuffer);
+                    ToServerDto toServerDto = (ToServerDto) deserialize(receiveBuffer); // Receive
                     logger.info("received a data object: " + toServerDto.getCommand().toString());
                     final Command command = (toServerDto).getCommand();
-
-                    // Execute
-                    CommandResultDto commandResultDto = command.execute(collectionManager, historyManager);
+                    CommandResultDto commandResultDto = command.execute(collectionManager, historyManager); // Execute
                     logger.info("executed the command with result: " + commandResultDto.toString());
-
-                    // Send
-                    byte[] sendBuffer = serialize(commandResultDto);
+                    byte[] sendBuffer = serialize(commandResultDto); // Send
                     ByteBuffer sendWrapBuffer = ByteBuffer.wrap(sendBuffer);
                     datagramChannel.send(sendWrapBuffer, socketAddress);
                     logger.info("sent the command result to the client");

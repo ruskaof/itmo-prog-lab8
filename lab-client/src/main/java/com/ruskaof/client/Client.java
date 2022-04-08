@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public final class Client {
+    private static final int MAX_PORT = 9999;
     private static final Collection<String> LIST_OF_COMMANDS = new HashSet<>();
 
     private Client() {
@@ -16,17 +17,17 @@ public final class Client {
 
     public static void main(String[] args) {
         OutputManager outputManager = new OutputManager(System.out);
-        final int SERVER_PORT;
-        final int CLIENT_PORT;
-        final String IP;
+        final int serverPort;
+        final int clientPort;
+        final String ip;
 
         try {
-            SERVER_PORT = Integer.parseInt(args[0]);
-            CLIENT_PORT = Integer.parseInt(args[1]);
-            if (SERVER_PORT > 9999 || CLIENT_PORT > 9999) {
+            serverPort = Integer.parseInt(args[0]);
+            clientPort = Integer.parseInt(args[1]);
+            if (serverPort > MAX_PORT || clientPort > MAX_PORT) {
                 throw new IllegalArgumentException("Port number out of range");
             }
-            IP = args[2];
+            ip = args[2];
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
             outputManager.println("Found invalid arguments. Please use the program as \"java -jar <name> <server port> <client port> <ip>\"");
             return;
@@ -36,7 +37,7 @@ public final class Client {
 
 
         try {
-            ClientApp clientApp = new ClientApp(CLIENT_PORT, SERVER_PORT, IP);
+            ClientApp clientApp = new ClientApp(clientPort, serverPort, ip);
             new Console(outputManager, new InputManager(System.in), clientApp, LIST_OF_COMMANDS).start();
         } catch (ClassNotFoundException e) {
             outputManager.println("Found incorrect data from server.");

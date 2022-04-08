@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public final class Server {
+    private static int serverPort;
+    private static String ip;
+    private static String filename;
+    private static final int MAX_PORT = 9999;
     private static final Logger LOGGER
             = LoggerFactory.getLogger(Server.class);
 
@@ -19,33 +23,35 @@ public final class Server {
     }
 
     public static void main(String[] args) {
-        final int SERVER_PORT;
-        final String IP;
-        final String FILENAME;
         try {
-            FILENAME = args[0];
-            SERVER_PORT = Integer.parseInt(args[1]);
-            if (SERVER_PORT > 9999) {
-                throw new IllegalArgumentException("Port number out of range");
-            }
-            IP = args[2];
+            setParameterValues(args);
         } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
             LOGGER.error("Found Invalid arguments. Please use this program as \"java -jar <name> <datafile name> <server port> <ip>\"");
-            return;
         }
-
         CollectionManager collectionManager = new CollectionManagerImpl();
         HistoryManager historyManager = new HistoryManagerImpl();
-        FileManager fileManager = new FileManager(FILENAME);
+        FileManager fileManager = new FileManager(filename);
         ServerApp serverApp;
-
         try {
             serverApp = new ServerApp(historyManager, collectionManager, fileManager, LOGGER);
-            serverApp.start(SERVER_PORT, IP);
+            serverApp.start(serverPort, ip);
         } catch (IOException e) {
             LOGGER.error("There was a problem with a datafile. Please check if it is available.");
         } catch (ClassNotFoundException e) {
             LOGGER.error("Found incorrect request from client");
         }
     }
+
+    private static void setParameterValues(String[] args) throws IllegalArgumentException, IndexOutOfBoundsException {
+
+        filename = args[0];
+        serverPort = Integer.parseInt(args[1]);
+        if (serverPort > MAX_PORT) {
+            throw new IllegalArgumentException("Port number out of range");
+        }
+        ip = args[2];
+
+    }
 }
+
+

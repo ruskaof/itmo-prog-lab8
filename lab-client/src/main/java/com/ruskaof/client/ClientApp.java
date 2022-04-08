@@ -17,23 +17,33 @@ public final class ClientApp {
     private static final int BF_SIZE = 2048;
     private final int clientPort;
     private final int serverPort;
-    private final String IP;
+    private final String ip;
 
-    public ClientApp(int clientPort, int serverPort, String IP) {
+    public ClientApp(int clientPort, int serverPort, String ip) {
         this.clientPort = clientPort;
         this.serverPort = serverPort;
-        this.IP = IP;
+        this.ip = ip;
     }
 
     public CommandResultDto sendCommand(ToServerDto toServerDto) throws ClassNotFoundException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
 
             // Send
-            datagramChannel.bind(new InetSocketAddress(IP, clientPort));
+            datagramChannel.bind(new InetSocketAddress(ip, clientPort));
             byte[] buf1 = serialize(toServerDto);
             ByteBuffer sendBuffer = ByteBuffer.wrap(buf1);
-            SocketAddress socketAddress = new InetSocketAddress(IP, serverPort);
-            datagramChannel.send(sendBuffer, socketAddress);
+            SocketAddress socketAddress = new InetSocketAddress(ip, serverPort);
+
+            int limit = 65507;
+            while (sendBuffer.hasRemaining()) {
+                if (sendBuffer.remaining() < limit) {
+                    limit = sendBuffer.remaining();
+                }
+                ByteBuffer limitedSendBuffer = sendBuffer.slice();
+                limitedSendBuffer.limit(limit);
+                datagramChannel.send(limitedSendBuffer, socketAddress);
+                sendBuffer.position(sendBuffer.position() + limit);
+            }
 
             // Receive
             byte[] buf2 = new byte[BF_SIZE];
