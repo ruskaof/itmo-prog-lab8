@@ -36,6 +36,7 @@ public final class Server {
             serverApp = new ServerApp(historyManager, collectionManager, fileManager, LOGGER);
             serverApp.start(serverPort, ip);
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.error("There was a problem with a datafile. Please check if it is available.");
         } catch (ClassNotFoundException e) {
             LOGGER.error("Found incorrect request from client");

@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -39,16 +40,11 @@ public class ServerApp {
         this.fileManager = fileManager;
     }
 
-    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
-        ObjectInputStream is = new ObjectInputStream(in);
-        return is.readObject();
-    }
-
-    public void start(int serverPort, String ip) throws IOException, ClassNotFoundException {
+    public void start(int serverPort, String IP) throws IOException, ClassNotFoundException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
-            datagramChannel.bind(new InetSocketAddress(ip, serverPort));
+            datagramChannel.bind(new InetSocketAddress(IP, serverPort));
             logger.info("Made a datagram channel");
+
             String stringData = fileManager.read();
             TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
             collectionManager.initialiseData(studyGroups);
@@ -63,21 +59,50 @@ public class ServerApp {
                         isWorkingState = false;
                     }
                     if ("save".equals(inp)) {
-                        System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
+                        System.out.println(new SaveCommand(fileManager).execute(collectionManager,historyManager));
                     }
                 }
-                byte[] receiveBuffer = new byte[BF_SIZE];
-                ByteBuffer receiveWrapperBuffer = ByteBuffer.wrap(receiveBuffer);
-                SocketAddress socketAddress = datagramChannel.receive(receiveWrapperBuffer);
+                byte[] amountOfBytesHeader = new byte[4];
+                ByteBuffer amountOfBytesHeaderWrapper = ByteBuffer.wrap(amountOfBytesHeader);
+                SocketAddress socketAddress = datagramChannel.receive(amountOfBytesHeaderWrapper);
+
                 if (Objects.nonNull(socketAddress)) {
-                    ToServerDto toServerDto = (ToServerDto) deserialize(receiveBuffer); // Receive
+                    // Receive
+                    byte[] dataBytes = new byte[bytesToInt(amountOfBytesHeader)];
+
+                    ByteBuffer dataBytesWrapper = ByteBuffer.wrap(dataBytes);
+
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ignored) {
+
+                    }
+
+                    SocketAddress checkAddress = datagramChannel.receive(dataBytesWrapper);
+                    while (checkAddress == null) {
+                        checkAddress = datagramChannel.receive(dataBytesWrapper);
+                    }
+
+                    ToServerDto toServerDto = (ToServerDto) deserialize(dataBytes);
                     logger.info("received a data object: " + toServerDto.getCommand().toString());
                     final Command command = (toServerDto).getCommand();
-                    CommandResultDto commandResultDto = command.execute(collectionManager, historyManager); // Execute
+
+                    // Execute
+                    CommandResultDto commandResultDto = command.execute(collectionManager, historyManager);
                     logger.info("executed the command with result: " + commandResultDto.toString());
-                    byte[] sendBuffer = serialize(commandResultDto); // Send
-                    ByteBuffer sendWrapBuffer = ByteBuffer.wrap(sendBuffer);
-                    datagramChannel.send(sendWrapBuffer, socketAddress);
+
+                    // Send
+                    Pair<byte[], byte[]> pair = serialize(commandResultDto);
+
+                    byte[] sendDataBytes = pair.first;
+                    byte[] sendDataAmountBytes = pair.second;
+
+                    ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
+                    datagramChannel.send(sendDataAmountWrapper, socketAddress);
+
+                    ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
+                    datagramChannel.send(sendBuffer, socketAddress);
+
                     logger.info("sent the command result to the client");
                 }
             }
@@ -86,10 +111,44 @@ public class ServerApp {
         }
     }
 
-    public static byte[] serialize(Object obj) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
+    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ObjectInputStream is = new ObjectInputStream(in);
+        return is.readObject();
+    }
+
+    /**
+     *
+     * @param obj
+     * @return first - data itself, second - amount of bytes in data
+     * @throws IOException
+     */
+    public static Pair<byte[], byte[]> serialize(Object obj) throws IOException {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+
+        objectOutputStream.writeObject(obj);
+        byte[] sizeBytes = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+
+        return new Pair<>(byteArrayOutputStream.toByteArray(), sizeBytes); // в первых 4 байтах будет храниться число-количество данных отправления
+    }
+
+    public static int bytesToInt(byte[] bytes) {
+        int value = 0;
+        for (byte b : bytes) {
+            value = (value << 8) + (b & 0xFF);
+        }
+        return value;
+    }
+}
+
+class Pair<T, U> {
+    public T first;
+    public U second;
+
+    public Pair(T first, U second) {
+        this.first = first;
+        this.second = second;
     }
 }
