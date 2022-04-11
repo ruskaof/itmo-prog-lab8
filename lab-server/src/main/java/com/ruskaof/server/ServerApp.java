@@ -13,17 +13,13 @@ import com.ruskaof.server.util.FileManager;
 import com.ruskaof.server.util.JsonParser;
 import org.slf4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.SocketAddress;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Objects;
@@ -37,6 +33,7 @@ public class ServerApp {
     private final Logger logger;
     private final int countOfBytesForSize = 4;
     private final int serverWaitingPeriod = 50;
+    private String stringData;
 
     public ServerApp(HistoryManager historyManager, CollectionManager collectionManager, FileManager fileManager, Logger logger) {
         this.logger = logger;
@@ -45,11 +42,16 @@ public class ServerApp {
         this.fileManager = fileManager;
     }
 
-    public void start(int serverPort, String serverIp) throws IOException, ClassNotFoundException {
+    public void start(int serverPort, String serverIp) throws IOException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.bind(new InetSocketAddress(serverIp, serverPort));
             logger.info("Made a datagram channel with ip: " + serverIp);
-            String stringData = fileManager.read();
+            try {
+                stringData = fileManager.read();
+            } catch (IOException e) {
+                logger.error("There was a problem with a datafile. Please check if it is available.");
+                return;
+            }
             TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
             collectionManager.initialiseData(studyGroups);
             logger.info("Initialized collection, ready to receive data.");
@@ -69,16 +71,13 @@ public class ServerApp {
                 byte[] amountOfBytesHeader = new byte[countOfBytesForSize];
                 ByteBuffer amountOfBytesHeaderWrapper = ByteBuffer.wrap(amountOfBytesHeader);
                 SocketAddress clientSocketAddress = datagramChannel.receive(amountOfBytesHeaderWrapper);
-
                 if (Objects.nonNull(clientSocketAddress)) {
                     Command command = receive(amountOfBytesHeader, datagramChannel);
-                    // Execute
                     CommandResultDto commandResultDto = command.execute(collectionManager, historyManager);
                     logger.info("executed the command with result: " + commandResultDto.toString());
                     send(commandResultDto, datagramChannel, clientSocketAddress);
                 }
             }
-
             System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
         }
     }
@@ -90,13 +89,18 @@ public class ServerApp {
         byte[] sendDataBytes = pair.getFirst();
         byte[] sendDataAmountBytes = pair.getSecond();
 
-        ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
-        datagramChannel.send(sendDataAmountWrapper, clientSocketAddress); // сначала отправляется файл-количество байтов в основном массиве байтов
 
-        ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-        datagramChannel.send(sendBuffer, clientSocketAddress);
+        try {
+            ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
+            datagramChannel.send(sendBuffer, clientSocketAddress);
+            ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
+            datagramChannel.send(sendDataAmountWrapper, clientSocketAddress); // сначала отправляется файл-количество байтов в основном массиве байтов
+            logger.info("sent the command result to the client");
+        } catch (IOException e) {
+            logger.error("could not send the data to client because the message is too big");
+        }
 
-        logger.info("sent the command result to the client");
+
     }
 
     private Command receive(byte[] amountOfBytesHeader, DatagramChannel datagramChannel) throws IOException {
@@ -133,7 +137,6 @@ public class ServerApp {
     }
 
     /**
-     *
      * @return first - data itself, second - amount of bytes in data
      */
     public Pair<byte[], byte[]> serialize(Object obj) throws IOException {
@@ -156,33 +159,5 @@ public class ServerApp {
             value = (value << vosem) + (b & ff);
         }
         return value;
-    }
-
-    public static String getIp() {
-        URL whatismyip = null;
-        try {
-            whatismyip = new URL("http://checkip.amazonaws.com");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(
-                    whatismyip.openStream()));
-            String ip = in.readLine();
-            return ip;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return "";
-                }
-            }
-        }
-        return "";
     }
 }

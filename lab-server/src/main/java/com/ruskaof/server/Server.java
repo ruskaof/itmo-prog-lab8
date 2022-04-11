@@ -27,6 +27,7 @@ public final class Server {
             setParameterValues(args);
         } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
             LOGGER.error("Found Invalid arguments. Please use this program as \"java -jar <name> <datafile name> <server port> <ip>\"");
+            return;
         }
         CollectionManager collectionManager = new CollectionManagerImpl();
         HistoryManager historyManager = new HistoryManagerImpl();
@@ -36,22 +37,17 @@ public final class Server {
             serverApp = new ServerApp(historyManager, collectionManager, fileManager, LOGGER);
             serverApp.start(serverPort, serverIp);
         } catch (IOException e) {
-            e.printStackTrace();
-            LOGGER.error("There was a problem with a datafile. Please check if it is available.");
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("Found incorrect request from client");
+            LOGGER.error("An unexpected IO error occurred. The message is: " + e.getMessage());
         }
     }
 
     private static void setParameterValues(String[] args) throws IllegalArgumentException, IndexOutOfBoundsException {
-
         filename = args[0];
         serverPort = Integer.parseInt(args[1]);
         if (serverPort > MAX_PORT) {
             throw new IllegalArgumentException("Port number out of range");
         }
         serverIp = args[2];
-
     }
 }
 

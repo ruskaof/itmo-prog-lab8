@@ -50,11 +50,17 @@ public final class ClientApp {
         byte[] sendDataBytes = pair.getFirst();
         byte[] sendDataAmountBytes = pair.getSecond();
 
-        ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
-        datagramChannel.send(sendDataAmountWrapper, serverSocketAddress); // сначала отправляем число-количество байтов в основном массиве байтов
+        try {
+            ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
+            datagramChannel.send(sendDataAmountWrapper, serverSocketAddress); // сначала отправляем число-количество байтов в основном массиве байтов
 
-        ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-        datagramChannel.send(sendBuffer, serverSocketAddress);
+            ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
+            datagramChannel.send(sendBuffer, serverSocketAddress);
+        } catch (IOException e) {
+            System.out.println("Could not send data because it was too big");
+        }
+
+
     }
 
     private CommandResultDto receive(DatagramChannel datagramChannel) throws IOException {
