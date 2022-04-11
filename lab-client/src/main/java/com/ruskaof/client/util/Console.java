@@ -46,10 +46,7 @@ public class Console {
             final String[] parsedInp = parseToNameAndArg(input);
             final String commandName = parsedInp[0];
             Serializable commandArg = parsedInp[1];
-
-            // only for update command in this case
-            String commandArg2 = "";
-
+            String commandArg2 = ""; // only for update command in this case
             if (listOfCommands.contains(commandName)) {
                 if ("add".equals(commandName) || "add_if_min".equals(commandName) || "remove_greater".equals(commandName)) {
                     commandArg = studyGroupMaker.makeStudyGroup();
@@ -90,44 +87,31 @@ public class Console {
     private Command getCommandObjectByName(String commandName, Serializable arg, String arg2) {
         Command command;
         switch (commandName) {
-            case "add":
-                command = new AddCommand((StudyGroup) arg);
+            case "add": command = new AddCommand((StudyGroup) arg);
                 break;
-            case "add_if_min":
-                command = new AddIfMinCommand((StudyGroup) arg);
+            case "add_if_min": command = new AddIfMinCommand((StudyGroup) arg);
                 break;
-            case "clear":
-                command = new ClearCommand();
+            case "clear": command = new ClearCommand();
                 break;
-            case "filter_less_than_semester_enum":
-                command = new FilterLessThanSemesterEnumCommand((String) arg);
+            case "filter_less_than_semester_enum": command = new FilterLessThanSemesterEnumCommand((String) arg);
                 break;
-            case "history":
-                command = new HistoryCommand();
+            case "history": command = new HistoryCommand();
                 break;
-            case "info":
-                command = new InfoCommand();
+            case "info": command = new InfoCommand();
                 break;
-            case "min_by_id":
-                command = new MinByIDCommand((String) arg);
+            case "min_by_id": command = new MinByIDCommand((String) arg);
                 break;
-            case "print_ascending":
-                command = new PrintAscendingCommand();
+            case "print_ascending": command = new PrintAscendingCommand();
                 break;
-            case "remove_by_id":
-                command = new RemoveByIdCommand((String) arg);
+            case "remove_by_id": command = new RemoveByIdCommand((String) arg);
                 break;
-            case "remove_greater":
-                command = new RemoveGreaterCommand((StudyGroup) arg);
+            case "remove_greater": command = new RemoveGreaterCommand((StudyGroup) arg);
                 break;
-            case "show":
-                command = new ShowCommand();
+            case "show": command = new ShowCommand();
                 break;
-            case "update":
-                command = new UpdateCommand((StudyGroup) arg, arg2);
+            case "update": command = new UpdateCommand((StudyGroup) arg, arg2);
                 break;
-            default:
-                command = new HelpCommand();
+            default: command = new HelpCommand();
                 break;
         }
         return command;

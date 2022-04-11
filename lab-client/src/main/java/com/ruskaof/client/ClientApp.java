@@ -2,23 +2,24 @@ package com.ruskaof.client;
 
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.dto.ToServerDto;
+import com.ruskaof.common.util.Pair;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
 public final class ClientApp {
-    private static final int BF_SIZE = 2048;
     private final int clientPort;
     private final int serverPort;
     private final String ip;
+    private final int waitingTime = 500;
+    private final int countOfBytesForSize = 4;
 
     public ClientApp(int clientPort, int serverPort, String ip) {
         this.clientPort = clientPort;
@@ -28,14 +29,15 @@ public final class ClientApp {
 
     public CommandResultDto sendCommand(ToServerDto toServerDto) throws ClassNotFoundException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
+            datagramChannel.configureBlocking(false);
             // Send
             datagramChannel.bind(new InetSocketAddress(ip, clientPort));
             SocketAddress socketAddress = new InetSocketAddress(ip, serverPort);
 
             Pair<byte[], byte[]> pair = serialize(toServerDto);
 
-            byte[] sendDataBytes = pair.first;
-            byte[] sendDataAmountBytes = pair.second;
+            byte[] sendDataBytes = pair.getFirst();
+            byte[] sendDataAmountBytes = pair.getSecond();
 
             ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
             datagramChannel.send(sendDataAmountWrapper, socketAddress);
@@ -43,17 +45,7 @@ public final class ClientApp {
             ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
             datagramChannel.send(sendBuffer, socketAddress);
 
-            // Receive
-            byte[] amountOfBytesHeader = new byte[4];
-            ByteBuffer amountOfBytesHeaderWrapper = ByteBuffer.wrap(amountOfBytesHeader);
-            datagramChannel.receive(amountOfBytesHeaderWrapper);
-
-            byte[] dataBytes = new byte[bytesToInt(amountOfBytesHeader)];
-
-            ByteBuffer dataBytesWrapper = ByteBuffer.wrap(dataBytes);
-            datagramChannel.receive(dataBytesWrapper);
-
-            return (CommandResultDto) deserialize(dataBytes);
+            return receive(datagramChannel);
         } catch (IOException e) {
             e.printStackTrace();
             return new CommandResultDto("Something went wrong executing the command");
@@ -61,27 +53,58 @@ public final class ClientApp {
 
     }
 
+    private CommandResultDto receive(DatagramChannel datagramChannel) throws IOException {
+        // Receive
+        byte[] amountOfBytesHeader = new byte[countOfBytesForSize];
+        ByteBuffer amountOfBytesHeaderWrapper = ByteBuffer.wrap(amountOfBytesHeader);
+        SocketAddress checkingAddress = null;
+        int timeout = waitingTime;
+        while (checkingAddress == null) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace(); // never thrown
+            }
+            timeout--;
+            checkingAddress = datagramChannel.receive(amountOfBytesHeaderWrapper);
+            if (timeout == 0) {
+                return new CommandResultDto("Could not receive any answer from server");
+            }
+        }
+
+        byte[] dataBytes = new byte[bytesToInt(amountOfBytesHeader)];
+
+        ByteBuffer dataBytesWrapper = ByteBuffer.wrap(dataBytes);
+        datagramChannel.receive(dataBytesWrapper);
+
+        try {
+            return (CommandResultDto) deserialize(dataBytes);
+        } catch (ClassNotFoundException e) {
+            return new CommandResultDto("Received incorrect answer from server");
+        }
+    }
+
     /**
-     *
-     * @param obj
      * @return first - data itself, second - amount of bytes in data
-     * @throws IOException
      */
-    public static Pair<byte[], byte[]> serialize(Object obj) throws IOException {
+    private Pair<byte[], byte[]> serialize(Object obj) throws IOException {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
 
         objectOutputStream.writeObject(obj);
-        byte[] sizeBytes = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+        byte[] sizeBytes = ByteBuffer.allocate(countOfBytesForSize).putInt(byteArrayOutputStream.size()).array();
 
         return new Pair<>(byteArrayOutputStream.toByteArray(), sizeBytes); // в первых 4 байтах будет храниться число-количество данных отправления
     }
 
     public static int bytesToInt(byte[] bytes) {
+        final int vosem = 8;
+        final int ff = 0xFF;
+
         int value = 0;
         for (byte b : bytes) {
-            value = (value << 8) + (b & 0xFF);
+            value = (value << vosem) + (b & ff);
         }
         return value;
     }
@@ -93,12 +116,4 @@ public final class ClientApp {
     }
 }
 
-class Pair<T, U> {
-    public T first;
-    public U second;
 
-    public Pair(T first, U second) {
-        this.first = first;
-        this.second = second;
-    }
-}
