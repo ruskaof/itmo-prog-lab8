@@ -27,30 +27,33 @@ public final class ClientApp {
         this.ip = ip;
     }
 
-    public CommandResultDto sendCommand(ToServerDto toServerDto) throws ClassNotFoundException {
+    public CommandResultDto sendCommand(ToServerDto toServerDto) {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
-            datagramChannel.configureBlocking(false);
-            // Send
-            datagramChannel.bind(new InetSocketAddress(ip, clientPort));
-            SocketAddress socketAddress = new InetSocketAddress(ip, serverPort);
-
-            Pair<byte[], byte[]> pair = serialize(toServerDto);
-
-            byte[] sendDataBytes = pair.getFirst();
-            byte[] sendDataAmountBytes = pair.getSecond();
-
-            ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
-            datagramChannel.send(sendDataAmountWrapper, socketAddress);
-
-            ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-            datagramChannel.send(sendBuffer, socketAddress);
-
+            datagramChannel.configureBlocking(false); // нужно, чтобы в случае, если от сервера не придет никакого ответа не блокироваться навсегда
+            send(datagramChannel, toServerDto);
             return receive(datagramChannel);
         } catch (IOException e) {
             e.printStackTrace();
             return new CommandResultDto("Something went wrong executing the command");
         }
 
+    }
+
+    private void send(DatagramChannel datagramChannel, ToServerDto toServerDto) throws IOException {
+        // Send
+        datagramChannel.bind(new InetSocketAddress(ip, clientPort));
+        SocketAddress socketAddress = new InetSocketAddress(ip, serverPort);
+
+        Pair<byte[], byte[]> pair = serialize(toServerDto);
+
+        byte[] sendDataBytes = pair.getFirst();
+        byte[] sendDataAmountBytes = pair.getSecond();
+
+        ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
+        datagramChannel.send(sendDataAmountWrapper, socketAddress); // сначала отправляем число-количество байтов в основном массиве байтов
+
+        ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
+        datagramChannel.send(sendBuffer, socketAddress);
     }
 
     private CommandResultDto receive(DatagramChannel datagramChannel) throws IOException {

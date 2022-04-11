@@ -86,7 +86,7 @@ public class ServerApp {
         byte[] sendDataAmountBytes = pair.getSecond();
 
         ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
-        datagramChannel.send(sendDataAmountWrapper, socketAddress);
+        datagramChannel.send(sendDataAmountWrapper, socketAddress); // сначала отправляется файл-количество байтов в основном массиве байтов
 
         ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
         datagramChannel.send(sendBuffer, socketAddress);
