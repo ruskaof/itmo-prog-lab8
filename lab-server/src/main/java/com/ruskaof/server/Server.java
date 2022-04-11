@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public final class Server {
     private static int serverPort;
-    private static String ip;
+    private static String serverIp;
     private static String filename;
     private static final int MAX_PORT = 9999;
     private static final Logger LOGGER
@@ -34,7 +34,7 @@ public final class Server {
         ServerApp serverApp;
         try {
             serverApp = new ServerApp(historyManager, collectionManager, fileManager, LOGGER);
-            serverApp.start(serverPort, ip);
+            serverApp.start(serverPort, serverIp);
         } catch (IOException e) {
             e.printStackTrace();
             LOGGER.error("There was a problem with a datafile. Please check if it is available.");
@@ -50,7 +50,7 @@ public final class Server {
         if (serverPort > MAX_PORT) {
             throw new IllegalArgumentException("Port number out of range");
         }
-        ip = args[2];
+        serverIp = args[2];
 
     }
 }

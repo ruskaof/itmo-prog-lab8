@@ -19,7 +19,8 @@ public final class Client {
         OutputManager outputManager = new OutputManager(System.out);
         final int serverPort;
         final int clientPort;
-        final String ip;
+        final String clientIp;
+        final String serverIp;
 
         try {
             serverPort = Integer.parseInt(args[0]);
@@ -27,9 +28,11 @@ public final class Client {
             if (serverPort > MAX_PORT || clientPort > MAX_PORT) {
                 throw new IllegalArgumentException("Port number out of range");
             }
-            ip = args[2];
+            clientIp = args[2];
+            final int three = 3;
+            serverIp = args[three];
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
-            outputManager.println("Found invalid arguments. Please use the program as \"java -jar <name> <server port> <client port> <ip>\"");
+            outputManager.println("Found invalid arguments. Please use the program as \"java -jar <name> <server port> <client port> <clientIp> <serverIp>\"");
             return;
         }
 
@@ -37,7 +40,7 @@ public final class Client {
 
 
         try {
-            ClientApp clientApp = new ClientApp(clientPort, serverPort, ip);
+            ClientApp clientApp = new ClientApp(clientPort, serverPort, clientIp, serverIp);
             new Console(outputManager, new InputManager(System.in), clientApp, LIST_OF_COMMANDS).start();
         } catch (ClassNotFoundException e) {
             outputManager.println("Found incorrect data from server.");

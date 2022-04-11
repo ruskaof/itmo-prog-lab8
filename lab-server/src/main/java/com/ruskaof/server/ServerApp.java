@@ -1,6 +1,7 @@
 package com.ruskaof.server;
 
 import com.ruskaof.common.commands.Command;
+import com.ruskaof.common.commands.HelpCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.dto.ToServerDto;
@@ -12,13 +13,17 @@ import com.ruskaof.server.util.FileManager;
 import com.ruskaof.server.util.JsonParser;
 import org.slf4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.SocketAddress;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Objects;
@@ -40,10 +45,10 @@ public class ServerApp {
         this.fileManager = fileManager;
     }
 
-    public void start(int serverPort, String ip) throws IOException, ClassNotFoundException {
+    public void start(int serverPort, String serverIp) throws IOException, ClassNotFoundException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
-            datagramChannel.bind(new InetSocketAddress(ip, serverPort));
-            logger.info("Made a datagram channel");
+            datagramChannel.bind(new InetSocketAddress(serverIp, serverPort));
+            logger.info("Made a datagram channel with ip: " + serverIp);
             String stringData = fileManager.read();
             TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
             collectionManager.initialiseData(studyGroups);
@@ -63,14 +68,14 @@ public class ServerApp {
                 }
                 byte[] amountOfBytesHeader = new byte[countOfBytesForSize];
                 ByteBuffer amountOfBytesHeaderWrapper = ByteBuffer.wrap(amountOfBytesHeader);
-                SocketAddress socketAddress = datagramChannel.receive(amountOfBytesHeaderWrapper);
+                SocketAddress clientSocketAddress = datagramChannel.receive(amountOfBytesHeaderWrapper);
 
-                if (Objects.nonNull(socketAddress)) {
+                if (Objects.nonNull(clientSocketAddress)) {
                     Command command = receive(amountOfBytesHeader, datagramChannel);
                     // Execute
                     CommandResultDto commandResultDto = command.execute(collectionManager, historyManager);
                     logger.info("executed the command with result: " + commandResultDto.toString());
-                    send(commandResultDto, datagramChannel, socketAddress);
+                    send(commandResultDto, datagramChannel, clientSocketAddress);
                 }
             }
 
@@ -78,7 +83,7 @@ public class ServerApp {
         }
     }
 
-    private void send(CommandResultDto commandResultDto, DatagramChannel datagramChannel, SocketAddress socketAddress) throws IOException {
+    private void send(CommandResultDto commandResultDto, DatagramChannel datagramChannel, SocketAddress clientSocketAddress) throws IOException {
         // Send
         Pair<byte[], byte[]> pair = serialize(commandResultDto);
 
@@ -86,15 +91,15 @@ public class ServerApp {
         byte[] sendDataAmountBytes = pair.getSecond();
 
         ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
-        datagramChannel.send(sendDataAmountWrapper, socketAddress); // сначала отправляется файл-количество байтов в основном массиве байтов
+        datagramChannel.send(sendDataAmountWrapper, clientSocketAddress); // сначала отправляется файл-количество байтов в основном массиве байтов
 
         ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-        datagramChannel.send(sendBuffer, socketAddress);
+        datagramChannel.send(sendBuffer, clientSocketAddress);
 
         logger.info("sent the command result to the client");
     }
 
-    private Command receive(byte[] amountOfBytesHeader, DatagramChannel datagramChannel) throws IOException, ClassNotFoundException {
+    private Command receive(byte[] amountOfBytesHeader, DatagramChannel datagramChannel) throws IOException {
         // Receive
         byte[] dataBytes = new byte[bytesToInt(amountOfBytesHeader)];
 
@@ -111,7 +116,12 @@ public class ServerApp {
             checkAddress = datagramChannel.receive(dataBytesWrapper);
         }
 
-        ToServerDto toServerDto = (ToServerDto) deserialize(dataBytes);
+        ToServerDto toServerDto;
+        try {
+            toServerDto = (ToServerDto) deserialize(dataBytes);
+        } catch (ClassNotFoundException e) {
+            return new HelpCommand();
+        }
         logger.info("received a data object: " + toServerDto.getCommand().toString());
         return (toServerDto).getCommand();
     }
@@ -146,5 +156,33 @@ public class ServerApp {
             value = (value << vosem) + (b & ff);
         }
         return value;
+    }
+
+    public static String getIp() {
+        URL whatismyip = null;
+        try {
+            whatismyip = new URL("http://checkip.amazonaws.com");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(
+                    whatismyip.openStream()));
+            String ip = in.readLine();
+            return ip;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return "";
+                }
+            }
+        }
+        return "";
     }
 }
