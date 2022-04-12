@@ -15,6 +15,7 @@ public class RemoveByIdCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(this.getName());
         int intArg;
         try {
             intArg = Integer.parseInt((String) arg);

@@ -61,5 +61,7 @@ public final class Client {
         l.add("remove_greater");
         l.add("show");
         l.add("update");
+        l.add("execute_script");
+        l.add("filter_less_than_semester_enum");
     }
 }

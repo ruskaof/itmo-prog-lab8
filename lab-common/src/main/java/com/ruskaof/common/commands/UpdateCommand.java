@@ -18,6 +18,7 @@ public class UpdateCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(this.getName());
         // Stream api would not help
         int intArg;
         try {

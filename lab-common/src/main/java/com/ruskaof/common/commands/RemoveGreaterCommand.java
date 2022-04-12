@@ -16,6 +16,7 @@ public class RemoveGreaterCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(this.getName());
         // Stream api would not help
         StudyGroup studyGroup = (StudyGroup) arg;
         collectionManager.getMainData().removeIf(x -> x.compareTo(studyGroup) > 0);

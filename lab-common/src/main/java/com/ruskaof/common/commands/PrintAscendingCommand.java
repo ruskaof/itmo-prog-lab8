@@ -16,6 +16,7 @@ public class PrintAscendingCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(this.getName());
         // Stream api would not help (Tree set is already sorted)
         return new CommandResultDto(collectionManager.getMainData());
     }

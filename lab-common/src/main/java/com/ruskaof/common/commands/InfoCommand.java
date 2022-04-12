@@ -19,6 +19,7 @@ public class InfoCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(this.getName());
         // Stream api would not help
         if (!collectionManager.getMainData().isEmpty()) {
             return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),

@@ -14,7 +14,7 @@ public class ClearCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-
+        historyManager.addNote(this.getName());
         // stream api would not help
         collectionManager.getMainData().clear();
         return new CommandResultDto("The collection was cleared successfully.");

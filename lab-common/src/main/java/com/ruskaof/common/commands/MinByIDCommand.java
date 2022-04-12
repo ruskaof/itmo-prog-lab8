@@ -19,6 +19,7 @@ public class MinByIDCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(this.getName());
         // STREAM API!!
         StudyGroup minIdStudyGroup = collectionManager.getMainData().stream().min(Comparator.comparingInt(StudyGroup::getId)).orElse(null);
 

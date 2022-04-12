@@ -19,6 +19,7 @@ public class FilterLessThanSemesterEnumCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(this.getName());
         StringJoiner output = new StringJoiner("\n\n");
         Semester inpEnum;
         try {

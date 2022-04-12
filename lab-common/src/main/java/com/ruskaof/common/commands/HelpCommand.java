@@ -14,6 +14,7 @@ public class HelpCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(this.getName());
         // stream api would not help
         return new CommandResultDto(
                 "help : gives information about available commands\n"
