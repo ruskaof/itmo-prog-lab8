@@ -95,7 +95,7 @@ public class ServerApp {
         try {
             ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
             int limit = timeoutToSend;
-            while (datagramChannel.send(sendDataAmountWrapper, clientSocketAddress) == 0) {
+            while (datagramChannel.send(sendDataAmountWrapper, clientSocketAddress) < sendDataAmountBytes.length) {
                 limit -= 1;
                 logger.info("could not sent a package, re-trying");
                 if (limit == 0) {
@@ -103,7 +103,7 @@ public class ServerApp {
                 }
             } // сначала отправляется файл-количество байтов в основном массиве байтов
             ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-            while (datagramChannel.send(sendBuffer, clientSocketAddress) == 0) {
+            while (datagramChannel.send(sendBuffer, clientSocketAddress) <= sendDataBytes.length) {
                 limit -= 1;
                 logger.info("could not send a package, re-trying");
                 if (limit == 0) {
