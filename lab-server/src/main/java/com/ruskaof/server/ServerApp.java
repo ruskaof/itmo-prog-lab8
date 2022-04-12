@@ -49,7 +49,7 @@ public class ServerApp {
             logger.info("Made a datagram channel with ip: " + serverIp);
             try {
                 stringData = fileManager.read();
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException | IllegalStateException e) {
                 logger.error("There was a problem with a datafile. Please check if it is available.");
                 return;
             }
