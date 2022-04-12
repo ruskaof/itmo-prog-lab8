@@ -13,9 +13,12 @@ import com.ruskaof.server.util.FileManager;
 import com.ruskaof.server.util.JsonParser;
 import org.slf4j.Logger;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.BindException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -44,21 +47,16 @@ public class ServerApp {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.bind(new InetSocketAddress(serverIp, serverPort));
             logger.info("Made a datagram channel with ip: " + serverIp);
-            try {
-                stringData = fileManager.read();
-            } catch (IOException | IllegalArgumentException | IllegalStateException e) {
-                logger.error("There was a problem with a datafile. Please check if it is available.");
-                return;
-            }
+            stringData = fileManager.read();
             TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
             collectionManager.initialiseData(studyGroups);
             logger.info("Initialized collection, ready to receive data.");
             boolean isWorkingState = true;
             datagramChannel.configureBlocking(false);
-            BufferedReader scanner = new BufferedReader(new InputStreamReader(System.in));
+            Scanner scanner = new Scanner(System.in);
             while (isWorkingState) {
                 if (System.in.available() > 0) { // возможно, не лучшее решение, но другое мне найти не удалось
-                    final String inp = scanner.readLine();
+                    final String inp = scanner.nextLine();
                     if ("exit".equals(inp)) {
                         isWorkingState = false;
                     }
@@ -79,6 +77,8 @@ public class ServerApp {
             System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
         } catch (BindException e) {
             logger.error("Could not send data on the Inet address, bind exception. Please re-start server with another arguments");
+        } catch (IOException | IllegalArgumentException | IllegalStateException e) {
+            logger.error("There was a problem with a datafile. Please check if it is available.");
         }
     }
 

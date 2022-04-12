@@ -21,6 +21,7 @@ import com.ruskaof.common.dto.ToServerDto;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 
 public class Console {
@@ -41,6 +42,7 @@ public class Console {
     }
 
     public void start() throws ClassNotFoundException {
+
         String input = readNextCommand();
         while (!"exit".equals(input)) {
             final String[] parsedInp = parseToNameAndArg(input);
@@ -81,7 +83,11 @@ public class Console {
 
     private String readNextCommand() {
         outputManager.print(">>>");
-        return inputManager.nextLine();
+        try {
+            return inputManager.nextLine();
+        } catch (NoSuchElementException e) {
+            return "exit";
+        }
     }
 
     private Command getCommandObjectByName(String commandName, Serializable arg, String arg2) {
