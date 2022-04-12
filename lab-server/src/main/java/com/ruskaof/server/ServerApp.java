@@ -6,6 +6,7 @@ import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.dto.ToServerDto;
 import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataCantBeSentException;
 import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.Pair;
 import com.ruskaof.server.commands.SaveCommand;
@@ -36,6 +37,7 @@ public class ServerApp {
     private final int countOfBytesForSize = 4;
     private final int serverWaitingPeriod = 50;
     private String stringData;
+    private final int timeoutToSend = 10;
 
     public ServerApp(HistoryManager historyManager, CollectionManager collectionManager, FileManager fileManager, Logger logger) {
         this.logger = logger;
@@ -46,12 +48,7 @@ public class ServerApp {
 
     public void start(int serverPort, String serverIp) throws IOException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
-            datagramChannel.bind(new InetSocketAddress(serverIp, serverPort));
-            logger.info("Made a datagram channel with ip: " + serverIp);
-            stringData = fileManager.read();
-            TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
-            collectionManager.initialiseData(studyGroups);
-            logger.info("Initialized collection, ready to receive data.");
+            initialise(datagramChannel, serverIp, serverPort);
             boolean isWorkingState = true;
             datagramChannel.configureBlocking(false);
             Scanner scanner = new Scanner(System.in);
@@ -76,6 +73,8 @@ public class ServerApp {
                 }
             }
             System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
+        } catch (DataCantBeSentException e) {
+            logger.info("Could not send data to client");
         } catch (BindException e) {
             logger.error("Could not use these ports and ip, bind exception. Please re-start server with another arguments");
         } catch (IOException | IllegalArgumentException | IllegalStateException e) {
@@ -85,7 +84,7 @@ public class ServerApp {
         }
     }
 
-    private void send(CommandResultDto commandResultDto, DatagramChannel datagramChannel, SocketAddress clientSocketAddress) throws IOException {
+    private void send(CommandResultDto commandResultDto, DatagramChannel datagramChannel, SocketAddress clientSocketAddress) throws IOException, DataCantBeSentException {
         // Send
         Pair<byte[], byte[]> pair = serialize(commandResultDto);
 
@@ -95,9 +94,22 @@ public class ServerApp {
 
         try {
             ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
-            datagramChannel.send(sendDataAmountWrapper, clientSocketAddress); // сначала отправляется файл-количество байтов в основном массиве байтов
+            int limit = timeoutToSend;
+            while (datagramChannel.send(sendDataAmountWrapper, clientSocketAddress) == 0) {
+                limit -= 1;
+                logger.info("could not sent a package, re-trying");
+                if (limit == 0) {
+                    throw new DataCantBeSentException();
+                }
+            } // сначала отправляется файл-количество байтов в основном массиве байтов
             ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-            datagramChannel.send(sendBuffer, clientSocketAddress);
+            while (datagramChannel.send(sendBuffer, clientSocketAddress) == 0) {
+                limit -= 1;
+                logger.info("could not send a package, re-trying");
+                if (limit == 0) {
+                    throw new DataCantBeSentException();
+                }
+            }
             logger.info("sent the command result to the client");
         } catch (IOException e) {
             logger.error("could not send the data to client because the message is too big");
@@ -162,5 +174,14 @@ public class ServerApp {
             value = (value << vosem) + (b & ff);
         }
         return value;
+    }
+
+    private void initialise(DatagramChannel datagramChannel, String serverIp, int serverPort) throws IOException {
+        datagramChannel.bind(new InetSocketAddress(serverIp, serverPort));
+        logger.info("Made a datagram channel with ip: " + serverIp);
+        stringData = fileManager.read();
+        TreeSet<StudyGroup> studyGroups = new JsonParser().deSerialize(stringData);
+        collectionManager.initialiseData(studyGroups);
+        logger.info("Initialized collection, ready to receive data.");
     }
 }

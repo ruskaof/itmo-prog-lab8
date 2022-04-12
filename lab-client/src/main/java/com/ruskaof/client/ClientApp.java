@@ -2,6 +2,7 @@ package com.ruskaof.client;
 
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.dto.ToServerDto;
+import com.ruskaof.common.util.DataCantBeSentException;
 import com.ruskaof.common.util.Pair;
 
 import java.io.ByteArrayInputStream;
@@ -23,6 +24,7 @@ public final class ClientApp {
     private final String serverIp;
     private final int waitingTime = 500;
     private final int countOfBytesForSize = 4;
+    private final int timeoutToSend = 10;
 
     public ClientApp(int clientPort, int serverPort, String clientIp, String serverIp) {
         this.clientPort = clientPort;
@@ -31,7 +33,7 @@ public final class ClientApp {
         this.serverIp = serverIp;
     }
 
-    public CommandResultDto sendCommand(ToServerDto toServerDto) {
+    public CommandResultDto sendCommand(ToServerDto toServerDto) throws DataCantBeSentException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.configureBlocking(false); // нужно, чтобы в случае, если от сервера не придет никакого ответа не блокироваться навсегда
             send(datagramChannel, toServerDto);
@@ -45,7 +47,7 @@ public final class ClientApp {
 
     }
 
-    private void send(DatagramChannel datagramChannel, ToServerDto toServerDto) throws IOException {
+    private void send(DatagramChannel datagramChannel, ToServerDto toServerDto) throws IOException, DataCantBeSentException {
 
         datagramChannel.bind(new InetSocketAddress(clientIp, clientPort));
 
@@ -58,10 +60,22 @@ public final class ClientApp {
 
         try {
             ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
-            datagramChannel.send(sendDataAmountWrapper, serverSocketAddress); // сначала отправляем число-количество байтов в основном массиве байтов
-
+            int limit = timeoutToSend;
+            while (datagramChannel.send(sendDataAmountWrapper, serverSocketAddress) == 0) {
+                limit -= 1;
+                System.out.println("Could not send a package, re-trying");
+                if (limit == 0) {
+                    throw new DataCantBeSentException();
+                }
+            } // сначала отправляем число-количество байтов в основном массиве байтов
             ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-            datagramChannel.send(sendBuffer, serverSocketAddress);
+            while (datagramChannel.send(sendBuffer, serverSocketAddress) == 0) {
+                limit -= 1;
+                System.out.println("Could not send a package, re-trying");
+                if (limit == 0) {
+                    throw new DataCantBeSentException();
+                }
+            }
         } catch (IOException | UnresolvedAddressException e) {
             System.out.println("Could not resolve the Inet address you wrote. Please check it and maybe restart the client");
             System.out.println("Could not send data because it was too big");

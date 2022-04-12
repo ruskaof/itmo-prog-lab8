@@ -18,6 +18,7 @@ import com.ruskaof.common.commands.ShowCommand;
 import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.ToServerDto;
+import com.ruskaof.common.util.DataCantBeSentException;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -60,7 +61,11 @@ public class Console {
                 if ("execute_script".equals(commandName)) {
                     new ExecuteScriptCommand((String) commandArg).execute(inputManager);
                 } else {
-                    outputManager.println(clientApp.sendCommand(new ToServerDto(getCommandObjectByName(commandName, commandArg, commandArg2))).getOutput().toString());
+                    try {
+                        outputManager.println(clientApp.sendCommand(new ToServerDto(getCommandObjectByName(commandName, commandArg, commandArg2))).getOutput().toString());
+                    } catch (DataCantBeSentException e) {
+                        outputManager.println("Could not send a command");
+                    }
                 }
             } else {
                 outputManager.println("The command was not found. Please use \"help\" to know about commands.");
