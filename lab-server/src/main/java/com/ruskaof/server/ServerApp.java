@@ -23,6 +23,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.TreeSet;
@@ -76,9 +77,11 @@ public class ServerApp {
             }
             System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
         } catch (BindException e) {
-            logger.error("Could not send data on the Inet address, bind exception. Please re-start server with another arguments");
+            logger.error("Could not use these ports and ip, bind exception. Please re-start server with another arguments");
         } catch (IOException | IllegalArgumentException | IllegalStateException e) {
             logger.error("There was a problem with a datafile. Please check if it is available.");
+        } catch (NoSuchElementException ignored) {
+            logger.info("You pressed ^D? Okay, bye");
         }
     }
 
