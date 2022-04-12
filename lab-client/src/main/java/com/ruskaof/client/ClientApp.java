@@ -9,10 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.UnresolvedAddressException;
 
 public final class ClientApp {
     private final int clientPort;
@@ -30,10 +32,12 @@ public final class ClientApp {
     }
 
     public CommandResultDto sendCommand(ToServerDto toServerDto) {
-         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
+        try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.configureBlocking(false); // нужно, чтобы в случае, если от сервера не придет никакого ответа не блокироваться навсегда
             send(datagramChannel, toServerDto);
             return receive(datagramChannel);
+        } catch (BindException e) {
+            return new CommandResultDto("Could not send data on the Inet address, bind exception. Please re-start client with another arguments");
         } catch (IOException e) {
             e.printStackTrace();
             return new CommandResultDto("Something went wrong executing the command");
@@ -42,7 +46,9 @@ public final class ClientApp {
     }
 
     private void send(DatagramChannel datagramChannel, ToServerDto toServerDto) throws IOException {
+
         datagramChannel.bind(new InetSocketAddress(clientIp, clientPort));
+
         SocketAddress serverSocketAddress = new InetSocketAddress(serverIp, serverPort);
 
         Pair<byte[], byte[]> pair = serialize(toServerDto);
@@ -56,7 +62,8 @@ public final class ClientApp {
 
             ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
             datagramChannel.send(sendBuffer, serverSocketAddress);
-        } catch (IOException e) {
+        } catch (IOException | UnresolvedAddressException e) {
+            System.out.println("Could not resolve the Inet address you wrote. Please check it and maybe restart the client");
             System.out.println("Could not send data because it was too big");
         }
 

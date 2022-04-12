@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -79,6 +80,8 @@ public class ServerApp {
                 }
             }
             System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
+        } catch (BindException e) {
+            logger.error("Could not send data on the Inet address, bind exception. Please re-start server with another arguments");
         }
     }
 
@@ -91,10 +94,10 @@ public class ServerApp {
 
 
         try {
-            ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-            datagramChannel.send(sendBuffer, clientSocketAddress);
             ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
             datagramChannel.send(sendDataAmountWrapper, clientSocketAddress); // сначала отправляется файл-количество байтов в основном массиве байтов
+            ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
+            datagramChannel.send(sendBuffer, clientSocketAddress);
             logger.info("sent the command result to the client");
         } catch (IOException e) {
             logger.error("could not send the data to client because the message is too big");
