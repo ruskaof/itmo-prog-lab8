@@ -63,3 +63,100 @@
 7.  Интерфейс  `Serializable`. Объектный граф, сериализация и десериализация полей и методов.
 8.  Java Stream API. Создание конвейеров. Промежуточные и терминальные операции.
 9.  Шаблоны проектирования: Decorator, Iterator, Factory method, Command, Flyweight, Interpreter, Singleton, Strategy, Adapter, Facade, Proxy.
+
+
+└───itmo-prog-lab6
+    │   .gitignore
+    │   logback.xml
+    │   pom.xml
+    │   README.md
+    │   s_checks.xml
+    │
+    ├───lab-client
+    │   │   pom.xml
+    │   │
+    │   └───src
+    │       └───main
+    │           └───java
+    │               └───com
+    │                   └───ruskaof
+    │                       └───client
+    │                           │   Client.java
+    │                           │   ClientApp.java
+    │                           │
+    │                           ├───commands
+    │                           │       ExecuteScriptCommand.java
+    │                           │
+    │                           └───util
+    │                                   Console.java
+    │                                   InputManager.java
+    │                                   OutputManager.java
+    │                                   StudyGroupMaker.java
+    │
+    ├───lab-common
+    │   │   pom.xml
+    │   │
+    │   └───src
+    │       └───main
+    │           └───java
+    │               └───com
+    │                   └───ruskaof
+    │                       └───common
+    │                           ├───commands
+    │                           │       AddCommand.java
+    │                           │       AddIfMinCommand.java
+    │                           │       ClearCommand.java
+    │                           │       Command.java
+    │                           │       FilterLessThanSemesterEnumCommand.java
+    │                           │       HelpCommand.java
+    │                           │       HistoryCommand.java
+    │                           │       InfoCommand.java
+    │                           │       MinByIDCommand.java
+    │                           │       PrintAscendingCommand.java
+    │                           │       RemoveByIdCommand.java
+    │                           │       RemoveGreaterCommand.java
+    │                           │       ShowCommand.java
+    │                           │       UpdateCommand.java
+    │                           │
+    │                           ├───data
+    │                           │       Coordinates.java
+    │                           │       Country.java
+    │                           │       FormOfEducation.java
+    │                           │       Location.java
+    │                           │       Person.java
+    │                           │       Semester.java
+    │                           │       StudyGroup.java
+    │                           │
+    │                           ├───dto
+    │                           │       CommandFromClientDto.java
+    │                           │       CommandResultDto.java
+    │                           │
+    │                           └───util
+    │                                   CollectionManager.java
+    │                                   DataCantBeSentException.java
+    │                                   HistoryManager.java
+    │                                   NoAnswerException.java
+    │                                   Pair.java
+    │
+    └───lab-server
+        │   pom.xml
+        │
+        └───src
+            └───main
+                └───java
+                    └───com
+                        └───ruskaof
+                            └───server
+                                │   Server.java
+                                │   ServerApp.java
+                                │
+                                ├───commands
+                                │       SaveCommand.java
+                                │
+                                └───util
+                                        CollectionManagerImpl.java
+                                        DateDeserializer.java
+                                        DateSerializer.java
+                                        FileManager.java
+                                        HistoryManagerImpl.java
+                                        JsonParser.java
