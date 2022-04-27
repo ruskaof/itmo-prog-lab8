@@ -66,12 +66,19 @@
 
 
 └───itmo-prog-lab6
+
     │   .gitignore
+    
     │   logback.xml
+    
     │   pom.xml
+    
     │   README.md
+    
     │   s_checks.xml
+    
     │
+    
     ├───lab-client
     │   │   pom.xml
     │   │
