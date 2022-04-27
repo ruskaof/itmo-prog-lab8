@@ -14,7 +14,7 @@ public final class Server {
     private static int serverPort;
     private static String serverIp;
     private static String filename;
-    private static final int MAX_PORT = 9999;
+    private static final int MAX_PORT = 65535;
     private static final Logger LOGGER
             = LoggerFactory.getLogger(Server.class);
 

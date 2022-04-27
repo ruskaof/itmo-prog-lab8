@@ -4,7 +4,7 @@ import com.ruskaof.common.commands.Command;
 import com.ruskaof.common.commands.HelpCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.dto.ToServerDto;
+import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.DataCantBeSentException;
 import com.ruskaof.common.util.HistoryManager;
@@ -24,11 +24,11 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.TreeSet;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class ServerApp {
     private final HistoryManager historyManager;
     private final CollectionManager collectionManager;
@@ -73,14 +73,12 @@ public class ServerApp {
                 }
             }
             System.out.println(new SaveCommand(fileManager).execute(collectionManager, historyManager));
-        } catch (DataCantBeSentException e) {
+        } catch (DataCantBeSentException | InterruptedException e) {
             logger.info("Could not send data to client");
         } catch (BindException e) {
             logger.error("Could not use these ports and ip, bind exception. Please re-start server with another arguments");
         } catch (IOException | IllegalArgumentException | IllegalStateException e) {
             logger.error("There was a problem with a datafile. Please check if it is available.");
-        } catch (NoSuchElementException ignored) {
-            logger.info("You pressed ^D? Okay, bye");
         }
     }
 
@@ -118,31 +116,27 @@ public class ServerApp {
 
     }
 
-    private Command receive(byte[] amountOfBytesHeader, DatagramChannel datagramChannel) throws IOException {
+    private Command receive(byte[] amountOfBytesHeader, DatagramChannel datagramChannel) throws IOException, InterruptedException {
         // Receive
         byte[] dataBytes = new byte[bytesToInt(amountOfBytesHeader)];
 
         ByteBuffer dataBytesWrapper = ByteBuffer.wrap(dataBytes);
 
-        try {
-            Thread.sleep(serverWaitingPeriod);
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage());
-        }
+        Thread.sleep(serverWaitingPeriod);
 
         SocketAddress checkAddress = datagramChannel.receive(dataBytesWrapper);
         while (checkAddress == null) {
             checkAddress = datagramChannel.receive(dataBytesWrapper);
         }
 
-        ToServerDto toServerDto;
+        CommandFromClientDto commandFromClientDto;
         try {
-            toServerDto = (ToServerDto) deserialize(dataBytes);
+            commandFromClientDto = (CommandFromClientDto) deserialize(dataBytes);
         } catch (ClassNotFoundException e) {
             return new HelpCommand();
         }
-        logger.info("received a data object: " + toServerDto.getCommand().toString());
-        return (toServerDto).getCommand();
+        logger.info("received a data object: " + commandFromClientDto.getCommand().toString());
+        return (commandFromClientDto).getCommand();
     }
 
     public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {

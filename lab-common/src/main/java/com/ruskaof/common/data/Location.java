@@ -7,7 +7,7 @@ public class Location implements Serializable {
 
     private final float x;
     private final long y;
-    private final String name; //not empty not null
+    private final String name; //not empty, not null
 
     public Location(float x, long y, String name) {
         this.x = x;

@@ -20,26 +20,34 @@ public class InfoCommand extends Command {
             HistoryManager historyManager
     ) {
         historyManager.addNote(this.getName());
-        // Stream api would not help
-        if (!collectionManager.getMainData().isEmpty()) {
-            return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
+
+        if (collectionManager.getMainData().isEmpty()) {
+            return new CommandResultDto(new InfoCommandResult(0,
                     collectionManager.getCreationDate(),
-                    collectionManager.getMainData().first().getStudentsCount())
+                    0)
             );
-        } else {
+        }
+        if (collectionManager.getMainData().first().getStudentsCount() == null) {
             return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
                     collectionManager.getCreationDate(),
                     0)
             );
         }
+        return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
+                collectionManager.getCreationDate(),
+                collectionManager.getMainData().first().getStudentsCount())
+        );
+
+
+        // Stream api would not help
     }
 
-    final class InfoCommandResult implements Serializable {
+    private static final class InfoCommandResult implements Serializable {
         private final int numberOfElements;
         private final LocalDate creationDate;
         private final int biggestStudentsCount;
 
-        private InfoCommandResult(int numberOfElements, LocalDate creationDate, int biggestStudentsCount) {
+        private InfoCommandResult(Integer numberOfElements, LocalDate creationDate, int biggestStudentsCount) {
             this.numberOfElements = numberOfElements;
             this.creationDate = creationDate;
             this.biggestStudentsCount = biggestStudentsCount;

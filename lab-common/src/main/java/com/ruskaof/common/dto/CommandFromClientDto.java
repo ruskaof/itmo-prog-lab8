@@ -5,10 +5,10 @@ import com.ruskaof.common.commands.Command;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ToServerDto implements Serializable {
+public class CommandFromClientDto implements Serializable {
     private final Command command;
 
-    public ToServerDto(Command command) {
+    public CommandFromClientDto(Command command) {
         this.command = command;
     }
 
@@ -24,7 +24,7 @@ public class ToServerDto implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ToServerDto that = (ToServerDto) o;
+        CommandFromClientDto that = (CommandFromClientDto) o;
         return Objects.equals(command, that.command);
     }
 

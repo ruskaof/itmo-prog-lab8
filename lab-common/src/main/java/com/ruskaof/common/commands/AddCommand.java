@@ -16,8 +16,8 @@ public class AddCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-        // stream api would not help
         historyManager.addNote(this.getName());
+        // stream api would not help
         StudyGroup studyGroup = (StudyGroup) arg;
         studyGroup.setId(collectionManager.getMaxId() + 1);
         collectionManager.getMainData().add(studyGroup);

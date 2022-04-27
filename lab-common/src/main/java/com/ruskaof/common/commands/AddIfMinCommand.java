@@ -18,6 +18,7 @@ public class AddIfMinCommand extends Command {
             HistoryManager historyManager
     ) {
         historyManager.addNote(this.getName());
+
         StudyGroup studyGroup = (StudyGroup) arg;
         studyGroup.setId(collectionManager.getMaxId() + 1);
 

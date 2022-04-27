@@ -1,8 +1,9 @@
 package com.ruskaof.client;
 
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.dto.ToServerDto;
+import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
+import com.ruskaof.common.util.NoAnswerException;
 import com.ruskaof.common.util.Pair;
 
 import java.io.ByteArrayInputStream;
@@ -17,6 +18,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.UnresolvedAddressException;
 
+@SuppressWarnings("FieldCanBeLocal")
 public final class ClientApp {
     private final int clientPort;
     private final int serverPort;
@@ -33,27 +35,26 @@ public final class ClientApp {
         this.serverIp = serverIp;
     }
 
-    public CommandResultDto sendCommand(ToServerDto toServerDto) throws DataCantBeSentException {
+    public CommandResultDto sendCommand(CommandFromClientDto commandFromClientDto) throws DataCantBeSentException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.configureBlocking(false); // нужно, чтобы в случае, если от сервера не придет никакого ответа не блокироваться навсегда
-            send(datagramChannel, toServerDto);
-            return receive(datagramChannel);
+            send(datagramChannel, commandFromClientDto);
+            return receiveCommandResult(datagramChannel);
         } catch (BindException e) {
             return new CommandResultDto("Could not send data on the Inet address, bind exception. Please re-start client with another arguments");
         } catch (IOException e) {
-            e.printStackTrace();
-            return new CommandResultDto("Something went wrong executing the command");
+            return new CommandResultDto("Something went wrong executing the command, the message is: " + e.getMessage());
         }
 
     }
 
-    private void send(DatagramChannel datagramChannel, ToServerDto toServerDto) throws IOException, DataCantBeSentException {
+    private void send(DatagramChannel datagramChannel, CommandFromClientDto commandFromClientDto) throws IOException, DataCantBeSentException {
 
         datagramChannel.bind(new InetSocketAddress(clientIp, clientPort));
 
         SocketAddress serverSocketAddress = new InetSocketAddress(serverIp, serverPort);
 
-        Pair<byte[], byte[]> pair = serialize(toServerDto);
+        Pair<byte[], byte[]> pair = serialize(commandFromClientDto);
 
         byte[] sendDataBytes = pair.getFirst();
         byte[] sendDataAmountBytes = pair.getSecond();
@@ -76,42 +77,51 @@ public final class ClientApp {
                     throw new DataCantBeSentException();
                 }
             }
-        } catch (IOException | UnresolvedAddressException e) {
+        } catch (IOException e) {
             System.out.println("Could not resolve the Inet address you wrote. Please check it and maybe restart the client");
+        } catch (UnresolvedAddressException e) {
             System.out.println("Could not send data because it was too big");
         }
 
 
     }
 
-    private CommandResultDto receive(DatagramChannel datagramChannel) throws IOException {
-        // Receive
+    private CommandResultDto receiveCommandResult(DatagramChannel datagramChannel) throws IOException {
         byte[] amountOfBytesHeader = new byte[countOfBytesForSize];
         ByteBuffer amountOfBytesHeaderWrapper = ByteBuffer.wrap(amountOfBytesHeader);
+        try {
+            receiveToBuffer(datagramChannel, amountOfBytesHeaderWrapper, waitingTime);
+            byte[] dataBytes = new byte[bytesToInt(amountOfBytesHeader)];
+
+
+            ByteBuffer dataBytesWrapper = ByteBuffer.wrap(dataBytes);
+
+            receiveToBuffer(datagramChannel, dataBytesWrapper, 1);
+
+            return (CommandResultDto) deserialize(dataBytes);
+
+        } catch (NoAnswerException e) {
+            return new CommandResultDto("Could not receive any answer from server");
+        } catch (ClassNotFoundException e) {
+            return new CommandResultDto("Received incorrect answer from server");
+        }
+    }
+
+    private void receiveToBuffer(DatagramChannel datagramChannel, ByteBuffer receiverBuffer, int timeoutMills) throws NoAnswerException, IOException {
+        int timeout = timeoutMills;
         SocketAddress checkingAddress = null;
-        int timeout = waitingTime;
+
         while (checkingAddress == null) {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace(); // never thrown
             }
-            timeout--;
-            checkingAddress = datagramChannel.receive(amountOfBytesHeaderWrapper);
+            checkingAddress = datagramChannel.receive(receiverBuffer);
             if (timeout == 0) {
-                return new CommandResultDto("Could not receive any answer from server");
+                throw new NoAnswerException("Timeout exceeded. Could not receive any data.");
             }
-        }
-
-        byte[] dataBytes = new byte[bytesToInt(amountOfBytesHeader)];
-
-        ByteBuffer dataBytesWrapper = ByteBuffer.wrap(dataBytes);
-        datagramChannel.receive(dataBytesWrapper);
-
-        try {
-            return (CommandResultDto) deserialize(dataBytes);
-        } catch (ClassNotFoundException e) {
-            return new CommandResultDto("Received incorrect answer from server");
+            timeout--;
         }
     }
 

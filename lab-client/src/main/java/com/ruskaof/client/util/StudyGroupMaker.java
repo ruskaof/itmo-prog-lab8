@@ -7,7 +7,10 @@ import com.ruskaof.common.data.Location;
 import com.ruskaof.common.data.Person;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -24,11 +27,13 @@ public class StudyGroupMaker {
         this.asker = new Asker(inputManager, outputManager);
     }
 
-    public StudyGroup makeStudyGroup() {
+    public StudyGroup makeStudyGroup() throws IOException {
         return askForStudyGroup();
     }
 
-    private StudyGroup askForStudyGroup() {
+    @NotNull
+    @Contract(" -> new")
+    private StudyGroup askForStudyGroup() throws IOException {
         outputManager.println("Enter studyGroup data");
         String name = asker.ask(arg -> (arg).length() > 0, "Enter name (String)",
                 ERROR_MESSAGE, "The string must not be empty", x -> x, false);
@@ -48,7 +53,8 @@ public class StudyGroupMaker {
                 formOfEducation, semesterEnum, groupAdmin);
     }
 
-    private Coordinates askForCoordinates() {
+    @Contract(" -> new")
+    private @NotNull Coordinates askForCoordinates() throws IOException {
         outputManager.println("Enter coordinates data");
         final long xLimitation = -896;
         final double yLimitation = 135;
@@ -59,7 +65,7 @@ public class StudyGroupMaker {
         return new Coordinates(x, y);
     }
 
-    private Person askForGroupAdmin() {
+    private Person askForGroupAdmin() throws IOException {
         outputManager.println("Enter groupAdminData");
 
         String name = asker.ask(arg -> (arg).length() > 0, "Enter name (String)",
@@ -76,7 +82,7 @@ public class StudyGroupMaker {
         return new Person(name, height, nationality, location);
     }
 
-    private Location askForLocation() {
+    private Location askForLocation() throws IOException {
         outputManager.println("Enter location data");
         String name = asker.ask(arg -> (arg).length() > 0, "Enter name (String) (can be null)",
                 ERROR_MESSAGE, "The string must not be empty. Try again", x -> x, true);
@@ -104,7 +110,7 @@ public class StudyGroupMaker {
                          String errorMessage,
                          String wrongValueMessage,
                          Function<String, T> converter,
-                         boolean nullable) {
+                         boolean nullable) throws IOException {
             outputManager.println(askMessage);
             String input;
             T value;

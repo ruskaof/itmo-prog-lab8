@@ -15,6 +15,7 @@ public class RemoveByIdCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
+
         historyManager.addNote(this.getName());
         int intArg;
         try {
@@ -23,7 +24,6 @@ public class RemoveByIdCommand extends Command {
             return new CommandResultDto("Your argument was incorrect. The command was not executed.");
         }
 
-        // Stream api would not help
         if (collectionManager.getMainData().removeIf(x -> x.getId() == intArg)) {
             return new CommandResultDto("The element was deleted successfully.");
         } else {

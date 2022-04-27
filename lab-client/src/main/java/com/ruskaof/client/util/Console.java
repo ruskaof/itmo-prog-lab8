@@ -17,9 +17,10 @@ import com.ruskaof.common.commands.RemoveGreaterCommand;
 import com.ruskaof.common.commands.ShowCommand;
 import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
-import com.ruskaof.common.dto.ToServerDto;
+import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -42,10 +43,10 @@ public class Console {
         this.studyGroupMaker = new StudyGroupMaker(inputManager, outputManager);
     }
 
-    public void start() throws ClassNotFoundException {
-
-        String input = readNextCommand();
-        while (!"exit".equals(input)) {
+    public void start() throws ClassNotFoundException, IOException {
+        String input;
+        do {
+            input = readNextCommand();
             final String[] parsedInp = parseToNameAndArg(input);
             final String commandName = parsedInp[0];
             Serializable commandArg = parsedInp[1];
@@ -62,7 +63,10 @@ public class Console {
                     new ExecuteScriptCommand((String) commandArg).execute(inputManager);
                 } else {
                     try {
-                        outputManager.println(clientApp.sendCommand(new ToServerDto(getCommandObjectByName(commandName, commandArg, commandArg2))).getOutput().toString());
+                        outputManager.println(
+                                clientApp.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2)))
+                                .getOutput().toString()
+                        );
                     } catch (DataCantBeSentException e) {
                         outputManager.println("Could not send a command");
                     }
@@ -70,8 +74,7 @@ public class Console {
             } else {
                 outputManager.println("The command was not found. Please use \"help\" to know about commands.");
             }
-            input = readNextCommand();
-        }
+        } while (!"exit".equals(input));
     }
 
     private String[] parseToNameAndArg(String input) {
@@ -86,7 +89,7 @@ public class Console {
         return new String[]{inputCommand, inputArg};
     }
 
-    private String readNextCommand() {
+    private String readNextCommand() throws IOException {
         outputManager.print(">>>");
         try {
             return inputManager.nextLine();

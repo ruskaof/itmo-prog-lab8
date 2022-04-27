@@ -17,7 +17,6 @@ public class RemoveGreaterCommand extends Command {
             HistoryManager historyManager
     ) {
         historyManager.addNote(this.getName());
-        // Stream api would not help
         StudyGroup studyGroup = (StudyGroup) arg;
         collectionManager.getMainData().removeIf(x -> x.compareTo(studyGroup) > 0);
         return new CommandResultDto("Greater elements were removed successfully");

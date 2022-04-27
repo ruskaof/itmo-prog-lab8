@@ -18,28 +18,19 @@ public class InputManager {
     }
 
 
-    public String nextLine() {
+    public String nextLine() throws IOException {
         if (!currentFilesReaders.isEmpty()) {
-            try {
-                String input = currentFilesReaders.peek().readLine();
-                if (input == null) {
-                    currentFiles.pop();
-                    currentFilesReaders.pop().close();
-                    return nextLine();
-                } else {
-                    return input;
-                }
-            } catch (IOException e) {
-                // never throws exception
-                e.printStackTrace();
+            String input = currentFilesReaders.peek().readLine();
+            if (input == null) {
+                currentFiles.pop();
+                currentFilesReaders.pop().close();
+                return nextLine();
+            } else {
+                return input;
             }
-
         } else {
             return scanner.nextLine();
         }
-
-        // never returns ""
-        return "";
     }
 
     public void connectToFile(File file) throws IOException, UnsupportedOperationException {
