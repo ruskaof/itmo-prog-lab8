@@ -64,21 +64,14 @@
 8.  Java Stream API. Создание конвейеров. Промежуточные и терминальные операции.
 9.  Шаблоны проектирования: Decorator, Iterator, Factory method, Command, Flyweight, Interpreter, Singleton, Strategy, Adapter, Facade, Proxy.
 
-
+```
 └───itmo-prog-lab6
-
     │   .gitignore
-    
     │   logback.xml
-    
     │   pom.xml
-    
     │   README.md
-    
     │   s_checks.xml
-    
     │
-    
     ├───lab-client
     │   │   pom.xml
     │   │
@@ -167,3 +160,4 @@
                                         FileManager.java
                                         HistoryManagerImpl.java
                                         JsonParser.java
+```
