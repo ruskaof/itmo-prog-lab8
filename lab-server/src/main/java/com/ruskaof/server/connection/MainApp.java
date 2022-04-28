@@ -1,11 +1,12 @@
 package com.ruskaof.server.connection;
 
-import com.ruskaof.common.commands.Command;
+import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.Pair;
 import com.ruskaof.common.util.State;
+import com.ruskaof.server.data.remote.repository.posturesql.Database;
 import com.ruskaof.server.util.CommandHandler;
 import org.slf4j.Logger;
 
@@ -24,29 +25,42 @@ public class MainApp {
     private final String ip;
     private final CommandHandler commandHandler;
     private final ClientDataReceiver clientDataReceiver;
+    private final Database database;
 
     public MainApp(
             Logger logger,
             int port,
             String ip,
             CommandHandler commandHandler,
-            ClientDataReceiver clientDataReceiver) {
+            ClientDataReceiver clientDataReceiver,
+            Database database) {
         this.logger = logger;
         this.ip = ip;
         this.port = port;
         this.commandHandler = commandHandler;
         this.clientDataReceiver = clientDataReceiver;
+        this.database = database;
     }
 
-    public void start(HistoryManager historyManager, CollectionManager collectionManager, State<Boolean> isWorking) throws IOException {
+    public void start(
+            HistoryManager historyManager,
+            CollectionManager collectionManager,
+            State<Boolean> isWorking
+    ) throws IOException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.bind(new InetSocketAddress(ip, port));
             datagramChannel.configureBlocking(false);
 
             while (isWorking.getValue()) {
-                Pair<Command, SocketAddress> receivedCommandAndAddress = clientDataReceiver.receiveData(datagramChannel, isWorking);
+                Pair<CommandFromClientDto, SocketAddress> receivedCommandAndAddress =
+                        clientDataReceiver.receiveData(datagramChannel, isWorking);
 
-                CommandResultDto commandResultDto = commandHandler.handle(receivedCommandAndAddress.getFirst(), historyManager, collectionManager);
+                CommandResultDto commandResultDto = commandHandler.handle(
+                        receivedCommandAndAddress.getFirst(),
+                        historyManager,
+                        collectionManager,
+                        database
+                );
 
                 send(commandResultDto, datagramChannel, receivedCommandAndAddress.getSecond(), 10);
             }
@@ -59,8 +73,12 @@ public class MainApp {
         }
     }
 
-    private void send(CommandResultDto commandResultDto, DatagramChannel datagramChannel, SocketAddress clientSocketAddress, int timeoutToSend) throws TimeoutException, IOException {
-        // Send
+    private void send(
+            CommandResultDto commandResultDto,
+            DatagramChannel datagramChannel,
+            SocketAddress clientSocketAddress,
+            int timeoutToSend
+    ) throws TimeoutException, IOException {
         Pair<byte[], byte[]> pair = serializeWithHeader(commandResultDto);
 
         byte[] sendDataBytes = pair.getFirst();

@@ -7,6 +7,7 @@ import com.ruskaof.server.connection.ClientDataReceiver;
 import com.ruskaof.server.connection.MainApp;
 import com.ruskaof.server.data.remote.repository.json.FileManager;
 import com.ruskaof.server.data.remote.repository.json.JsonCollectionManagerImpl;
+import com.ruskaof.server.data.remote.repository.posturesql.Database;
 import com.ruskaof.server.util.CommandHandler;
 import com.ruskaof.server.util.HistoryManagerImpl;
 import org.slf4j.Logger;
@@ -16,6 +17,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -39,22 +42,30 @@ public final class Server {
 
     public static void main(String[] args) throws SQLException, InterruptedException, IOException {
 
-//        Connection connection = DriverManager.getConnection(
-//                "jdbc:postgresql://localhost:5432/postgres",
-//                "ruskaof",
-//                "ruskaof"
-//        );
-//
-//        System.out.println(connection);
+        Connection connection = DriverManager.getConnection(
+                "jdbc:postgresql://localhost:5432/postgres",
+                "ruskaof",
+                "ruskaof"
+        );
+
+        System.out.println(connection);
         initMainInfoForConnection();
 
 
         CollectionManager collectionManager = new JsonCollectionManagerImpl();
         HistoryManager historyManager = new HistoryManagerImpl();
         FileManager fileManager = new FileManager(filename);
+        Database database = new Database(connection);
         MainApp serverApp;
         try {
-            serverApp = new MainApp(LOGGER, serverPort, serverIp, new CommandHandler(), new ClientDataReceiver(LOGGER));
+            serverApp = new MainApp(
+                    LOGGER,
+                    serverPort,
+                    serverIp,
+                    new CommandHandler(),
+                    new ClientDataReceiver(LOGGER),
+                    database
+            );
             serverApp.start(historyManager, collectionManager, new State<>(true));
         } catch (IOException e) {
             LOGGER.error("An unexpected IO error occurred. The message is: " + e.getMessage());

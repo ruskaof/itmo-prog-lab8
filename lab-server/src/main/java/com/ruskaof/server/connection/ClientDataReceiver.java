@@ -1,6 +1,5 @@
 package com.ruskaof.server.connection;
 
-import com.ruskaof.common.commands.Command;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.Pair;
 import com.ruskaof.common.util.State;
@@ -39,12 +38,12 @@ public class ClientDataReceiver {
         return is.readObject();
     }
 
-    public Pair<Command, SocketAddress> receiveData(DatagramChannel datagramChannel, State<Boolean> isWorking) throws IOException, InterruptedException, TimeoutException, ClassNotFoundException {
+    public Pair<CommandFromClientDto, SocketAddress> receiveData(DatagramChannel datagramChannel, State<Boolean> isWorking) throws IOException, InterruptedException, TimeoutException, ClassNotFoundException {
         ByteBuffer amountOfBytesInMainDataBuffer = ByteBuffer.wrap(new byte[4]);
         receiveActiveWaiting(datagramChannel, amountOfBytesInMainDataBuffer, isWorking);
         ByteBuffer dataByteBuffer = ByteBuffer.wrap(new byte[bytesToInt(amountOfBytesInMainDataBuffer.array())]);
         SocketAddress clientSocketAddress = receiveWithTimeout(datagramChannel, dataByteBuffer, 5);
-        Command receivedCommand = ((CommandFromClientDto) deserialize(dataByteBuffer.array())).getCommand();
+        CommandFromClientDto receivedCommand = ((CommandFromClientDto) deserialize(dataByteBuffer.array()));
         return new Pair<>(receivedCommand, clientSocketAddress);
     }
 
