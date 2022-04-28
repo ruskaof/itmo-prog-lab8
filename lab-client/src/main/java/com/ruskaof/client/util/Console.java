@@ -2,20 +2,7 @@ package com.ruskaof.client.util;
 
 import com.ruskaof.client.ClientApp;
 import com.ruskaof.client.commands.ExecuteScriptCommand;
-import com.ruskaof.common.commands.AddCommand;
-import com.ruskaof.common.commands.AddIfMinCommand;
-import com.ruskaof.common.commands.ClearCommand;
-import com.ruskaof.common.commands.Command;
-import com.ruskaof.common.commands.FilterLessThanSemesterEnumCommand;
-import com.ruskaof.common.commands.HelpCommand;
-import com.ruskaof.common.commands.HistoryCommand;
-import com.ruskaof.common.commands.InfoCommand;
-import com.ruskaof.common.commands.MinByIDCommand;
-import com.ruskaof.common.commands.PrintAscendingCommand;
-import com.ruskaof.common.commands.RemoveByIdCommand;
-import com.ruskaof.common.commands.RemoveGreaterCommand;
-import com.ruskaof.common.commands.ShowCommand;
-import com.ruskaof.common.commands.UpdateCommand;
+import com.ruskaof.common.commands.*;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
@@ -64,7 +51,7 @@ public class Console {
                 } else {
                     try {
                         outputManager.println(
-                                clientApp.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2)))
+                                clientApp.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), "1", "1"))
                                 .getOutput().toString()
                         );
                     } catch (DataCantBeSentException e) {

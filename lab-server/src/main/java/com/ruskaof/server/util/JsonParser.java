@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.ruskaof.common.data.StudyGroup;
+import com.ruskaof.server.data.remote.repository.json.DateDeserializer;
+import com.ruskaof.server.data.remote.repository.json.DateSerializer;
 
 import java.lang.reflect.Type;
 import java.util.TreeSet;

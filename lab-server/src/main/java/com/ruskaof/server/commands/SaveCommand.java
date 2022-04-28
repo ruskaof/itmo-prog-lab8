@@ -4,7 +4,7 @@ import com.ruskaof.common.commands.Command;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
-import com.ruskaof.server.util.FileManager;
+import com.ruskaof.server.data.remote.repository.json.FileManager;
 import com.ruskaof.server.util.JsonParser;
 
 import java.io.FileNotFoundException;

@@ -1,24 +1,20 @@
-package com.ruskaof.server;
+package com.ruskaof.server.connection;
 
 import com.ruskaof.common.commands.Command;
 import com.ruskaof.common.commands.HelpCommand;
 import com.ruskaof.common.data.StudyGroup;
-import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.dto.CommandFromClientDto;
+import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.DataCantBeSentException;
 import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.Pair;
 import com.ruskaof.server.commands.SaveCommand;
-import com.ruskaof.server.util.FileManager;
+import com.ruskaof.server.data.remote.repository.json.FileManager;
 import com.ruskaof.server.util.JsonParser;
 import org.slf4j.Logger;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;

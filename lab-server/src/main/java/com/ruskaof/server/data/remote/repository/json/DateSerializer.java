@@ -1,4 +1,4 @@
-package com.ruskaof.server.util;
+package com.ruskaof.server.data.remote.repository.json;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

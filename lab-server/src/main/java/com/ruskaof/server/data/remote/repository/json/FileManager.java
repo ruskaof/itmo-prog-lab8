@@ -1,10 +1,6 @@
-package com.ruskaof.server.util;
+package com.ruskaof.server.data.remote.repository.json;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 public class FileManager {
     private final String filename;
