@@ -3,6 +3,7 @@ package com.ruskaof.client.util;
 import com.ruskaof.common.data.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -40,7 +41,7 @@ public class StudyGroupMaker {
         Coordinates coordinates = askForCoordinates(); //not null
         Person groupAdmin = askForGroupAdmin(); //not null
         return new StudyGroup(name, coordinates, studentsCount,
-                formOfEducation, semesterEnum, groupAdmin);
+                formOfEducation, semesterEnum, groupAdmin, LocalDate.now());
     }
 
     private Coordinates askForCoordinates() throws IOException {

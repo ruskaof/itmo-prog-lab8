@@ -1,11 +1,8 @@
 package com.ruskaof.common.commands;
 
-import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
-
-import java.util.Comparator;
 
 
 public class MinByIDCommand extends Command {
@@ -19,14 +16,16 @@ public class MinByIDCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-        historyManager.addNote(this.getName());
+//        historyManager.addNote(this.getName());
+//
+//        StudyGroup minIdStudyGroup = collectionManager.getMainData().stream().min(Comparator.comparingInt(StudyGroup::getId)).orElse(null);
+//
+//        if (minIdStudyGroup == null) {
+//            return new CommandResultDto("Collection is empty");
+//        } else {
+//            return new CommandResultDto(minIdStudyGroup);
+//        }
 
-        StudyGroup minIdStudyGroup = collectionManager.getMainData().stream().min(Comparator.comparingInt(StudyGroup::getId)).orElse(null);
-
-        if (minIdStudyGroup == null) {
-            return new CommandResultDto("Collection is empty");
-        } else {
-            return new CommandResultDto(minIdStudyGroup);
-        }
+        return new CommandResultDto(")");
     }
 }

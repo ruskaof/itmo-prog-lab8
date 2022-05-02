@@ -1,5 +1,6 @@
 package com.ruskaof.server.connection;
 
+import com.ruskaof.common.commands.RegisterCommand;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
@@ -52,15 +53,26 @@ public class MainApp {
             datagramChannel.configureBlocking(false);
 
             while (isWorking.getValue()) {
+
                 Pair<CommandFromClientDto, SocketAddress> receivedCommandAndAddress =
                         clientDataReceiver.receiveData(datagramChannel, isWorking);
 
-                CommandResultDto commandResultDto = commandHandler.handle(
-                        receivedCommandAndAddress.getFirst(),
-                        historyManager,
-                        collectionManager,
-                        database
-                );
+                final CommandResultDto commandResultDto;
+
+                if (receivedCommandAndAddress.getFirst().getCommand() instanceof RegisterCommand) {
+                    commandResultDto = commandHandler.handleRegister(
+                            (RegisterCommand) receivedCommandAndAddress.getFirst().getCommand(),
+                            historyManager,
+                            collectionManager
+                    );
+                } else {
+
+                    commandResultDto = commandHandler.handleCommand(
+                            receivedCommandAndAddress.getFirst(),
+                            historyManager,
+                            collectionManager
+                    );
+                }
 
                 send(commandResultDto, datagramChannel, receivedCommandAndAddress.getSecond(), 10);
             }

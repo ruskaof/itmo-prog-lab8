@@ -1,6 +1,7 @@
 package com.ruskaof.common.data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 
@@ -20,14 +21,31 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
                       Integer studentsCount,
                       FormOfEducation formOfEducation,
                       Semester semesterEnum,
-                      Person groupAdmin) {
+                      Person groupAdmin,
+                      LocalDate creationDate) {
         this.name = name;
         this.coordinates = coordinates;
         this.studentsCount = studentsCount;
         this.formOfEducation = formOfEducation;
         this.semesterEnum = semesterEnum;
         this.groupAdmin = groupAdmin;
-        this.creationDate = java.time.LocalDate.now();
+        this.creationDate = creationDate;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public FormOfEducation getFormOfEducation() {
+        return formOfEducation;
+    }
+
+    public Person getGroupAdmin() {
+        return groupAdmin;
     }
 
     public String getName() {

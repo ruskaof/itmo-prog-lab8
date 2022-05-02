@@ -40,4 +40,16 @@ public class Location implements Serializable {
     public int hashCode() {
         return Objects.hash(x, y, name);
     }
+
+    public float getX() {
+        return x;
+    }
+
+    public long getY() {
+        return y;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

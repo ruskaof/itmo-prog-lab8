@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Database {
-    public final UsersTable usersTable;
+    private final UsersTable usersTable;
     private final StudyGroupTable studyGroupTable;
 
     public Database(Connection connection) {
@@ -18,7 +18,7 @@ public class Database {
         }
     }
 
-    private void initTables() throws SQLException {
+    public void initTables() throws SQLException {
         studyGroupTable.init();
         usersTable.init();
     }

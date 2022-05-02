@@ -5,9 +5,8 @@ import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.State;
 import com.ruskaof.server.connection.ClientDataReceiver;
 import com.ruskaof.server.connection.MainApp;
-import com.ruskaof.server.data.remote.repository.json.FileManager;
-import com.ruskaof.server.data.remote.repository.json.JsonCollectionManagerImpl;
 import com.ruskaof.server.data.remote.repository.posturesql.Database;
+import com.ruskaof.server.domain.repository.DataManager;
 import com.ruskaof.server.util.CommandHandler;
 import com.ruskaof.server.util.HistoryManagerImpl;
 import org.slf4j.Logger;
@@ -27,7 +26,8 @@ public final class Server {
     private static final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
     private static int serverPort;
     private static String serverIp;
-    private static String filename;
+    private static String studyGroupsFilename;
+    private static String usersFilename;
     private static final int MAX_PORT = 65535;
     private static final Logger LOGGER
             = LoggerFactory.getLogger(Server.class);
@@ -42,20 +42,19 @@ public final class Server {
 
     public static void main(String[] args) throws SQLException, InterruptedException, IOException {
 
+
+        initMainInfoForConnection();
         Connection connection = DriverManager.getConnection(
                 "jdbc:postgresql://localhost:5432/postgres",
-                "ruskaof",
-                "ruskaof"
+                username,
+                password
         );
 
         System.out.println(connection);
-        initMainInfoForConnection();
 
-
-        CollectionManager collectionManager = new JsonCollectionManagerImpl();
         HistoryManager historyManager = new HistoryManagerImpl();
-        FileManager fileManager = new FileManager(filename);
         Database database = new Database(connection);
+        CollectionManager collectionManager = new DataManager(database);
         MainApp serverApp;
         try {
             serverApp = new MainApp(
@@ -83,12 +82,21 @@ public final class Server {
 
         serverIp = ask("Enter server IP");
 
-        filename = ask(
+        studyGroupsFilename = ask(
                 (value) -> {
                     File file = new File(value);
                     return (file.exists() && value.endsWith(".json"));
                 },
                 "Enter filename for storing data",
+                "Filename must end with .json and file must exist"
+        );
+
+        usersFilename = ask(
+                (value) -> {
+                    File file = new File(value);
+                    return (file.exists() && value.endsWith(".json"));
+                },
+                "Enter filename for storing users",
                 "Filename must end with .json and file must exist"
         );
 

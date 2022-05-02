@@ -18,8 +18,8 @@ public class AddCommand extends Command {
     ) {
         historyManager.addNote(this.getName());
         StudyGroup studyGroup = (StudyGroup) arg;
-        studyGroup.setId(collectionManager.getMaxId() + 1);
-        collectionManager.getMainData().add(studyGroup);
+        studyGroup.setId(-1);
+        collectionManager.addStudyGroup(studyGroup);
         return new CommandResultDto("The element was added successfully");
     }
 }

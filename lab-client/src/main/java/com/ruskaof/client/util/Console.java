@@ -102,17 +102,26 @@ public class Console {
                 break;
             case "min_by_id": command = new MinByIDCommand((String) arg);
                 break;
-            case "print_ascending": command = new PrintAscendingCommand();
+            case "print_ascending":
+                command = new PrintAscendingCommand();
                 break;
-            case "remove_by_id": command = new RemoveByIdCommand((String) arg);
+            case "remove_by_id":
+                command = new RemoveByIdCommand((String) arg);
                 break;
-            case "remove_greater": command = new RemoveGreaterCommand((StudyGroup) arg);
+            case "remove_greater":
+                command = new RemoveGreaterCommand((StudyGroup) arg);
                 break;
-            case "show": command = new ShowCommand();
+            case "show":
+                command = new ShowCommand();
                 break;
-            case "update": command = new UpdateCommand((StudyGroup) arg, arg2);
+            case "update":
+                command = new UpdateCommand((StudyGroup) arg, arg2);
                 break;
-            default: command = new HelpCommand();
+            case "register":
+                command = new RegisterCommand((String) arg);
+                break;
+            default:
+                command = new HelpCommand();
                 break;
         }
         return command;

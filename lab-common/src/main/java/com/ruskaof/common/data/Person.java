@@ -10,6 +10,22 @@ public class Person implements Serializable {
     private final Country nationality; //not null
     private final Location location; //not null
 
+    public String getName() {
+        return name;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public Country getNationality() {
+        return nationality;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
     public Person(String name, Integer height, Country nationality, Location location) {
         this.name = name;
         this.height = height;

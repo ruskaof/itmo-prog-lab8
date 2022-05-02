@@ -16,9 +16,11 @@ public class RemoveGreaterCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-        historyManager.addNote(this.getName());
-        StudyGroup studyGroup = (StudyGroup) arg;
-        collectionManager.getMainData().removeIf(x -> x.compareTo(studyGroup) > 0);
-        return new CommandResultDto("Greater elements were removed successfully");
+//        historyManager.addNote(this.getName());
+//        StudyGroup studyGroup = (StudyGroup) arg;
+//        collectionManager.getMainData().removeIf(x -> x.compareTo(studyGroup) > 0);
+//        return new CommandResultDto("Greater elements were removed successfully");
+
+        return new CommandResultDto(")");
     }
 }

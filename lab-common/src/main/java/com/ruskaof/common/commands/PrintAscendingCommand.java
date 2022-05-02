@@ -16,7 +16,9 @@ public class PrintAscendingCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-        historyManager.addNote(this.getName());
-        return new CommandResultDto(collectionManager.getMainData());
+//        historyManager.addNote(this.getName());
+//        return new CommandResultDto(collectionManager.getMainData());
+
+        return new CommandResultDto(")");
     }
 }

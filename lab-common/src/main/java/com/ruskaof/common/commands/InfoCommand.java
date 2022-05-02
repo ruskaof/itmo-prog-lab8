@@ -19,27 +19,29 @@ public class InfoCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-        historyManager.addNote(this.getName());
+//        historyManager.addNote(this.getName());
+//
+//        if (collectionManager.getMainData().isEmpty()) {
+//            return new CommandResultDto(new InfoCommandResult(0,
+//                    collectionManager.getCreationDate(),
+//                    0)
+//            );
+//        }
+//        if (collectionManager.getMainData().first().getStudentsCount() == null) {
+//            return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
+//                    collectionManager.getCreationDate(),
+//                    0)
+//            );
+//        }
+//        return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
+//                collectionManager.getCreationDate(),
+//                collectionManager.getMainData().first().getStudentsCount())
+//        );
+//
+//
+//        // Stream api would not help
 
-        if (collectionManager.getMainData().isEmpty()) {
-            return new CommandResultDto(new InfoCommandResult(0,
-                    collectionManager.getCreationDate(),
-                    0)
-            );
-        }
-        if (collectionManager.getMainData().first().getStudentsCount() == null) {
-            return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
-                    collectionManager.getCreationDate(),
-                    0)
-            );
-        }
-        return new CommandResultDto(new InfoCommandResult(collectionManager.getMainData().size(),
-                collectionManager.getCreationDate(),
-                collectionManager.getMainData().first().getStudentsCount())
-        );
-
-
-        // Stream api would not help
+        return new CommandResultDto(")");
     }
 
     private static final class InfoCommandResult implements Serializable {
