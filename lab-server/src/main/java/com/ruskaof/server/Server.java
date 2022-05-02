@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -26,8 +25,6 @@ public final class Server {
     private static final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
     private static int serverPort;
     private static String serverIp;
-    private static String studyGroupsFilename;
-    private static String usersFilename;
     private static final int MAX_PORT = 65535;
     private static final Logger LOGGER
             = LoggerFactory.getLogger(Server.class);
@@ -53,8 +50,8 @@ public final class Server {
         System.out.println(connection);
 
         HistoryManager historyManager = new HistoryManagerImpl();
-        Database database = new Database(connection);
-        CollectionManager collectionManager = new DataManager(database);
+        Database database = new Database(connection, LOGGER);
+        CollectionManager collectionManager = new DataManager(database, LOGGER);
         MainApp serverApp;
         try {
             serverApp = new MainApp(
@@ -73,7 +70,7 @@ public final class Server {
 
     private static void initMainInfoForConnection() throws IOException {
         serverPort = ask(
-                (value) -> (value >= 1024 && value <= 65535),
+                value -> (value >= 1024 && value <= 65535),
                 "Enter server port",
                 "Server port must be an int number",
                 "Sever port must be between 1024 and 65535",
@@ -81,25 +78,6 @@ public final class Server {
         );
 
         serverIp = ask("Enter server IP");
-
-        studyGroupsFilename = ask(
-                (value) -> {
-                    File file = new File(value);
-                    return (file.exists() && value.endsWith(".json"));
-                },
-                "Enter filename for storing data",
-                "Filename must end with .json and file must exist"
-        );
-
-        usersFilename = ask(
-                (value) -> {
-                    File file = new File(value);
-                    return (file.exists() && value.endsWith(".json"));
-                },
-                "Enter filename for storing users",
-                "Filename must end with .json and file must exist"
-        );
-
         dbHost = ask("Enter database host");
 
         dbName = ask("Enter database name");

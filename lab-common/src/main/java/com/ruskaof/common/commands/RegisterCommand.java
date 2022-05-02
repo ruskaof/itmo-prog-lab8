@@ -13,9 +13,15 @@ public class RegisterCommand extends Command {
 
     @Override
     public CommandResultDto execute(CollectionManager collectionManager, HistoryManager historyManager) {
-        final String login = ((String) arg).split("\\.")[0];
-        final String password = ((String) arg).split("\\.")[1];
-        collectionManager.addUser(new User(-1, password, login));
+        final String[] splitInp = ((String) arg).split("\\.");
+
+        if (splitInp.length == 2) {
+            final String login = ((String) arg).split("\\.")[0];
+            final String password = ((String) arg).split("\\.")[1];
+            collectionManager.addUser(new User(-1, password, login));
+        } else {
+            return new CommandResultDto("Invalid arguments");
+        }
 
         return new CommandResultDto("New user added!");
     }

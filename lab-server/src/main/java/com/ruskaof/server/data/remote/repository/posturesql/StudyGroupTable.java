@@ -108,7 +108,7 @@ public class StudyGroupTable extends Table<StudyGroup> {
                 int i = 1;
 
                 while (resultSet.next()) {
-                    StudyGroup studyGroup = resultSet.getObject(i, StudyGroup.class);
+                    StudyGroup studyGroup = mapRowToObject(resultSet);
                     newCollection.add(studyGroup);
                 }
             }

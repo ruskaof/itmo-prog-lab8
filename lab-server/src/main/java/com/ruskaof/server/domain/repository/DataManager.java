@@ -4,6 +4,8 @@ import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.data.User;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.server.data.remote.repository.posturesql.Database;
+import com.ruskaof.server.util.Encryptor;
+import org.slf4j.Logger;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -15,16 +17,20 @@ public class DataManager implements CollectionManager {
     private TreeSet<StudyGroup> mainData = new TreeSet<>();
     private TreeSet<User> users = new TreeSet<>();
 
-    public DataManager(Database database) {
+    public DataManager(Database database, Logger logger) {
         this.database = database;
+
         try {
-            database.initTables();
+            initialiseData(database.getStudyGroupTable().getCollection(), database.getUsersTable().getCollection());
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("wtf");
         }
+
+        logger.info("Made a data manager with initialised collections:\n" +
+                mainData.toString() + "\n" + users.toString());
     }
 
-    public void initialiseData(TreeSet<StudyGroup> studyGroups, TreeSet<User> users) {
+    private void initialiseData(TreeSet<StudyGroup> studyGroups, TreeSet<User> users) {
         this.mainData = studyGroups;
         this.users = users;
     }
@@ -57,11 +63,7 @@ public class DataManager implements CollectionManager {
 
     @Override
     public boolean validateUser(String username, String password) {
-        return false;
-    }
-
-    public TreeSet<StudyGroup> getMainData() {
-        return mainData;
+        return users.stream().anyMatch(it -> it.getName().equals(username) && it.getPassword().equals(Encryptor.encryptThisString(password)));
     }
 
     public int getMaxId() {

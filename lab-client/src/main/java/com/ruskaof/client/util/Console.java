@@ -19,15 +19,25 @@ public class Console {
     private final ClientApp clientApp;
     private final StudyGroupMaker studyGroupMaker;
     private final Collection<String> listOfCommands;
+    private final String username;
+    private final String password;
 
 
-    public Console(OutputManager outputManager, InputManager inputManager, ClientApp clientApp,
-                   Collection<String> listOfCommands) {
+    public Console(
+            OutputManager outputManager,
+            InputManager inputManager,
+            ClientApp clientApp,
+            Collection<String> listOfCommands,
+            String username,
+            String password
+    ) {
         this.outputManager = outputManager;
         this.inputManager = inputManager;
         this.clientApp = clientApp;
         this.listOfCommands = listOfCommands;
         this.studyGroupMaker = new StudyGroupMaker(inputManager, outputManager);
+        this.username = username;
+        this.password = password;
     }
 
     public void start() throws ClassNotFoundException, IOException {
@@ -51,8 +61,8 @@ public class Console {
                 } else {
                     try {
                         outputManager.println(
-                                clientApp.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), "1", "1"))
-                                .getOutput().toString()
+                                clientApp.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), username, password))
+                                        .getOutput().toString()
                         );
                     } catch (DataCantBeSentException e) {
                         outputManager.println("Could not send a command");
@@ -88,19 +98,26 @@ public class Console {
     private Command getCommandObjectByName(String commandName, Serializable arg, String arg2) {
         Command command;
         switch (commandName) {
-            case "add": command = new AddCommand((StudyGroup) arg);
+            case "add":
+                command = new AddCommand((StudyGroup) arg);
                 break;
-            case "add_if_min": command = new AddIfMinCommand((StudyGroup) arg);
+            case "add_if_min":
+                command = new AddIfMinCommand((StudyGroup) arg);
                 break;
-            case "clear": command = new ClearCommand();
+            case "clear":
+                command = new ClearCommand();
                 break;
-            case "filter_less_than_semester_enum": command = new FilterLessThanSemesterEnumCommand((String) arg);
+            case "filter_less_than_semester_enum":
+                command = new FilterLessThanSemesterEnumCommand((String) arg);
                 break;
-            case "history": command = new HistoryCommand();
+            case "history":
+                command = new HistoryCommand();
                 break;
-            case "info": command = new InfoCommand();
+            case "info":
+                command = new InfoCommand();
                 break;
-            case "min_by_id": command = new MinByIDCommand((String) arg);
+            case "min_by_id":
+                command = new MinByIDCommand((String) arg);
                 break;
             case "print_ascending":
                 command = new PrintAscendingCommand();

@@ -42,4 +42,13 @@ public class User implements Comparable<User> {
     public int compareTo(User o) {
         return o.getId() - this.getId() > 0 ? 1 : -1;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -1,6 +1,7 @@
 package com.ruskaof.server.data.remote.repository.posturesql;
 
 import com.ruskaof.common.data.User;
+import com.ruskaof.server.util.Encryptor;
 
 import java.sql.*;
 import java.util.TreeSet;
@@ -20,7 +21,7 @@ public class UsersTable extends Table<User> {
             statement.execute("CREATE TABLE IF NOT EXISTS users ("
                     + "    id serial PRIMARY KEY,"
                     + "    login varchar(50) NOT NULL UNIQUE,"
-                    + "    password varchar(30) NOT NULL)");
+                    + "    password varchar(70) NOT NULL)");
         }
     }
 
@@ -30,8 +31,8 @@ public class UsersTable extends Table<User> {
 
         return new User(
                 resultSet.getLong("id"),
-                resultSet.getString("login"),
-                resultSet.getString("password")
+                resultSet.getString("password"),
+                resultSet.getString("login")
         );
 
     }
@@ -76,6 +77,6 @@ public class UsersTable extends Table<User> {
     private void makePreparedStatement(PreparedStatement preparedStatement, User user) throws SQLException {
         int currentParameterOffset = 0;
         preparedStatement.setString(++currentParameterOffset, user.getName());
-        preparedStatement.setString(++currentParameterOffset, user.getPassword());
+        preparedStatement.setString(++currentParameterOffset, Encryptor.encryptThisString(user.getPassword()));
     }
 }
