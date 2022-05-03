@@ -15,14 +15,18 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
     private final Semester semesterEnum; // null-able
     private final Person groupAdmin; //not null
     private int id; // >0, unique, automatic generation
+    private final String authorName;
 
-    public StudyGroup(String name,
-                      Coordinates coordinates,
-                      Integer studentsCount,
-                      FormOfEducation formOfEducation,
-                      Semester semesterEnum,
-                      Person groupAdmin,
-                      LocalDate creationDate) {
+    public StudyGroup(
+            String name,
+            Coordinates coordinates,
+            Integer studentsCount,
+            FormOfEducation formOfEducation,
+            Semester semesterEnum,
+            Person groupAdmin,
+            LocalDate creationDate,
+            String authorName
+    ) {
         this.name = name;
         this.coordinates = coordinates;
         this.studentsCount = studentsCount;
@@ -30,6 +34,7 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
         this.semesterEnum = semesterEnum;
         this.groupAdmin = groupAdmin;
         this.creationDate = creationDate;
+        this.authorName = authorName;
     }
 
     public Coordinates getCoordinates() {
@@ -102,6 +107,10 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
         return id;
     }
 
+    public String getAuthorName() {
+        return authorName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -111,11 +120,11 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
             return false;
         }
         StudyGroup that = (StudyGroup) o;
-        return id == that.id && Objects.equals(name, that.name) && Objects.equals(coordinates, that.coordinates) && Objects.equals(creationDate, that.creationDate) && Objects.equals(studentsCount, that.studentsCount) && formOfEducation == that.formOfEducation && semesterEnum == that.semesterEnum && Objects.equals(groupAdmin, that.groupAdmin);
+        return id == that.id && Objects.equals(name, that.name) && Objects.equals(coordinates, that.coordinates) && Objects.equals(creationDate, that.creationDate) && Objects.equals(studentsCount, that.studentsCount) && formOfEducation == that.formOfEducation && semesterEnum == that.semesterEnum && Objects.equals(groupAdmin, that.groupAdmin) && Objects.equals(authorName, that.authorName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, coordinates, creationDate, studentsCount, formOfEducation, semesterEnum, groupAdmin);
+        return Objects.hash(name, coordinates, creationDate, studentsCount, formOfEducation, semesterEnum, groupAdmin, id, authorName);
     }
 }

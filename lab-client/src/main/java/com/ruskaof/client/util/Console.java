@@ -50,7 +50,7 @@ public class Console {
         this.inputManager = inputManager;
         this.clientApp = clientApp;
         this.listOfCommands = listOfCommands;
-        this.studyGroupMaker = new StudyGroupMaker(inputManager, outputManager);
+        this.studyGroupMaker = new StudyGroupMaker(inputManager, outputManager, username);
         this.username = username;
         this.password = password;
     }

@@ -16,7 +16,8 @@ public abstract class Command implements Serializable {
 
     public abstract CommandResultDto execute(
             CollectionManager collectionManager,
-            HistoryManager historyManager
+            HistoryManager historyManager,
+            String username
     );
 
     public String getName() {

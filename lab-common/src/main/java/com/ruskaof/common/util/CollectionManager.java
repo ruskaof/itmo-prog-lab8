@@ -21,7 +21,7 @@ public interface CollectionManager {
 
     boolean checkIfMin(StudyGroup studyGroup);
 
-    void clearData();
+    void clearOwnedData(String username);
 
     String filterLessThanSemesterEnumToString(Semester inpEnum);
 
@@ -41,5 +41,7 @@ public interface CollectionManager {
 
     void updateStudyGroupById(int id, StudyGroup studyGroup);
 
-    void removeGreater(StudyGroup studyGroup);
+    void removeGreaterIfOwned(StudyGroup studyGroup, String username);
+
+    boolean validateOwner(String username, int studyGroupId);
 }

@@ -4,7 +4,7 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
 
-public class RemoveByIdCommand extends Command {
+public class RemoveByIdCommand extends Command implements PrivateAccessedStudyGroupCommand {
     private final String arg;
 
     public RemoveByIdCommand(String arg) {
@@ -15,7 +15,8 @@ public class RemoveByIdCommand extends Command {
     @Override
     public CommandResultDto execute(
             CollectionManager collectionManager,
-            HistoryManager historyManager
+            HistoryManager historyManager,
+            String username
     ) {
 
         historyManager.addNote(this.getName());
@@ -30,5 +31,14 @@ public class RemoveByIdCommand extends Command {
         collectionManager.removeStudyGroupById(intArg);
 
         return new CommandResultDto("The element was removed if it was in the data");
+    }
+
+    @Override
+    public int getStudyGroupId() {
+        try {
+            return Integer.parseInt(arg);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 }

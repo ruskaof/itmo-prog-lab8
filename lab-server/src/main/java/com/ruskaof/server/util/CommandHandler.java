@@ -1,5 +1,6 @@
 package com.ruskaof.server.util;
 
+import com.ruskaof.common.commands.PrivateAccessedStudyGroupCommand;
 import com.ruskaof.common.commands.RegisterCommand;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
@@ -13,7 +14,15 @@ public class CommandHandler {
             CollectionManager collectionManager
     ) {
         if (collectionManager.validateUser(commandFromClientDto.getLogin(), commandFromClientDto.getPassword())) {
-            return commandFromClientDto.getCommand().execute(collectionManager, historyManager);
+            if (commandFromClientDto.getCommand() instanceof PrivateAccessedStudyGroupCommand) {
+                final int id = ((PrivateAccessedStudyGroupCommand) commandFromClientDto.getCommand()).getStudyGroupId();
+                if (collectionManager.validateOwner(commandFromClientDto.getLogin(), id)) {
+                    return commandFromClientDto.getCommand().execute(collectionManager, historyManager, commandFromClientDto.getLogin());
+                } else {
+                    return new CommandResultDto("You are not the owner of the object so you can't do anything with it");
+                }
+            }
+            return commandFromClientDto.getCommand().execute(collectionManager, historyManager, commandFromClientDto.getLogin());
         } else {
             return new CommandResultDto("Invalid login or password. Command was not executed");
         }
@@ -24,6 +33,6 @@ public class CommandHandler {
             HistoryManager historyManager,
             CollectionManager collectionManager
     ) {
-        return registerCommand.execute(collectionManager, historyManager);
+        return registerCommand.execute(collectionManager, historyManager, "zatichka");
     }
 }

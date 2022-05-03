@@ -17,7 +17,12 @@ public class RegisterCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(CollectionManager collectionManager, HistoryManager historyManager) {
+    public CommandResultDto execute(
+            CollectionManager collectionManager,
+            HistoryManager historyManager,
+            String username
+    ) {
+        historyManager.addNote(this.getName());
 
         if (collectionManager.checkIfUsernameUnique(loginAndPassword[0])) {
             collectionManager.addUser(new User(-1, loginAndPassword[1], loginAndPassword[0]));

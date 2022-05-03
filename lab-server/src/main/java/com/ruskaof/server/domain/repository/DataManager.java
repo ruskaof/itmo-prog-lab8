@@ -79,9 +79,9 @@ public class DataManager implements CollectionManager {
     }
 
     @Override
-    public void clearData() {
+    public void clearOwnedData(String username) {
         try {
-            database.getStudyGroupTable().clearData();
+            database.getStudyGroupTable().clearOwnedData(username);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -156,13 +156,18 @@ public class DataManager implements CollectionManager {
     }
 
     @Override
-    public void removeGreater(StudyGroup studyGroup) {
+    public void removeGreaterIfOwned(StudyGroup studyGroup, String username) {
         try {
-            database.getStudyGroupTable().removeGreater(studyGroup);
+            database.getStudyGroupTable().removeGreaterIfOwned(studyGroup, username);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         updateCollections();
+    }
+
+    @Override
+    public boolean validateOwner(String username, int studyGroupId) {
+        return mainData.stream().anyMatch(it -> it.getId() == studyGroupId && it.getAuthorName().equals(username));
     }
 
     private void updateCollections() {

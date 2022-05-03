@@ -12,7 +12,8 @@ public class HistoryCommand extends Command {
     @Override
     public CommandResultDto execute(
             CollectionManager collectionManager,
-            HistoryManager historyManager
+            HistoryManager historyManager,
+            String username
     ) {
         historyManager.addNote(this.getName());
         return new CommandResultDto(historyManager.niceToString());

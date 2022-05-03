@@ -5,7 +5,7 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
 
-public class UpdateCommand extends Command {
+public class UpdateCommand extends Command implements PrivateAccessedStudyGroupCommand {
     private final String idArg;
     private final StudyGroup studyGroup;
 
@@ -18,7 +18,8 @@ public class UpdateCommand extends Command {
     @Override
     public CommandResultDto execute(
             CollectionManager collectionManager,
-            HistoryManager historyManager
+            HistoryManager historyManager,
+            String username
     ) {
         historyManager.addNote(this.getName());
         int intArg;
@@ -31,5 +32,15 @@ public class UpdateCommand extends Command {
         collectionManager.updateStudyGroupById(intArg, studyGroup);
 
         return new CommandResultDto("Element was updated if it was in the table");
+    }
+
+
+    @Override
+    public int getStudyGroupId() {
+        try {
+            return Integer.parseInt(idArg);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 }

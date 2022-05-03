@@ -7,7 +7,6 @@ import com.ruskaof.common.data.Location;
 import com.ruskaof.common.data.Person;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
-import com.ruskaof.common.util.Encryptor;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -21,10 +20,12 @@ public class StudyGroupMaker {
     private static final String ERROR_MESSAGE = "Your enter was not correct type. Try again";
     private final OutputManager outputManager;
     private final Asker asker;
+    private final String authorName;
 
-    public StudyGroupMaker(InputManager inputManager, OutputManager outputManager) {
+    public StudyGroupMaker(InputManager inputManager, OutputManager outputManager, String authorName) {
         this.outputManager = outputManager;
         this.asker = new Asker(inputManager, outputManager);
+        this.authorName = authorName;
     }
 
     public String[] makeLoginAndPassword() throws IOException {
@@ -55,7 +56,7 @@ public class StudyGroupMaker {
         Coordinates coordinates = askForCoordinates(); //not null
         Person groupAdmin = askForGroupAdmin(); //not null
         return new StudyGroup(name, coordinates, studentsCount,
-                formOfEducation, semesterEnum, groupAdmin, LocalDate.now());
+                formOfEducation, semesterEnum, groupAdmin, LocalDate.now(), authorName);
     }
 
     private Coordinates askForCoordinates() throws IOException {
