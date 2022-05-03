@@ -17,10 +17,8 @@ public class ShowCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-//        historyManager.addNote(this.getName());
-//        // Сортировка по имени как в тз
-//        return new CommandResultDto((Serializable) collectionManager.getMainData().stream().sorted(Comparator.comparing(StudyGroup::getName)).collect(Collectors.toList()));
+        historyManager.addNote(this.getName());
 
-        return new CommandResultDto(")");
+        return new CommandResultDto(collectionManager.showSortedByName());
     }
 }

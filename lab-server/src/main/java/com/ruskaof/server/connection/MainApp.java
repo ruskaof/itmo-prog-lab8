@@ -21,6 +21,8 @@ import java.nio.channels.DatagramChannel;
 import java.util.concurrent.TimeoutException;
 
 public class MainApp {
+    private static final int TIMEOUT_TO_SEND = 10;
+    private static final int HEADER_LENGTH = 4;
     private final Logger logger;
     private final int port;
     private final String ip;
@@ -74,7 +76,7 @@ public class MainApp {
                     );
                 }
 
-                send(commandResultDto, datagramChannel, receivedCommandAndAddress.getSecond(), 10);
+                send(commandResultDto, datagramChannel, receivedCommandAndAddress.getSecond(), TIMEOUT_TO_SEND);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -132,7 +134,7 @@ public class MainApp {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
 
         objectOutputStream.writeObject(obj);
-        byte[] sizeBytes = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+        byte[] sizeBytes = ByteBuffer.allocate(HEADER_LENGTH).putInt(byteArrayOutputStream.size()).array();
 
         return new Pair<>(byteArrayOutputStream.toByteArray(), sizeBytes); // в первых 4 байтах будет храниться число-количество данных отправления
     }

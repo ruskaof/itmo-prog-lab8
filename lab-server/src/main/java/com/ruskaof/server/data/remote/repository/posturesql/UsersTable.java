@@ -1,9 +1,12 @@
 package com.ruskaof.server.data.remote.repository.posturesql;
 
 import com.ruskaof.common.data.User;
-import com.ruskaof.server.util.Encryptor;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.TreeSet;
 
 public class UsersTable extends Table<User> {
@@ -77,6 +80,6 @@ public class UsersTable extends Table<User> {
     private void makePreparedStatement(PreparedStatement preparedStatement, User user) throws SQLException {
         int currentParameterOffset = 0;
         preparedStatement.setString(++currentParameterOffset, user.getName());
-        preparedStatement.setString(++currentParameterOffset, Encryptor.encryptThisString(user.getPassword()));
+        preparedStatement.setString(++currentParameterOffset, user.getPassword());
     }
 }

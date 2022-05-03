@@ -22,10 +22,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class Server {
-    private static final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedReader BUFFERED_READER = new BufferedReader(new InputStreamReader(System.in));
     private static int serverPort;
     private static String serverIp;
     private static final int MAX_PORT = 65535;
+    private static final int MIN_PORT = 1024;
     private static final Logger LOGGER
             = LoggerFactory.getLogger(Server.class);
     private static String dbHost;
@@ -70,7 +71,7 @@ public final class Server {
 
     private static void initMainInfoForConnection() throws IOException {
         serverPort = ask(
-                value -> (value >= 1024 && value <= 65535),
+                value -> (value >= MIN_PORT && value <= MAX_PORT),
                 "Enter server port",
                 "Server port must be an int number",
                 "Sever port must be between 1024 and 65535",
@@ -97,7 +98,7 @@ public final class Server {
         T value;
         do {
             try {
-                input = bufferedReader.readLine();
+                input = BUFFERED_READER.readLine();
                 value = converter.apply(input);
             } catch (IllegalArgumentException e) {
                 LOGGER.error(errorMessage);
@@ -118,7 +119,7 @@ public final class Server {
         LOGGER.info(askMessage);
         String input;
         do {
-            input = bufferedReader.readLine();
+            input = BUFFERED_READER.readLine();
             if (predicate.test(input)) {
                 return input;
             } else {
@@ -132,7 +133,7 @@ public final class Server {
     ) throws IOException {
         LOGGER.info(askMessage);
         String input;
-        input = bufferedReader.readLine();
+        input = BUFFERED_READER.readLine();
         return input;
     }
 }

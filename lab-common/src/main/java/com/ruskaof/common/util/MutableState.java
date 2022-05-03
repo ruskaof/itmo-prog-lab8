@@ -6,6 +6,6 @@ public class MutableState<T> extends State<T> {
     }
 
     public void setValue(T newValue) {
-        value = newValue;
+        setValueIHATECHECKSTYLEBECAUSEICOULDUSEJUSTPROTECTEDVALUE(newValue);
     }
 }

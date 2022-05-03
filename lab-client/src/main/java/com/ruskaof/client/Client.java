@@ -13,9 +13,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class Client {
-    private static final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-    private static final OutputManager outputManager = new OutputManager(System.out);
+    private static final BufferedReader BUFFERED_READER = new BufferedReader(new InputStreamReader(System.in));
+    private static final OutputManager OUTPUT_MANAGER = new OutputManager(System.out);
     private static final int MAX_PORT = 65635;
+    private static final int MIN_PORT = 1024;
     private static final Collection<String> LIST_OF_COMMANDS = new HashSet<>();
     private static int serverPort;
     private static int clientPort;
@@ -34,16 +35,16 @@ public final class Client {
         try {
             initMainInfoForConnection();
         } catch (IOException e) {
-            outputManager.println("Something went wrong during initialisation client info");
+            OUTPUT_MANAGER.println("Something went wrong during initialisation client info");
             return;
         }
         try {
-            ClientApp clientApp = new ClientApp(clientPort, serverPort, clientIp, serverIp, outputManager);
-            new Console(outputManager, new InputManager(System.in), clientApp, LIST_OF_COMMANDS, username, password).start();
+            ClientApp clientApp = new ClientApp(clientPort, serverPort, clientIp, serverIp, OUTPUT_MANAGER);
+            new Console(OUTPUT_MANAGER, new InputManager(System.in), clientApp, LIST_OF_COMMANDS, username, password).start();
         } catch (ClassNotFoundException e) {
-            outputManager.println("Found incorrect data from server.");
+            OUTPUT_MANAGER.println("Found incorrect data from server.");
         } catch (IOException e) {
-            outputManager.println("Something went wrong with IO, the message is: " + e.getMessage());
+            OUTPUT_MANAGER.println("Something went wrong with IO, the message is: " + e.getMessage());
         }
     }
 
@@ -74,7 +75,7 @@ public final class Client {
         username = ask("Enter username");
         password = ask("Enter password");
         serverPort = ask(
-                value -> (value >= 1024 && value <= MAX_PORT),
+                value -> (value >= MIN_PORT && value <= MAX_PORT),
                 "Enter server port",
                 "Server port must be an int number",
                 "Sever port must be between 1024 and 65535",
@@ -84,7 +85,7 @@ public final class Client {
         serverIp = ask("Enter server IP");
 
         clientPort = ask(
-                value -> (value >= 1024 && value <= MAX_PORT),
+                value -> (value >= MIN_PORT && value <= MAX_PORT),
                 "Enter client port",
                 "Client port must be an int number",
                 "Client port must be between 1024 and 65535",
@@ -100,21 +101,21 @@ public final class Client {
                              String wrongValueMessage,
                              Function<String, T> converter
     ) throws IOException {
-        outputManager.println(askMessage);
+        OUTPUT_MANAGER.println(askMessage);
         String input;
         T value;
         do {
             try {
-                input = bufferedReader.readLine();
+                input = BUFFERED_READER.readLine();
                 value = converter.apply(input);
             } catch (IllegalArgumentException e) {
-                outputManager.println(errorMessage);
+                OUTPUT_MANAGER.println(errorMessage);
                 continue;
             }
             if (predicate.test(value)) {
                 return value;
             } else {
-                outputManager.println(wrongValueMessage);
+                OUTPUT_MANAGER.println(wrongValueMessage);
             }
         } while (true);
     }
@@ -122,9 +123,9 @@ public final class Client {
     private static String ask(
             String askMessage
     ) throws IOException {
-        outputManager.println(askMessage);
+        OUTPUT_MANAGER.println(askMessage);
         String input;
-        input = bufferedReader.readLine();
+        input = BUFFERED_READER.readLine();
         return input;
     }
 }

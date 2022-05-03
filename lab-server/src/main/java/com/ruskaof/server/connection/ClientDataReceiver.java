@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 
 public class ClientDataReceiver {
+    private static final int HEADER_LENGTH = 4;
+    private static final int TIMEOUT_MILLS = 5;
     private final Logger logger;
 
     public ClientDataReceiver(Logger logger) {
@@ -39,10 +41,10 @@ public class ClientDataReceiver {
     }
 
     public Pair<CommandFromClientDto, SocketAddress> receiveData(DatagramChannel datagramChannel, State<Boolean> isWorking) throws IOException, InterruptedException, TimeoutException, ClassNotFoundException {
-        ByteBuffer amountOfBytesInMainDataBuffer = ByteBuffer.wrap(new byte[4]);
+        ByteBuffer amountOfBytesInMainDataBuffer = ByteBuffer.wrap(new byte[HEADER_LENGTH]);
         receiveActiveWaiting(datagramChannel, amountOfBytesInMainDataBuffer, isWorking);
         ByteBuffer dataByteBuffer = ByteBuffer.wrap(new byte[bytesToInt(amountOfBytesInMainDataBuffer.array())]);
-        SocketAddress clientSocketAddress = receiveWithTimeout(datagramChannel, dataByteBuffer, 5);
+        SocketAddress clientSocketAddress = receiveWithTimeout(datagramChannel, dataByteBuffer, TIMEOUT_MILLS);
         CommandFromClientDto receivedCommand = ((CommandFromClientDto) deserialize(dataByteBuffer.array()));
         return new Pair<>(receivedCommand, clientSocketAddress);
     }

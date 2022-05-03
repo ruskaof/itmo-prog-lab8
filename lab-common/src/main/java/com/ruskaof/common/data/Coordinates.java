@@ -8,17 +8,17 @@ public class Coordinates implements Serializable {
     private final long x; //> -896
     private final Double y; //<=135, not null
 
+    public Coordinates(long x, Double y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public long getX() {
         return x;
     }
 
     public Double getY() {
         return y;
-    }
-
-    public Coordinates(long x, Double y) {
-        this.x = x;
-        this.y = y;
     }
 
     @Override

@@ -19,8 +19,12 @@ public class CommandFromClientDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CommandFromClientDto that = (CommandFromClientDto) o;
         return Objects.equals(command, that.command) && Objects.equals(login, that.login) && Objects.equals(password, that.password);
     }

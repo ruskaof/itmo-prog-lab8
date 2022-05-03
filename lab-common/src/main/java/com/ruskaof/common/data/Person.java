@@ -10,6 +10,13 @@ public class Person implements Serializable {
     private final Country nationality; //not null
     private final Location location; //not null
 
+    public Person(String name, Integer height, Country nationality, Location location) {
+        this.name = name;
+        this.height = height;
+        this.nationality = nationality;
+        this.location = location;
+    }
+
     public String getName() {
         return name;
     }
@@ -24,13 +31,6 @@ public class Person implements Serializable {
 
     public Location getLocation() {
         return location;
-    }
-
-    public Person(String name, Integer height, Country nationality, Location location) {
-        this.name = name;
-        this.height = height;
-        this.nationality = nationality;
-        this.location = location;
     }
 
     @Override

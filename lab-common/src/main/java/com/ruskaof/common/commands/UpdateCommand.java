@@ -18,23 +18,17 @@ public class UpdateCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-//        historyManager.addNote(this.getName());
-//        int intArg;
-//        try {
-//            intArg = Integer.parseInt(idArg);
-//        } catch (NumberFormatException e) {
-//            return new CommandResultDto("Your argument was incorrect. The command was not executed.");
-//        }
-//
-//        if (collectionManager.getMainData().removeIf(x -> x.getId() == intArg)) {
-//            StudyGroup studyGroup = (StudyGroup) arg;
-//            studyGroup.setId(intArg);
-//            collectionManager.getMainData().add(studyGroup);
-//            return new CommandResultDto("The element was updated successfully");
-//        } else {
-//            return new CommandResultDto("Written id was not found. The command was not executed");
-//        }
+        historyManager.addNote(this.getName());
+        int intArg;
+        try {
+            intArg = Integer.parseInt(idArg);
+        } catch (NumberFormatException e) {
+            return new CommandResultDto("Your argument was incorrect. The command was not executed.");
+        }
+        StudyGroup studyGroup = (StudyGroup) arg;
 
-        return new CommandResultDto(")");
+        collectionManager.updateStudyGroupById(intArg, studyGroup);
+
+        return new CommandResultDto("Element was updated if it was in the table");
     }
 }

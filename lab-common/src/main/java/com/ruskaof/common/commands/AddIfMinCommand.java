@@ -17,19 +17,16 @@ public class AddIfMinCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-//        historyManager.addNote(this.getName());
-//
-//        StudyGroup studyGroup = (StudyGroup) arg;
-//        studyGroup.setId(collectionManager.getMaxId() + 1);
-//
-//        // stream api would be worse in this case (I would lose TreeSet optimisation)
-//        if (collectionManager.getMainData().isEmpty() || studyGroup.compareTo(collectionManager.getMainData().first()) < 0) {
-//            collectionManager.getMainData().add(studyGroup);
-//            return new CommandResultDto("The element was added successfully");
-//        } else {
-//            return new CommandResultDto("The element was not min, so it was not added");
-//        }
+        historyManager.addNote(this.getName());
 
-        return new CommandResultDto(")");
+        StudyGroup studyGroup = (StudyGroup) arg;
+
+        // stream api would be worse in this case (I would lose TreeSet optimisation)
+        if (collectionManager.checkIfMin(studyGroup)) {
+            collectionManager.addStudyGroup(studyGroup);
+            return new CommandResultDto("The element was added successfully");
+        } else {
+            return new CommandResultDto("The element was not min, so it was not added");
+        }
     }
 }

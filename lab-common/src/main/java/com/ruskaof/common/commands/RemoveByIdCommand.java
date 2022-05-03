@@ -15,21 +15,18 @@ public class RemoveByIdCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-//
-//        historyManager.addNote(this.getName());
-//        int intArg;
-//        try {
-//            intArg = Integer.parseInt((String) arg);
-//        } catch (NumberFormatException e) {
-//            return new CommandResultDto("Your argument was incorrect. The command was not executed.");
-//        }
-//
-//        if (collectionManager.getMainData().removeIf(x -> x.getId() == intArg)) {
-//            return new CommandResultDto("The element was deleted successfully.");
-//        } else {
-//            return new CommandResultDto("Could not find written id. The command was not executed");
-//        }
 
-        return new CommandResultDto(")");
+        historyManager.addNote(this.getName());
+
+        int intArg;
+        try {
+            intArg = Integer.parseInt((String) arg);
+        } catch (NumberFormatException e) {
+            return new CommandResultDto("Your argument was incorrect. The command was not executed.");
+        }
+
+        collectionManager.removeStudyGroupById(intArg);
+
+        return new CommandResultDto("The element was removed if it was in the data");
     }
 }
