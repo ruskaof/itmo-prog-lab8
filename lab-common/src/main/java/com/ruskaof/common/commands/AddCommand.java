@@ -2,7 +2,7 @@ package com.ruskaof.common.commands;
 
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class AddCommand extends Command {
@@ -15,14 +15,14 @@ public class AddCommand extends Command {
 
     @Override
     public CommandResultDto execute(
-            CollectionManager collectionManager,
+            DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
         historyManager.addNote(this.getName());
         StudyGroup studyGroup = arg;
         studyGroup.setId(-1);
-        collectionManager.addStudyGroup(studyGroup);
+        dataManager.addStudyGroup(studyGroup);
         return new CommandResultDto("The element was added successfully");
     }
 }

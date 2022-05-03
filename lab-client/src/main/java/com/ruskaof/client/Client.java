@@ -1,9 +1,9 @@
 package com.ruskaof.client;
 
-import com.ruskaof.client.util.Console;
+import com.ruskaof.client.connection.ConnectionManager;
+import com.ruskaof.client.logic.Console;
 import com.ruskaof.client.util.InputManager;
 import com.ruskaof.client.util.OutputManager;
-import com.ruskaof.common.util.Encryptor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,8 +40,8 @@ public final class Client {
             return;
         }
         try {
-            ClientApp clientApp = new ClientApp(clientPort, serverPort, clientIp, serverIp, OUTPUT_MANAGER);
-            new Console(OUTPUT_MANAGER, new InputManager(System.in), clientApp, LIST_OF_COMMANDS, username, password).start();
+            ConnectionManager connectionManager = new ConnectionManager(clientPort, serverPort, clientIp, serverIp, OUTPUT_MANAGER);
+            new Console(OUTPUT_MANAGER, new InputManager(System.in), connectionManager, LIST_OF_COMMANDS, username, password).start();
         } catch (ClassNotFoundException e) {
             OUTPUT_MANAGER.println("Found incorrect data from server.");
         } catch (IOException e) {

@@ -1,11 +1,9 @@
-package com.ruskaof.server.domain.repository;
+package com.ruskaof.server.data.remote.posturesql;
 
 import com.ruskaof.common.commands.InfoCommand;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.data.User;
-import com.ruskaof.common.util.CollectionManager;
-import com.ruskaof.server.data.remote.repository.posturesql.Database;
 import com.ruskaof.common.util.Encryptor;
 import org.slf4j.Logger;
 
@@ -14,7 +12,7 @@ import java.util.Comparator;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 
-public class DataManager implements CollectionManager {
+public class DataManager implements com.ruskaof.common.util.DataManager {
     private final Database database;
     private TreeSet<StudyGroup> mainData = new TreeSet<>();
     private TreeSet<User> users = new TreeSet<>();

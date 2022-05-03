@@ -1,14 +1,14 @@
-package com.ruskaof.server.connection;
+package com.ruskaof.server.executing;
 
 import com.ruskaof.common.commands.RegisterCommand;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.Pair;
 import com.ruskaof.common.util.State;
-import com.ruskaof.server.data.remote.repository.posturesql.Database;
-import com.ruskaof.server.util.CommandHandler;
+import com.ruskaof.server.connection.ClientDataReceiver;
+import com.ruskaof.server.data.remote.posturesql.Database;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayOutputStream;
@@ -47,7 +47,7 @@ public class MainApp {
 
     public void start(
             HistoryManager historyManager,
-            CollectionManager collectionManager,
+            DataManager dataManager,
             State<Boolean> isWorking
     ) throws IOException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
@@ -65,14 +65,13 @@ public class MainApp {
                     commandResultDto = commandHandler.handleRegister(
                             (RegisterCommand) receivedCommandAndAddress.getFirst().getCommand(),
                             historyManager,
-                            collectionManager
+                            dataManager
                     );
                 } else {
-
                     commandResultDto = commandHandler.handleCommand(
                             receivedCommandAndAddress.getFirst(),
                             historyManager,
-                            collectionManager
+                            dataManager
                     );
                 }
 

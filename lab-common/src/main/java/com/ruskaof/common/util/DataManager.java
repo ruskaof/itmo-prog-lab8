@@ -9,7 +9,7 @@ import com.ruskaof.common.data.User;
  * This interface does everything but giving the collection itself, so no SOLID principles should be
  * violated :)
  */
-public interface CollectionManager {
+public interface DataManager {
 
     void addUser(User user);
 

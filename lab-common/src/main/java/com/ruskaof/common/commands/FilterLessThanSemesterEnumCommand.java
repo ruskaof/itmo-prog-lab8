@@ -3,7 +3,7 @@ package com.ruskaof.common.commands;
 
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class FilterLessThanSemesterEnumCommand extends Command {
@@ -16,7 +16,7 @@ public class FilterLessThanSemesterEnumCommand extends Command {
 
     @Override
     public CommandResultDto execute(
-            CollectionManager collectionManager,
+            DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
@@ -31,7 +31,7 @@ public class FilterLessThanSemesterEnumCommand extends Command {
         } catch (IllegalArgumentException e) {
             return new CommandResultDto("Your argument was incorrect");
         }
-        return new CommandResultDto(collectionManager.filterLessThanSemesterEnumToString(inpEnum));
+        return new CommandResultDto(dataManager.filterLessThanSemesterEnumToString(inpEnum));
 
     }
 }

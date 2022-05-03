@@ -1,4 +1,4 @@
-package com.ruskaof.common.util; // Java program to calculate MD2 hash value
+package com.ruskaof.common.util;
 
 
 import java.math.BigInteger;

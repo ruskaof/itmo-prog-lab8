@@ -2,7 +2,7 @@ package com.ruskaof.common.commands;
 
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 
@@ -16,7 +16,7 @@ public class AddIfMinCommand extends Command {
 
     @Override
     public CommandResultDto execute(
-            CollectionManager collectionManager,
+            DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
@@ -25,8 +25,8 @@ public class AddIfMinCommand extends Command {
         StudyGroup studyGroup = arg;
 
         // stream api would be worse in this case (I would lose TreeSet optimisation)
-        if (collectionManager.checkIfMin(studyGroup)) {
-            collectionManager.addStudyGroup(studyGroup);
+        if (dataManager.checkIfMin(studyGroup)) {
+            dataManager.addStudyGroup(studyGroup);
             return new CommandResultDto("The element was added successfully");
         } else {
             return new CommandResultDto("The element was not min, so it was not added");

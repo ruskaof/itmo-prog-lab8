@@ -2,7 +2,7 @@ package com.ruskaof.common.commands;
 
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class UpdateCommand extends Command implements PrivateAccessedStudyGroupCommand {
@@ -17,7 +17,7 @@ public class UpdateCommand extends Command implements PrivateAccessedStudyGroupC
 
     @Override
     public CommandResultDto execute(
-            CollectionManager collectionManager,
+            DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
@@ -29,7 +29,7 @@ public class UpdateCommand extends Command implements PrivateAccessedStudyGroupC
             return new CommandResultDto("Your argument was incorrect. The command was not executed.");
         }
 
-        collectionManager.updateStudyGroupById(intArg, studyGroup);
+        dataManager.updateStudyGroupById(intArg, studyGroup);
 
         return new CommandResultDto("Element was updated if it was in the table");
     }

@@ -1,7 +1,7 @@
 package com.ruskaof.common.commands;
 
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 import java.io.Serializable;
@@ -15,13 +15,13 @@ public class InfoCommand extends Command {
 
     @Override
     public CommandResultDto execute(
-            CollectionManager collectionManager,
+            DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
         historyManager.addNote(this.getName());
 
-        return new CommandResultDto(collectionManager.getInfoAboutCollections());
+        return new CommandResultDto(dataManager.getInfoAboutCollections());
     }
 
     public static final class InfoCommandResult implements Serializable {

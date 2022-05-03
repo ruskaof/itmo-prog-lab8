@@ -2,7 +2,7 @@ package com.ruskaof.common.commands;
 
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandResultDto;
-import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 /**
@@ -21,13 +21,13 @@ public class RemoveGreaterCommand extends Command {
 
     @Override
     public CommandResultDto execute(
-            CollectionManager collectionManager,
+            DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
         historyManager.addNote(this.getName());
 
-        collectionManager.removeGreaterIfOwned(arg, username);
+        dataManager.removeGreaterIfOwned(arg, username);
 
         return new CommandResultDto("Successfully removed greater elements");
     }

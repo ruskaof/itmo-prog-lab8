@@ -1,10 +1,9 @@
-package com.ruskaof.client;
+package com.ruskaof.client.connection;
 
 import com.ruskaof.client.util.OutputManager;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataCantBeSentException;
-import com.ruskaof.common.util.NoAnswerException;
 import com.ruskaof.common.util.Pair;
 
 import java.io.ByteArrayInputStream;
@@ -18,9 +17,10 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.UnresolvedAddressException;
+import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings("FieldCanBeLocal")
-public final class ClientApp {
+public final class ConnectionManager {
     private final int clientPort;
     private final int serverPort;
     private final String clientIp;
@@ -31,7 +31,7 @@ public final class ClientApp {
     private final int countOfBytesForSize = 4;
     private final int timeoutToSend = 10;
 
-    public ClientApp(int clientPort, int serverPort, String clientIp, String serverIp, OutputManager outputManager) {
+    public ConnectionManager(int clientPort, int serverPort, String clientIp, String serverIp, OutputManager outputManager) {
         this.clientPort = clientPort;
         this.serverPort = serverPort;
         this.clientIp = clientIp;
@@ -104,14 +104,14 @@ public final class ClientApp {
 
             return (CommandResultDto) deserialize(dataBytes);
 
-        } catch (NoAnswerException e) {
+        } catch (TimeoutException e) {
             return new CommandResultDto("Could not receive any answer from server");
         } catch (ClassNotFoundException e) {
             return new CommandResultDto("Received incorrect answer from server");
         }
     }
 
-    private void receiveToBuffer(DatagramChannel datagramChannel, ByteBuffer receiverBuffer, int timeoutMills) throws NoAnswerException, IOException {
+    private void receiveToBuffer(DatagramChannel datagramChannel, ByteBuffer receiverBuffer, int timeoutMills) throws TimeoutException, IOException {
         int timeout = timeoutMills;
         SocketAddress checkingAddress = null;
 
@@ -123,7 +123,7 @@ public final class ClientApp {
             }
             checkingAddress = datagramChannel.receive(receiverBuffer);
             if (timeout == 0) {
-                throw new NoAnswerException("Timeout exceeded. Could not receive any data.");
+                throw new TimeoutException("Timeout exceeded. Could not receive any data.");
             }
             timeout--;
         }

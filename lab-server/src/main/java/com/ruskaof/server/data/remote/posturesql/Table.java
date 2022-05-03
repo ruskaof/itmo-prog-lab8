@@ -1,4 +1,4 @@
-package com.ruskaof.server.data.remote.repository.posturesql;
+package com.ruskaof.server.data.remote.posturesql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

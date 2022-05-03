@@ -72,7 +72,7 @@ public class ClientDataReceiver {
             DatagramChannel datagramChannel,
             ByteBuffer byteBuffer,
             State<Boolean> isWorking
-    ) throws IOException, InterruptedException {
+    ) throws IOException {
         while (isWorking.getValue()) {
             SocketAddress receivedSocketAddress = datagramChannel.receive(byteBuffer);
             if (Objects.nonNull(receivedSocketAddress)) {

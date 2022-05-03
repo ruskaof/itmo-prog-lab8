@@ -1,13 +1,12 @@
 package com.ruskaof.server;
 
-import com.ruskaof.common.util.CollectionManager;
+import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.State;
 import com.ruskaof.server.connection.ClientDataReceiver;
-import com.ruskaof.server.connection.MainApp;
-import com.ruskaof.server.data.remote.repository.posturesql.Database;
-import com.ruskaof.server.domain.repository.DataManager;
-import com.ruskaof.server.util.CommandHandler;
+import com.ruskaof.server.executing.MainApp;
+import com.ruskaof.server.data.remote.posturesql.Database;
+import com.ruskaof.server.executing.CommandHandler;
 import com.ruskaof.server.util.HistoryManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +51,7 @@ public final class Server {
 
         HistoryManager historyManager = new HistoryManagerImpl();
         Database database = new Database(connection, LOGGER);
-        CollectionManager collectionManager = new DataManager(database, LOGGER);
+        DataManager dataManager = new com.ruskaof.server.data.remote.posturesql.DataManager(database, LOGGER);
         MainApp serverApp;
         try {
             serverApp = new MainApp(
@@ -63,7 +62,7 @@ public final class Server {
                     new ClientDataReceiver(LOGGER),
                     database
             );
-            serverApp.start(historyManager, collectionManager, new State<>(true));
+            serverApp.start(historyManager, dataManager, new State<>(true));
         } catch (IOException e) {
             LOGGER.error("An unexpected IO error occurred. The message is: " + e.getMessage());
         }

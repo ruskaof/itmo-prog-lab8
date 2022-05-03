@@ -1,4 +1,4 @@
-package com.ruskaof.server.data.remote.repository.posturesql;
+package com.ruskaof.server.data.remote.posturesql;
 
 import com.ruskaof.common.data.Coordinates;
 import com.ruskaof.common.data.Country;

@@ -1,10 +1,13 @@
-package com.ruskaof.server.data.remote.repository.posturesql;
+package com.ruskaof.server.data.remote.posturesql;
 
 import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Class for holding database tables for working with them
+ */
 public class Database {
     private final UsersTable usersTable;
     private final StudyGroupTable studyGroupTable;

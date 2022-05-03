@@ -1,7 +1,10 @@
-package com.ruskaof.client.util;
+package com.ruskaof.client.logic;
 
-import com.ruskaof.client.ClientApp;
+import com.ruskaof.client.connection.ConnectionManager;
 import com.ruskaof.client.commands.ExecuteScriptCommand;
+import com.ruskaof.client.util.InputManager;
+import com.ruskaof.client.util.OutputManager;
+import com.ruskaof.client.util.StudyGroupMaker;
 import com.ruskaof.common.commands.AddCommand;
 import com.ruskaof.common.commands.AddIfMinCommand;
 import com.ruskaof.common.commands.ClearCommand;
@@ -20,7 +23,6 @@ import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
-import com.ruskaof.common.util.Encryptor;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -31,7 +33,7 @@ import java.util.NoSuchElementException;
 public class Console {
     private final OutputManager outputManager;
     private final InputManager inputManager;
-    private final ClientApp clientApp;
+    private final ConnectionManager connectionManager;
     private final StudyGroupMaker studyGroupMaker;
     private final Collection<String> listOfCommands;
     private final String username;
@@ -41,14 +43,14 @@ public class Console {
     public Console(
             OutputManager outputManager,
             InputManager inputManager,
-            ClientApp clientApp,
+            ConnectionManager connectionManager,
             Collection<String> listOfCommands,
             String username,
             String password
     ) {
         this.outputManager = outputManager;
         this.inputManager = inputManager;
-        this.clientApp = clientApp;
+        this.connectionManager = connectionManager;
         this.listOfCommands = listOfCommands;
         this.studyGroupMaker = new StudyGroupMaker(inputManager, outputManager, username);
         this.username = username;
@@ -82,7 +84,7 @@ public class Console {
                 } else {
                     try {
                         outputManager.println(
-                                clientApp.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), username, password)).getOutput().toString()
+                                connectionManager.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), username, password)).getOutput().toString()
                         );
                     } catch (DataCantBeSentException e) {
                         outputManager.println("Could not send a command");
