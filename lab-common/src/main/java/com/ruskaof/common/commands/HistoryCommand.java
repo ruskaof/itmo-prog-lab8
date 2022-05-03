@@ -6,7 +6,7 @@ import com.ruskaof.common.util.HistoryManager;
 
 public class HistoryCommand extends Command {
     public HistoryCommand() {
-        super("", "history");
+        super("history");
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.ruskaof.client;
 import com.ruskaof.client.util.Console;
 import com.ruskaof.client.util.InputManager;
 import com.ruskaof.client.util.OutputManager;
+import com.ruskaof.common.util.Encryptor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -114,6 +115,23 @@ public final class Client {
             }
             if (predicate.test(value)) {
                 return value;
+            } else {
+                OUTPUT_MANAGER.println(wrongValueMessage);
+            }
+        } while (true);
+    }
+
+    private static String ask(
+            Predicate<String> predicate,
+            String askMessage,
+            String wrongValueMessage
+    ) throws IOException {
+        OUTPUT_MANAGER.println(askMessage);
+        String input;
+        do {
+            input = BUFFERED_READER.readLine();
+            if (predicate.test(input)) {
+                return input;
             } else {
                 OUTPUT_MANAGER.println(wrongValueMessage);
             }

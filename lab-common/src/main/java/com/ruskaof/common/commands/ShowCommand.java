@@ -9,7 +9,7 @@ public class ShowCommand extends Command {
 
 
     public ShowCommand() {
-        super("", "show");
+        super("show");
     }
 
     @Override

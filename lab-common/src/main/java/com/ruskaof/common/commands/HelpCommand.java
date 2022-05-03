@@ -6,7 +6,7 @@ import com.ruskaof.common.util.HistoryManager;
 
 public class HelpCommand extends Command {
     public HelpCommand() {
-        super("", "help");
+        super("help");
     }
 
     @Override

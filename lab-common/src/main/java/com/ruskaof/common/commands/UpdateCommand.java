@@ -7,10 +7,12 @@ import com.ruskaof.common.util.HistoryManager;
 
 public class UpdateCommand extends Command {
     private final String idArg;
+    private final StudyGroup studyGroup;
 
     public UpdateCommand(StudyGroup studyGroup, String id) {
-        super(studyGroup, "update");
+        super("update");
         this.idArg = id;
+        this.studyGroup = studyGroup;
     }
 
     @Override
@@ -25,7 +27,6 @@ public class UpdateCommand extends Command {
         } catch (NumberFormatException e) {
             return new CommandResultDto("Your argument was incorrect. The command was not executed.");
         }
-        StudyGroup studyGroup = (StudyGroup) arg;
 
         collectionManager.updateStudyGroupById(intArg, studyGroup);
 

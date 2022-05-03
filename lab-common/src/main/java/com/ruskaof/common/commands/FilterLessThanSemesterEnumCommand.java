@@ -7,9 +7,11 @@ import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class FilterLessThanSemesterEnumCommand extends Command {
+    private final String arg;
 
     public FilterLessThanSemesterEnumCommand(String arg) {
-        super(arg, "filter_less_than_semester_enum");
+        super("filter_less_than_semester_enum");
+        this.arg = arg;
     }
 
     @Override
@@ -20,10 +22,10 @@ public class FilterLessThanSemesterEnumCommand extends Command {
         historyManager.addNote(this.getName());
         Semester inpEnum;
         try {
-            if (arg.equals("null")) {
+            if ("null".equals(arg)) {
                 inpEnum = Semester.THIRD;
             } else {
-                inpEnum = Semester.valueOf((String) arg);
+                inpEnum = Semester.valueOf(arg);
             }
         } catch (IllegalArgumentException e) {
             return new CommandResultDto("Your argument was incorrect");

@@ -5,9 +5,11 @@ import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class RemoveByIdCommand extends Command {
+    private final String arg;
 
     public RemoveByIdCommand(String arg) {
-        super(arg, "remove_by_id");
+        super("remove_by_id");
+        this.arg = arg;
     }
 
     @Override
@@ -20,7 +22,7 @@ public class RemoveByIdCommand extends Command {
 
         int intArg;
         try {
-            intArg = Integer.parseInt((String) arg);
+            intArg = Integer.parseInt(arg);
         } catch (NumberFormatException e) {
             return new CommandResultDto("Your argument was incorrect. The command was not executed.");
         }

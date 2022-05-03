@@ -8,12 +8,9 @@ import java.io.Serializable;
 
 
 public abstract class Command implements Serializable {
-
-    protected final Serializable arg;
     private final String name;
 
-    protected Command(Serializable arg, String name) {
-        this.arg = arg;
+    protected Command(String name) {
         this.name = name;
     }
 
@@ -30,7 +27,6 @@ public abstract class Command implements Serializable {
     public String toString() {
         return "Command{"
                 + "name='" + name + '\''
-                + ", arg=" + arg
                 + '}';
     }
 }

@@ -8,7 +8,7 @@ import com.ruskaof.common.util.HistoryManager;
 public class PrintAscendingCommand extends Command {
 
     public PrintAscendingCommand() {
-        super("", "print_ascending");
+        super("print_ascending");
     }
 
     @Override

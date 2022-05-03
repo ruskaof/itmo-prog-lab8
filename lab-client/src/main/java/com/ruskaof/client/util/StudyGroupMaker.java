@@ -7,6 +7,7 @@ import com.ruskaof.common.data.Location;
 import com.ruskaof.common.data.Person;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
+import com.ruskaof.common.util.Encryptor;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -24,6 +25,13 @@ public class StudyGroupMaker {
     public StudyGroupMaker(InputManager inputManager, OutputManager outputManager) {
         this.outputManager = outputManager;
         this.asker = new Asker(inputManager, outputManager);
+    }
+
+    public String[] makeLoginAndPassword() throws IOException {
+        String login = asker.ask(arg -> arg.length() > 0, "Enter login", ERROR_MESSAGE, "Login must not be empty", x -> x, false);
+        String password = asker.ask(arg -> arg.length() > 0, "Enter password", ERROR_MESSAGE, "Password must not be empty", x -> x, false);
+
+        return new String[] {login, password};
     }
 
     public StudyGroup makeStudyGroup() throws IOException {

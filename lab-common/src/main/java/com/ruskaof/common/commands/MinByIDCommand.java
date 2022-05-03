@@ -7,9 +7,11 @@ import com.ruskaof.common.util.HistoryManager;
 
 
 public class MinByIDCommand extends Command {
+    private final String arg;
 
     public MinByIDCommand(String arg) {
-        super(arg, "min_by_id");
+        super("min_by_id");
+        this.arg = arg;
     }
 
     @Override

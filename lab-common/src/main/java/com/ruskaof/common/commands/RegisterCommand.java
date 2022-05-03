@@ -9,27 +9,23 @@ import com.ruskaof.common.util.HistoryManager;
  * This command doesn't even need a user to use correct login+password because it doesn't check on server side
  */
 public class RegisterCommand extends Command {
+    private final String[] loginAndPassword;
 
-    public RegisterCommand(String name) {
-        super(name, "register");
+    public RegisterCommand(String[] loginAndPassword) {
+        super("register");
+        this.loginAndPassword = loginAndPassword;
     }
 
     @Override
     public CommandResultDto execute(CollectionManager collectionManager, HistoryManager historyManager) {
-        final String[] splitInp = ((String) arg).split("\\.");
-        if (splitInp.length == 2) {
-            final String login = ((String) arg).split("\\.")[0];
-            final String password = ((String) arg).split("\\.")[1];
 
-            if (collectionManager.checkIfUsernameUnique(login)) {
-                collectionManager.addUser(new User(-1, password, login));
-            } else {
-                return new CommandResultDto("The username is not unique");
-            }
-
+        if (collectionManager.checkIfUsernameUnique(loginAndPassword[0])) {
+            collectionManager.addUser(new User(-1, loginAndPassword[1], loginAndPassword[0]));
         } else {
-            return new CommandResultDto("Invalid arguments");
+            return new CommandResultDto("The username is not unique");
         }
+
+
         return new CommandResultDto("New user added!");
     }
 }

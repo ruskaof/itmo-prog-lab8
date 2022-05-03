@@ -6,17 +6,15 @@ import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.data.User;
 import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.server.data.remote.repository.posturesql.Database;
-import com.ruskaof.server.util.Encryptor;
+import com.ruskaof.common.util.Encryptor;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 
 public class DataManager implements CollectionManager {
-    private final LocalDate creationDate = LocalDate.now();
     private final Database database;
     private TreeSet<StudyGroup> mainData = new TreeSet<>();
     private TreeSet<User> users = new TreeSet<>();
@@ -39,22 +37,16 @@ public class DataManager implements CollectionManager {
                 + mainData + "\n\n" + users);
     }
 
-
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
     @Override
     public void addUser(User user) {
         final User encryptedUser = new User(user.getId(), Encryptor.encryptThisString(user.getPassword()), user.getName());
 
         try {
-            database.getUsersTable().add(user);
+            database.getUsersTable().add(encryptedUser);
         } catch (SQLException e) {
-            System.out.println("?FSFSDFS)");
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        users.add(user);
+        updateCollections();
 
         logger.info("Successfully registered a new user: " + encryptedUser);
     }
@@ -64,9 +56,9 @@ public class DataManager implements CollectionManager {
         try {
             database.getStudyGroupTable().add(studyGroup);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        mainData.add(studyGroup);
+       updateCollections();
 
         logger.info("Successfully added a study group: " + studyGroup);
     }
@@ -108,20 +100,17 @@ public class DataManager implements CollectionManager {
         if (mainData.isEmpty()) {
             return new InfoCommand.InfoCommandResult(
                     0,
-                    creationDate,
                     0
             );
         }
         if (mainData.first().getStudentsCount() == null) {
             return new InfoCommand.InfoCommandResult(
                     mainData.size(),
-                    creationDate,
                     0
             );
         }
         return new InfoCommand.InfoCommandResult(
                 mainData.size(),
-                creationDate,
                 mainData.first().getStudentsCount()
         );
     }
@@ -163,6 +152,17 @@ public class DataManager implements CollectionManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        updateCollections();
+    }
+
+    @Override
+    public void removeGreater(StudyGroup studyGroup) {
+        try {
+            database.getStudyGroupTable().removeGreater(studyGroup);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        updateCollections();
     }
 
     private void updateCollections() {

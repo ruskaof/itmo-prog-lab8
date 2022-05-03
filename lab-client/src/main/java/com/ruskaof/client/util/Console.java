@@ -20,6 +20,7 @@ import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
+import com.ruskaof.common.util.Encryptor;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -58,6 +59,9 @@ public class Console {
         String input;
         do {
             input = readNextCommand();
+            if ("exit".equals(input)) {
+                break;
+            }
             final String[] parsedInp = parseToNameAndArg(input);
             final String commandName = parsedInp[0];
             Serializable commandArg = parsedInp[1];
@@ -70,13 +74,15 @@ public class Console {
                     commandArg2 = (String) commandArg;
                     commandArg = studyGroupMaker.makeStudyGroup();
                 }
+                if ("register".equals(commandName)) {
+                    commandArg = studyGroupMaker.makeLoginAndPassword();
+                }
                 if ("execute_script".equals(commandName)) {
                     new ExecuteScriptCommand((String) commandArg).execute(inputManager);
                 } else {
                     try {
                         outputManager.println(
-                                clientApp.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), username, password))
-                                        .getOutput().toString()
+                                clientApp.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), username, password)).getOutput().toString()
                         );
                     } catch (DataCantBeSentException e) {
                         outputManager.println("Could not send a command");
@@ -85,7 +91,7 @@ public class Console {
             } else {
                 outputManager.println("The command was not found. Please use \"help\" to know about commands.");
             }
-        } while (!"exit".equals(input));
+        } while (true);
     }
 
     private String[] parseToNameAndArg(String input) {
@@ -136,7 +142,7 @@ public class Console {
                 break;
             case "update": command = new UpdateCommand((StudyGroup) arg, arg2);
                 break;
-            case "register": command = new RegisterCommand((String) arg);
+            case "register": command = new RegisterCommand((String[]) arg);
                 break;
             default: command = new HelpCommand();
                 break;

@@ -6,7 +6,7 @@ import com.ruskaof.common.util.HistoryManager;
 
 public class ClearCommand extends Command {
     public ClearCommand() {
-        super("", "clear");
+        super("clear");
     }
 
     @Override

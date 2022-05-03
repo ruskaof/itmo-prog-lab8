@@ -7,9 +7,11 @@ import com.ruskaof.common.util.HistoryManager;
 
 
 public class AddIfMinCommand extends Command {
+    private final StudyGroup arg;
 
     public AddIfMinCommand(StudyGroup arg) {
-        super(arg, "add_if_min");
+        super("add_if_min");
+        this.arg = arg;
     }
 
     @Override
@@ -19,7 +21,7 @@ public class AddIfMinCommand extends Command {
     ) {
         historyManager.addNote(this.getName());
 
-        StudyGroup studyGroup = (StudyGroup) arg;
+        StudyGroup studyGroup = arg;
 
         // stream api would be worse in this case (I would lose TreeSet optimisation)
         if (collectionManager.checkIfMin(studyGroup)) {

@@ -5,15 +5,11 @@ import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.data.User;
 
-import java.time.LocalDate;
-
 /**
  * This interface does everything but giving the collection itself, so no SOLID principles should be
  * violated :)
  */
 public interface CollectionManager {
-
-    LocalDate getCreationDate();
 
     void addUser(User user);
 
@@ -44,4 +40,6 @@ public interface CollectionManager {
     String showSortedByName();
 
     void updateStudyGroupById(int id, StudyGroup studyGroup);
+
+    void removeGreater(StudyGroup studyGroup);
 }

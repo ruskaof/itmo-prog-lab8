@@ -6,9 +6,11 @@ import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class RemoveGreaterCommand extends Command {
+    private final StudyGroup arg;
 
     public RemoveGreaterCommand(StudyGroup arg) {
-        super(arg, "remove_greater");
+        super("remove_greater");
+        this.arg = arg;
     }
 
     @Override
@@ -16,11 +18,11 @@ public class RemoveGreaterCommand extends Command {
             CollectionManager collectionManager,
             HistoryManager historyManager
     ) {
-//        historyManager.addNote(this.getName());
-//        StudyGroup studyGroup = (StudyGroup) arg;
-//        collectionManager.getMainData().removeIf(x -> x.compareTo(studyGroup) > 0);
-//        return new CommandResultDto("Greater elements were removed successfully");
+        historyManager.addNote(this.getName());
+        StudyGroup studyGroup = (StudyGroup) arg;
 
-        return new CommandResultDto(")");
+        collectionManager.removeGreater(studyGroup);
+
+        return new CommandResultDto("Successfully removed greater elements");
     }
 }

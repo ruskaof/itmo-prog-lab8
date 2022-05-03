@@ -8,13 +8,19 @@ import com.ruskaof.common.data.Person;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
 public class StudyGroupTable extends Table<StudyGroup> {
-    private Connection connection;
+    private final Connection connection;
 
     public StudyGroupTable(Connection connection) {
         this.connection = connection;
@@ -115,9 +121,9 @@ public class StudyGroupTable extends Table<StudyGroup> {
         }
         preparedStatement.setFloat(++currentParameterOffset, studyGroup.getGroupAdmin().getLocation().getX());
         preparedStatement.setLong(++currentParameterOffset, studyGroup.getGroupAdmin().getLocation().getY());
-        if (studyGroup.getGroupAdmin().getLocation().getName()  != null ) {
+        if (studyGroup.getGroupAdmin().getLocation().getName() != null) {
             preparedStatement.setString(++currentParameterOffset, studyGroup.getGroupAdmin().getLocation().getName());
-        } else  {
+        } else {
             preparedStatement.setNull(++currentParameterOffset, Types.VARCHAR);
         }
     }
@@ -205,6 +211,14 @@ public class StudyGroupTable extends Table<StudyGroup> {
             makePreparedStatement(preparedStatement, studyGroup);
             preparedStatement.execute();
 
+        }
+    }
+
+    public void removeGreater(StudyGroup studyGroup) throws SQLException {
+        try (
+                Statement statement = connection.createStatement()
+        ) {
+            statement.execute("DELETE FROM study_groups WHERE students_count>" + studyGroup.getStudentsCount());
         }
     }
 }

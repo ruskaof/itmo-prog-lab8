@@ -6,9 +6,11 @@ import com.ruskaof.common.util.CollectionManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class AddCommand extends Command {
+    private final StudyGroup arg;
 
     public AddCommand(StudyGroup arg) {
-        super(arg, "add");
+        super("add");
+        this.arg = arg;
     }
 
     @Override
@@ -17,7 +19,7 @@ public class AddCommand extends Command {
             HistoryManager historyManager
     ) {
         historyManager.addNote(this.getName());
-        StudyGroup studyGroup = (StudyGroup) arg;
+        StudyGroup studyGroup = arg;
         studyGroup.setId(-1);
         collectionManager.addStudyGroup(studyGroup);
         return new CommandResultDto("The element was added successfully");
