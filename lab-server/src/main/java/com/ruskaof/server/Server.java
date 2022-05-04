@@ -1,13 +1,11 @@
 package com.ruskaof.server;
 
 import com.ruskaof.common.util.DataManager;
-import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.State;
 import com.ruskaof.server.data.remote.posturesql.DataManagerImpl;
 import com.ruskaof.server.data.remote.posturesql.Database;
 import com.ruskaof.server.executing.Console;
 import com.ruskaof.server.executing.MainApp;
-import com.ruskaof.server.util.HistoryManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +42,6 @@ public final class Server {
     public static void main(String[] args) {
         try {
             initMainInfoForConnection();
-
             Connection connection;
             try {
                 connection = DriverManager.getConnection(
@@ -56,14 +53,12 @@ public final class Server {
                 LOGGER.error("Cold not connect to the server. Please check if your login and password were correct.");
                 return;
             }
-
             LOGGER.info("Successfully made a connection with the database");
 
             ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
             ForkJoinPool forkJoinPool = new ForkJoinPool();
 
             State<Boolean> serverIsWorkingState = new State<>(true);
-            HistoryManager historyManager = new HistoryManagerImpl();
             Database database = new Database(connection, LOGGER);
             DataManager dataManager = new DataManagerImpl(database, LOGGER);
             Console console = new Console(serverIsWorkingState, LOGGER);
@@ -73,10 +68,11 @@ public final class Server {
                     serverPort,
                     serverIp,
                     cachedThreadPool,
-                    forkJoinPool
+                    forkJoinPool,
+                    dataManager
             );
             cachedThreadPool.submit(console::start);
-            serverApp.start(historyManager, dataManager, serverIsWorkingState);
+            serverApp.start(serverIsWorkingState);
             cachedThreadPool.shutdown();
             forkJoinPool.shutdown();
         } catch (IOException e) {

@@ -44,7 +44,7 @@ public class ClientDataReceiver {
         return is.readObject();
     }
 
-    public void startReceivingData(DatagramChannel datagramChannel, State<Boolean> isWorking, ExecutorService threadPool) throws IOException, InterruptedException, ClassNotFoundException {
+    public void startReceivingData(DatagramChannel datagramChannel, State<Boolean> isWorking, ExecutorService threadPool) throws IOException, InterruptedException {
         while (isWorking.getValue()) {
             ByteBuffer amountOfBytesInMainDataBuffer = ByteBuffer.wrap(new byte[HEADER_LENGTH]);
             receiveActiveWaiting(datagramChannel, amountOfBytesInMainDataBuffer, isWorking);
@@ -56,12 +56,17 @@ public class ClientDataReceiver {
                 } catch (TimeoutException e) {
                     logger.error("Could not receive correct information from client");
                 }
-                CommandFromClientDto receivedCommand = ((CommandFromClientDto) deserialize(dataByteBuffer.array()));
+                CommandFromClientDto receivedCommand = null;
+                try {
+                    receivedCommand = ((CommandFromClientDto) deserialize(dataByteBuffer.array()));
+                    Pair<CommandFromClientDto, SocketAddress> pairToBeExecuted = new Pair<>(receivedCommand, clientSocketAddress);
+                    queueToBeExecuted.add(pairToBeExecuted);
 
-                Pair<CommandFromClientDto, SocketAddress> pairToBeExecuted = new Pair<>(receivedCommand, clientSocketAddress);
-                queueToBeExecuted.add(pairToBeExecuted);
+                    logger.info("Received a full request from a client, added it to an executing queue:\n" + pairToBeExecuted);
+                } catch (ClassNotFoundException e) {
+                    logger.error("Found incorrect data from client. Ignoring it");
+                }
 
-                logger.info("Received a full request from a client, added it to an executing queue:\n" + pairToBeExecuted);
             }
         }
     }

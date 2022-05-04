@@ -38,8 +38,6 @@ public class ClientDataSender extends RecursiveTask<Void> {
         logger.info("Started to send message to the client");
         try {
             send(
-                    commandResultDto,
-                    datagramChannel,
                     socketAddress
             );
         } catch (TimeoutException | IOException e) {
@@ -50,8 +48,6 @@ public class ClientDataSender extends RecursiveTask<Void> {
     }
 
     private void send(
-            CommandResultDto commandResultDto,
-            DatagramChannel datagramChannel,
             SocketAddress clientSocketAddress
     ) throws TimeoutException, IOException {
         Pair<byte[], byte[]> pair = serializeWithHeader(commandResultDto);
