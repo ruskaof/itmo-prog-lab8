@@ -11,6 +11,7 @@ import com.ruskaof.server.connection.ClientDataSender;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.DatagramChannel;
@@ -85,6 +86,8 @@ public class MainApp {
                 }
             }
 
+        } catch (BindException e) {
+            logger.error("Could not start the server, bind exception. Please, use another port.");
         }
     }
 }
