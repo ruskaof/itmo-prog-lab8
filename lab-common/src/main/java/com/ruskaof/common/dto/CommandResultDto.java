@@ -7,22 +7,31 @@ public class CommandResultDto implements Serializable {
     private final Serializable output;
     private final boolean wasExecutedCorrectly;
 
+    public CommandResultDto(Serializable output, boolean wasExecutedCorrectly) {
+        this.output = output;
+        this.wasExecutedCorrectly = wasExecutedCorrectly;
+    }
+
     public boolean isWasExecutedCorrectly() {
         return wasExecutedCorrectly;
     }
 
     @Override
     public String toString() {
-        return "CommandResultDto{" +
-                "output=" + output +
-                ", wasExecutedCorrectly=" + wasExecutedCorrectly +
-                '}';
+        return "CommandResultDto{"
+                + "output=" + output
+                + ", wasExecutedCorrectly=" + wasExecutedCorrectly
+                + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CommandResultDto that = (CommandResultDto) o;
         return wasExecutedCorrectly == that.wasExecutedCorrectly && Objects.equals(output, that.output);
     }
@@ -34,10 +43,5 @@ public class CommandResultDto implements Serializable {
 
     public Serializable getOutput() {
         return output;
-    }
-
-    public CommandResultDto(Serializable output, boolean wasExecutedCorrectly) {
-        this.output = output;
-        this.wasExecutedCorrectly = wasExecutedCorrectly;
     }
 }

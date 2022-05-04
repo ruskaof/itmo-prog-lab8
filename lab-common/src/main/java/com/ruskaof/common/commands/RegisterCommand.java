@@ -36,7 +36,7 @@ public class RegisterCommand extends Command {
         return new RegisterCommand.RegisterCommandResult(true);
     }
 
-    public static class RegisterCommandResult extends CommandResultDto{
+    public static class RegisterCommandResult extends CommandResultDto {
         private final boolean wasRegistered;
 
         public RegisterCommandResult(boolean wasRegistered) {
@@ -67,9 +67,9 @@ public class RegisterCommand extends Command {
 
         @Override
         public String toString() {
-            return "RegisterCommandResult{" +
-                    "wasRegistered=" + wasRegistered +
-                    '}';
+            return "RegisterCommandResult{"
+                    + "wasRegistered=" + wasRegistered
+                    + '}';
         }
     }
 }

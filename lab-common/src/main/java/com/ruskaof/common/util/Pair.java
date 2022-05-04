@@ -19,9 +19,9 @@ public class Pair<T, U> {
 
     @Override
     public String toString() {
-        return "Pair{" +
-                "first=" + first +
-                ", second=" + second +
-                '}';
+        return "Pair{"
+                + "first=" + first
+                + ", second=" + second
+                + '}';
     }
 }
