@@ -29,6 +29,6 @@ public class RemoveGreaterCommand extends Command {
 
         dataManager.removeGreaterIfOwned(arg, username);
 
-        return new CommandResultDto("Successfully removed greater elements");
+        return new CommandResultDto("Successfully removed greater elements", true);
     }
 }

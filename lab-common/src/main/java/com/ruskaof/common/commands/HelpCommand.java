@@ -33,6 +33,6 @@ public class HelpCommand extends Command {
                         + "history : shows last 6 command usages\n"
                         + "min_by_id : gives information about a random element from collection with minimum value\n"
                         + "filter_less_than_semester_enum semesterEnum : shows every element with semesterEnum value less than entered\n"
-                        + "print_ascending : prints every element in ascending order");
+                        + "print_ascending : prints every element in ascending order", true);
     }
 }

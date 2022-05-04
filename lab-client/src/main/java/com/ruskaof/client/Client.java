@@ -4,10 +4,12 @@ import com.ruskaof.client.connection.ConnectionManager;
 import com.ruskaof.client.logic.Console;
 import com.ruskaof.client.util.InputManager;
 import com.ruskaof.client.util.OutputManager;
+import com.ruskaof.common.util.DataCantBeSentException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.function.Function;
@@ -23,8 +25,6 @@ public final class Client {
     private static int clientPort;
     private static String clientIp;
     private static String serverIp;
-    private static String username;
-    private static String password;
 
 
     private Client() {
@@ -41,11 +41,15 @@ public final class Client {
         }
         try {
             ConnectionManager connectionManager = new ConnectionManager(clientPort, serverPort, clientIp, serverIp, OUTPUT_MANAGER);
-            new Console(OUTPUT_MANAGER, new InputManager(System.in), connectionManager, LIST_OF_COMMANDS, username, password).start();
+            new Console(OUTPUT_MANAGER, new InputManager(System.in), connectionManager, LIST_OF_COMMANDS).start();
         } catch (ClassNotFoundException e) {
             OUTPUT_MANAGER.println("Found incorrect data from server.");
         } catch (IOException e) {
             OUTPUT_MANAGER.println("Something went wrong with IO, the message is: " + e.getMessage());
+        } catch (DataCantBeSentException e) {
+            OUTPUT_MANAGER.println("Some error happened and we could not sent your registration request to the server. Try again later");
+        } catch (UnresolvedAddressException e) {
+            OUTPUT_MANAGER.println("You entered incorrect Inet address");
         }
     }
 
@@ -66,15 +70,11 @@ public final class Client {
         Client.LIST_OF_COMMANDS.add("execute_script");
         Client.LIST_OF_COMMANDS.add("filter_less_than_semester_enum");
         Client.LIST_OF_COMMANDS.add("print_ascending");
-        Client.LIST_OF_COMMANDS.add("register");
+//        Client.LIST_OF_COMMANDS.add("register");
     }
 
 
     private static void initMainInfoForConnection() throws IOException {
-
-
-        username = ask("Enter username");
-        password = ask("Enter password");
         serverPort = ask(
                 value -> (value >= MIN_PORT && value <= MAX_PORT),
                 "Enter server port",
@@ -115,23 +115,6 @@ public final class Client {
             }
             if (predicate.test(value)) {
                 return value;
-            } else {
-                OUTPUT_MANAGER.println(wrongValueMessage);
-            }
-        } while (true);
-    }
-
-    private static String ask(
-            Predicate<String> predicate,
-            String askMessage,
-            String wrongValueMessage
-    ) throws IOException {
-        OUTPUT_MANAGER.println(askMessage);
-        String input;
-        do {
-            input = BUFFERED_READER.readLine();
-            if (predicate.test(input)) {
-                return input;
             } else {
                 OUTPUT_MANAGER.println(wrongValueMessage);
             }

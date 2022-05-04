@@ -25,9 +25,9 @@ public class MinByIDCommand extends Command {
         final StudyGroup minStudyGroup = dataManager.getMinByIdGroup();
 
         if (minStudyGroup == null) {
-            return new CommandResultDto("Collection is empty :(");
+            return new CommandResultDto("Collection is empty :(", true);
         } else {
-            return new CommandResultDto(minStudyGroup);
+            return new CommandResultDto(minStudyGroup, true);
         }
 
     }

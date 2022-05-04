@@ -12,15 +12,19 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 
 public class ClientDataReceiver {
     private static final int HEADER_LENGTH = 4;
     private static final int TIMEOUT_MILLS = 5;
+    private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
     private final Logger logger;
 
-    public ClientDataReceiver(Logger logger) {
+    public ClientDataReceiver(Logger logger, Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted) {
         this.logger = logger;
+        this.queueToBeExecuted = queueToBeExecuted;
     }
 
     public static int bytesToInt(byte[] bytes) {
@@ -40,13 +44,26 @@ public class ClientDataReceiver {
         return is.readObject();
     }
 
-    public Pair<CommandFromClientDto, SocketAddress> receiveData(DatagramChannel datagramChannel, State<Boolean> isWorking) throws IOException, InterruptedException, TimeoutException, ClassNotFoundException {
-        ByteBuffer amountOfBytesInMainDataBuffer = ByteBuffer.wrap(new byte[HEADER_LENGTH]);
-        receiveActiveWaiting(datagramChannel, amountOfBytesInMainDataBuffer, isWorking);
-        ByteBuffer dataByteBuffer = ByteBuffer.wrap(new byte[bytesToInt(amountOfBytesInMainDataBuffer.array())]);
-        SocketAddress clientSocketAddress = receiveWithTimeout(datagramChannel, dataByteBuffer, TIMEOUT_MILLS);
-        CommandFromClientDto receivedCommand = ((CommandFromClientDto) deserialize(dataByteBuffer.array()));
-        return new Pair<>(receivedCommand, clientSocketAddress);
+    public void startReceivingData(DatagramChannel datagramChannel, State<Boolean> isWorking, ExecutorService threadPool) throws IOException, InterruptedException, ClassNotFoundException {
+        while (isWorking.getValue()) {
+            ByteBuffer amountOfBytesInMainDataBuffer = ByteBuffer.wrap(new byte[HEADER_LENGTH]);
+            receiveActiveWaiting(datagramChannel, amountOfBytesInMainDataBuffer, isWorking);
+            if (isWorking.getValue()) {
+                ByteBuffer dataByteBuffer = ByteBuffer.wrap(new byte[bytesToInt(amountOfBytesInMainDataBuffer.array())]);
+                SocketAddress clientSocketAddress = null;
+                try {
+                    clientSocketAddress = receiveWithTimeout(datagramChannel, dataByteBuffer, TIMEOUT_MILLS);
+                } catch (TimeoutException e) {
+                    logger.error("Could not receive correct information from client");
+                }
+                CommandFromClientDto receivedCommand = ((CommandFromClientDto) deserialize(dataByteBuffer.array()));
+
+                Pair<CommandFromClientDto, SocketAddress> pairToBeExecuted = new Pair<>(receivedCommand, clientSocketAddress);
+                queueToBeExecuted.add(pairToBeExecuted);
+
+                logger.info("Received a full request from a client, added it to an executing queue:\n" + pairToBeExecuted);
+            }
+        }
     }
 
     private SocketAddress receiveWithTimeout(
@@ -59,6 +76,7 @@ public class ClientDataReceiver {
         while (amountToWait > 0) {
             receivedSocketAddress = datagramChannel.receive(byteBuffer);
             if (Objects.nonNull(receivedSocketAddress)) {
+                logger.info("Received a new client request 2/2");
                 return receivedSocketAddress;
             } else {
                 Thread.sleep(1);
@@ -76,6 +94,7 @@ public class ClientDataReceiver {
         while (isWorking.getValue()) {
             SocketAddress receivedSocketAddress = datagramChannel.receive(byteBuffer);
             if (Objects.nonNull(receivedSocketAddress)) {
+                logger.info("Received a new client request 1/2");
                 return receivedSocketAddress;
             }
         }

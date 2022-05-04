@@ -26,12 +26,12 @@ public class UpdateCommand extends Command implements PrivateAccessedStudyGroupC
         try {
             intArg = Integer.parseInt(idArg);
         } catch (NumberFormatException e) {
-            return new CommandResultDto("Your argument was incorrect. The command was not executed.");
+            return new CommandResultDto("Your argument was incorrect. The command was not executed.", true);
         }
 
         dataManager.updateStudyGroupById(intArg, studyGroup);
 
-        return new CommandResultDto("Element was updated if it was in the table");
+        return new CommandResultDto("Element was updated if it was in the table", true);
     }
 
 

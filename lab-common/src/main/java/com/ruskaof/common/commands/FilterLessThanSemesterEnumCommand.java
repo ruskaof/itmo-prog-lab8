@@ -29,9 +29,9 @@ public class FilterLessThanSemesterEnumCommand extends Command {
                 inpEnum = Semester.valueOf(arg);
             }
         } catch (IllegalArgumentException e) {
-            return new CommandResultDto("Your argument was incorrect");
+            return new CommandResultDto("Your argument was incorrect", true);
         }
-        return new CommandResultDto(dataManager.filterLessThanSemesterEnumToString(inpEnum));
+        return new CommandResultDto(dataManager.filterLessThanSemesterEnumToString(inpEnum), true);
 
     }
 }

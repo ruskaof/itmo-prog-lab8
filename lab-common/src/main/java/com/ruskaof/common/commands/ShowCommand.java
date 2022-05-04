@@ -20,6 +20,6 @@ public class ShowCommand extends Command {
     ) {
         historyManager.addNote(this.getName());
 
-        return new CommandResultDto(dataManager.showSortedByName());
+        return new CommandResultDto(dataManager.showSortedByName(), true);
     }
 }

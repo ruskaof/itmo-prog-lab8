@@ -21,7 +21,7 @@ public class Database {
         try {
             initTables();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

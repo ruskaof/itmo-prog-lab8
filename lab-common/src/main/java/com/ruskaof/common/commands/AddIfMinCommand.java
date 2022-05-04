@@ -27,9 +27,9 @@ public class AddIfMinCommand extends Command {
         // stream api would be worse in this case (I would lose TreeSet optimisation)
         if (dataManager.checkIfMin(studyGroup)) {
             dataManager.addStudyGroup(studyGroup);
-            return new CommandResultDto("The element was added successfully");
+            return new CommandResultDto("The element was added successfully", true);
         } else {
-            return new CommandResultDto("The element was not min, so it was not added");
+            return new CommandResultDto("The element was not min, so it was not added", true);
         }
     }
 }

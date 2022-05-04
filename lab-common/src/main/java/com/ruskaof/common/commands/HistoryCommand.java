@@ -16,6 +16,6 @@ public class HistoryCommand extends Command {
             String username
     ) {
         historyManager.addNote(this.getName());
-        return new CommandResultDto(historyManager.niceToString());
+        return new CommandResultDto(historyManager.niceToString(), true);
     }
 }

@@ -17,6 +17,12 @@ public class CommandFromClientDto implements Serializable {
         this.password = password;
     }
 
+    public CommandFromClientDto(Command command) {
+        this.command = command;
+        this.login = "";
+        this.password = "";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

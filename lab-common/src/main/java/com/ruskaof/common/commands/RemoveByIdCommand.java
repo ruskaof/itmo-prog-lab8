@@ -25,12 +25,12 @@ public class RemoveByIdCommand extends Command implements PrivateAccessedStudyGr
         try {
             intArg = Integer.parseInt(arg);
         } catch (NumberFormatException e) {
-            return new CommandResultDto("Your argument was incorrect. The command was not executed.");
+            return new CommandResultDto("Your argument was incorrect. The command was not executed.", true);
         }
 
         dataManager.removeStudyGroupById(intArg);
 
-        return new CommandResultDto("The element was removed if it was in the data");
+        return new CommandResultDto("The element was removed if it was in the data", true);
     }
 
     @Override

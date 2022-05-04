@@ -19,6 +19,6 @@ public class PrintAscendingCommand extends Command {
     ) {
         historyManager.addNote(this.getName());
 
-        return new CommandResultDto(dataManager.ascendingDataToString());
+        return new CommandResultDto(dataManager.ascendingDataToString(), true);
     }
 }

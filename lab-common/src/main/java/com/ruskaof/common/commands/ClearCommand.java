@@ -23,6 +23,6 @@ public class ClearCommand extends Command {
     ) {
         historyManager.addNote(this.getName());
         dataManager.clearOwnedData(username);
-        return new CommandResultDto("The data you owned was cleared successfully.");
+        return new CommandResultDto("The data you owned was cleared successfully.", true);
     }
 }

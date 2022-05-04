@@ -14,15 +14,15 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Asks and receives user input data to make a StudyGroup object.
+ * Asks and receives user input data to make a StudyGroup/username&password object.
  */
-public class StudyGroupMaker {
+public class DataObjectsMaker {
     private static final String ERROR_MESSAGE = "Your enter was not correct type. Try again";
     private final OutputManager outputManager;
     private final Asker asker;
     private final String authorName;
 
-    public StudyGroupMaker(InputManager inputManager, OutputManager outputManager, String authorName) {
+    public DataObjectsMaker(InputManager inputManager, OutputManager outputManager, String authorName) {
         this.outputManager = outputManager;
         this.asker = new Asker(inputManager, outputManager);
         this.authorName = authorName;
@@ -36,10 +36,6 @@ public class StudyGroupMaker {
     }
 
     public StudyGroup makeStudyGroup() throws IOException {
-        return askForStudyGroup();
-    }
-
-    private StudyGroup askForStudyGroup() throws IOException {
         outputManager.println("Enter studyGroup data");
         String name = asker.ask(arg -> (arg).length() > 0, "Enter name (String)",
                 ERROR_MESSAGE, "The string must not be empty", x -> x, false);

@@ -17,11 +17,11 @@ public class ExecuteScriptCommand {
     public void execute(InputManager inputManager) {
         try {
             inputManager.connectToFile(new File(arg));
-            new CommandResultDto("Starting to execute script...");
+            new CommandResultDto("Starting to execute script...", true);
         } catch (IOException e) {
-            new CommandResultDto("There was a problem opening the file. Check if it is available and you have written it in the command arg correctly.");
+            new CommandResultDto("There was a problem opening the file. Check if it is available and you have written it in the command arg correctly.", false);
         } catch (UnsupportedOperationException e) {
-            new CommandResultDto(e.getMessage());
+            new CommandResultDto(e.getMessage(), false);
         }
     }
 }

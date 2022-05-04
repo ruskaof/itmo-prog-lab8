@@ -4,7 +4,7 @@ import com.ruskaof.client.connection.ConnectionManager;
 import com.ruskaof.client.commands.ExecuteScriptCommand;
 import com.ruskaof.client.util.InputManager;
 import com.ruskaof.client.util.OutputManager;
-import com.ruskaof.client.util.StudyGroupMaker;
+import com.ruskaof.client.util.DataObjectsMaker;
 import com.ruskaof.common.commands.AddCommand;
 import com.ruskaof.common.commands.AddIfMinCommand;
 import com.ruskaof.common.commands.ClearCommand;
@@ -22,10 +22,12 @@ import com.ruskaof.common.commands.ShowCommand;
 import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
+import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataCantBeSentException;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
@@ -34,30 +36,27 @@ public class Console {
     private final OutputManager outputManager;
     private final InputManager inputManager;
     private final ConnectionManager connectionManager;
-    private final StudyGroupMaker studyGroupMaker;
+    private final DataObjectsMaker dataObjectsMaker;
     private final Collection<String> listOfCommands;
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
 
 
     public Console(
             OutputManager outputManager,
             InputManager inputManager,
             ConnectionManager connectionManager,
-            Collection<String> listOfCommands,
-            String username,
-            String password
+            Collection<String> listOfCommands
     ) {
         this.outputManager = outputManager;
         this.inputManager = inputManager;
         this.connectionManager = connectionManager;
         this.listOfCommands = listOfCommands;
-        this.studyGroupMaker = new StudyGroupMaker(inputManager, outputManager, username);
-        this.username = username;
-        this.password = password;
+        this.dataObjectsMaker = new DataObjectsMaker(inputManager, outputManager, username);
     }
 
-    public void start() throws ClassNotFoundException, IOException {
+    public void start() throws ClassNotFoundException, IOException, DataCantBeSentException, UnresolvedAddressException {
+        initUsernameAndPassword();
         String input;
         do {
             input = readNextCommand();
@@ -70,14 +69,14 @@ public class Console {
             String commandArg2 = ""; // only for update command in this case
             if (listOfCommands.contains(commandName)) {
                 if ("add".equals(commandName) || "add_if_min".equals(commandName) || "remove_greater".equals(commandName)) {
-                    commandArg = studyGroupMaker.makeStudyGroup();
+                    commandArg = dataObjectsMaker.makeStudyGroup();
                 }
                 if ("update".equals(commandName)) {
                     commandArg2 = (String) commandArg;
-                    commandArg = studyGroupMaker.makeStudyGroup();
+                    commandArg = dataObjectsMaker.makeStudyGroup();
                 }
                 if ("register".equals(commandName)) {
-                    commandArg = studyGroupMaker.makeLoginAndPassword();
+                    commandArg = dataObjectsMaker.makeLoginAndPassword();
                 }
                 if ("execute_script".equals(commandName)) {
                     new ExecuteScriptCommand((String) commandArg).execute(inputManager);
@@ -94,6 +93,36 @@ public class Console {
                 outputManager.println("The command was not found. Please use \"help\" to know about commands.");
             }
         } while (true);
+    }
+
+    private void initUsernameAndPassword() throws IOException, DataCantBeSentException, UnresolvedAddressException {
+        outputManager.println("Would you like to register first? (type \"yes\" to register or something else to continue with your own password+login).");
+        final String answer = inputManager.nextLine();
+        if ("yes".equals(answer)) {
+            outputManager.println("Enter your new login");
+            final String loginToRegister = inputManager.nextLine();
+            outputManager.println("Enter new password");
+            final String passwordToRegister = inputManager.nextLine();
+
+
+            CommandResultDto registerCommandResult = connectionManager.sendCommand(new CommandFromClientDto(new RegisterCommand(new String[]{loginToRegister, passwordToRegister})));
+            if (registerCommandResult.isWasExecutedCorrectly()) {
+                if (!((RegisterCommand.RegisterCommandResult) registerCommandResult).isWasRegistered()) {
+                    outputManager.println("User was not registered because the username was not unique.");
+                    initUsernameAndPassword();
+                } else {
+                    password = passwordToRegister;
+                    username = loginToRegister;
+                }
+            } else {
+                throw new DataCantBeSentException();
+            }
+        } else {
+            outputManager.println("Enter login");
+            username = inputManager.nextLine();
+            outputManager.println("Enter password");
+            password = inputManager.nextLine();
+        }
     }
 
     private String[] parseToNameAndArg(String input) {
@@ -143,8 +172,6 @@ public class Console {
             case "show": command = new ShowCommand();
                 break;
             case "update": command = new UpdateCommand((StudyGroup) arg, arg2);
-                break;
-            case "register": command = new RegisterCommand((String[]) arg);
                 break;
             default: command = new HelpCommand();
                 break;

@@ -23,6 +23,6 @@ public class AddCommand extends Command {
         StudyGroup studyGroup = arg;
         studyGroup.setId(-1);
         dataManager.addStudyGroup(studyGroup);
-        return new CommandResultDto("The element was added successfully");
+        return new CommandResultDto("The element was added successfully", true);
     }
 }

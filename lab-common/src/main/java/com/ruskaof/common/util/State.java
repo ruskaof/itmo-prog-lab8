@@ -1,14 +1,14 @@
 package com.ruskaof.common.util;
 
 public class State<T> {
-    private T value;
+    private volatile T value;
 
     public State(T value) {
         this.value = value;
     }
 
-    protected void setValueIHATECHECKSTYLEBECAUSEICOULDUSEJUSTPROTECTEDVALUE(T newValue) {
-        this.value = newValue;
+    public void setValue(T value) {
+        this.value = value;
     }
 
     public T getValue() {

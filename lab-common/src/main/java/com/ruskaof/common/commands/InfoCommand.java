@@ -21,7 +21,7 @@ public class InfoCommand extends Command {
     ) {
         historyManager.addNote(this.getName());
 
-        return new CommandResultDto(dataManager.getInfoAboutCollections());
+        return new CommandResultDto(dataManager.getInfoAboutCollections(), true);
     }
 
     public static final class InfoCommandResult implements Serializable {

@@ -1,6 +1,5 @@
 package com.ruskaof.server.executing;
 
-import com.ruskaof.common.commands.RegisterCommand;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataManager;
@@ -8,41 +7,45 @@ import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.Pair;
 import com.ruskaof.common.util.State;
 import com.ruskaof.server.connection.ClientDataReceiver;
-import com.ruskaof.server.data.remote.posturesql.Database;
+import com.ruskaof.server.connection.ClientDataSender;
 import org.slf4j.Logger;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.util.concurrent.TimeoutException;
+import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MainApp {
-    private static final int TIMEOUT_TO_SEND = 10;
-    private static final int HEADER_LENGTH = 4;
+    private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
+    private final Queue<Pair<CommandResultDto, SocketAddress>> queueToBeSent;
     private final Logger logger;
     private final int port;
     private final String ip;
     private final CommandHandler commandHandler;
     private final ClientDataReceiver clientDataReceiver;
-    private final Database database;
+    private final ExecutorService threadPool;
+    private final ForkJoinPool forkJoinPool;
 
     public MainApp(
             Logger logger,
             int port,
             String ip,
-            CommandHandler commandHandler,
-            ClientDataReceiver clientDataReceiver,
-            Database database) {
+            ExecutorService threadPool,
+            ForkJoinPool forkJoinPool
+    ) {
         this.logger = logger;
         this.ip = ip;
         this.port = port;
-        this.commandHandler = commandHandler;
-        this.clientDataReceiver = clientDataReceiver;
-        this.database = database;
+        queueToBeExecuted = new LinkedBlockingQueue<>();
+        queueToBeSent = new LinkedBlockingQueue<>();
+        this.commandHandler = new CommandHandler(queueToBeExecuted, queueToBeSent, logger);
+        this.clientDataReceiver = new ClientDataReceiver(logger, queueToBeExecuted);
+        this.threadPool = threadPool;
+        this.forkJoinPool = forkJoinPool;
     }
 
     public void start(
@@ -54,87 +57,34 @@ public class MainApp {
             datagramChannel.bind(new InetSocketAddress(ip, port));
             datagramChannel.configureBlocking(false);
 
+            threadPool.submit(() -> {
+                try {
+                    clientDataReceiver.startReceivingData(datagramChannel, isWorking, threadPool);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    logger.error("Found incorrect data from client. Ignoring it");
+                }
+            });
+
+
+            commandHandler.startToHandleCommands(
+                    historyManager,
+                    dataManager,
+                    isWorking,
+                    threadPool
+            );
+
+
             while (isWorking.getValue()) {
-
-                Pair<CommandFromClientDto, SocketAddress> receivedCommandAndAddress =
-                        clientDataReceiver.receiveData(datagramChannel, isWorking);
-
-                final CommandResultDto commandResultDto;
-
-                if (receivedCommandAndAddress.getFirst().getCommand() instanceof RegisterCommand) {
-                    commandResultDto = commandHandler.handleRegister(
-                            (RegisterCommand) receivedCommandAndAddress.getFirst().getCommand(),
-                            historyManager,
-                            dataManager
-                    );
-                } else {
-                    commandResultDto = commandHandler.handleCommand(
-                            receivedCommandAndAddress.getFirst(),
-                            historyManager,
-                            dataManager
-                    );
-                }
-
-                send(commandResultDto, datagramChannel, receivedCommandAndAddress.getSecond(), TIMEOUT_TO_SEND);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void send(
-            CommandResultDto commandResultDto,
-            DatagramChannel datagramChannel,
-            SocketAddress clientSocketAddress,
-            int timeoutToSend
-    ) throws TimeoutException, IOException {
-        Pair<byte[], byte[]> pair = serializeWithHeader(commandResultDto);
-
-        byte[] sendDataBytes = pair.getFirst();
-        byte[] sendDataAmountBytes = pair.getSecond();
-
-
-        try {
-            ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);
-            int limit = timeoutToSend;
-            while (datagramChannel.send(sendDataAmountWrapper, clientSocketAddress) <= 0) {
-                limit -= 1;
-                logger.info("could not sent a package, re-trying");
-                if (limit == 0) {
-                    throw new TimeoutException();
-                }
-            } // сначала отправляется файл-количество байтов в основном массиве байтов
-            ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
-            while (datagramChannel.send(sendBuffer, clientSocketAddress) <= 0) {
-                limit -= 1;
-                logger.info("could not send a package, re-trying");
-                if (limit == 0) {
-                    throw new TimeoutException();
+                if (!queueToBeSent.isEmpty()) {
+                    Pair<CommandResultDto, SocketAddress> commandResultDtoAndSocketAddress = queueToBeSent.poll();
+                    forkJoinPool.invoke(new ClientDataSender(commandResultDtoAndSocketAddress.getFirst(), datagramChannel, commandResultDtoAndSocketAddress.getSecond(), logger));
                 }
             }
-            logger.info("sent the command result to the client");
-        } catch (IOException e) {
-            logger.error("could not send the data to client because the message is too big");
+
         }
-
-
-    }
-
-    /**
-     * @return first - data itself, second - amount of bytes in data
-     */
-    public Pair<byte[], byte[]> serializeWithHeader(Object obj) throws IOException {
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-
-        objectOutputStream.writeObject(obj);
-        byte[] sizeBytes = ByteBuffer.allocate(HEADER_LENGTH).putInt(byteArrayOutputStream.size()).array();
-
-        return new Pair<>(byteArrayOutputStream.toByteArray(), sizeBytes); // в первых 4 байтах будет храниться число-количество данных отправления
     }
 }

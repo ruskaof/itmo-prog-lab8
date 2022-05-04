@@ -39,20 +39,20 @@ public final class ConnectionManager {
         this.outputManager = outputManager;
     }
 
-    public CommandResultDto sendCommand(CommandFromClientDto commandFromClientDto) throws DataCantBeSentException {
+    public CommandResultDto sendCommand(CommandFromClientDto commandFromClientDto) throws DataCantBeSentException, UnresolvedAddressException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.configureBlocking(false); // нужно, чтобы в случае, если от сервера не придет никакого ответа не блокироваться навсегда
             send(datagramChannel, commandFromClientDto);
             return receiveCommandResult(datagramChannel);
         } catch (BindException e) {
-            return new CommandResultDto("Could not send data on the Inet address, bind exception. Please re-start client with another arguments");
+            return new CommandResultDto("Could not send data on the Inet address, bind exception. Please re-start client with another arguments", false);
         } catch (IOException e) {
-            return new CommandResultDto("Something went wrong executing the command, the message is: " + e.getMessage());
+            return new CommandResultDto("Something went wrong executing the command, the message is: " + e.getMessage(), false);
         }
 
     }
 
-    private void send(DatagramChannel datagramChannel, CommandFromClientDto commandFromClientDto) throws IOException, DataCantBeSentException {
+    private void send(DatagramChannel datagramChannel, CommandFromClientDto commandFromClientDto) throws IOException, DataCantBeSentException, UnresolvedAddressException {
 
         datagramChannel.bind(new InetSocketAddress(clientIp, clientPort));
 
@@ -83,8 +83,6 @@ public final class ConnectionManager {
             }
         } catch (IOException e) {
             outputManager.println("Could not resolve the Inet address you wrote. Please check it and maybe restart the client");
-        } catch (UnresolvedAddressException e) {
-            outputManager.println("Could not send data because it was too big");
         }
 
 
@@ -105,9 +103,9 @@ public final class ConnectionManager {
             return (CommandResultDto) deserialize(dataBytes);
 
         } catch (TimeoutException e) {
-            return new CommandResultDto("Could not receive any answer from server");
+            return new CommandResultDto("Could not receive any answer from server", false);
         } catch (ClassNotFoundException e) {
-            return new CommandResultDto("Received incorrect answer from server");
+            return new CommandResultDto("Received incorrect answer from server", false);
         }
     }
 
