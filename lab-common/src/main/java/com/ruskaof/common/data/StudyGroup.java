@@ -17,6 +17,7 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
     private int id; // >0, unique, automatic generation
     private final String authorName;
 
+    //CHECKSTYLE:OFF
     public StudyGroup(
             String name,
             Coordinates coordinates,
@@ -36,7 +37,7 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
         this.creationDate = creationDate;
         this.authorName = authorName;
     }
-
+    //CHECKSTYLE:ON
     public Coordinates getCoordinates() {
         return coordinates;
     }
