@@ -3,6 +3,7 @@ package com.ruskaof.server;
 import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 import com.ruskaof.common.util.State;
+import com.ruskaof.server.data.remote.posturesql.DataManagerImpl;
 import com.ruskaof.server.data.remote.posturesql.Database;
 import com.ruskaof.server.executing.Console;
 import com.ruskaof.server.executing.MainApp;
@@ -64,7 +65,7 @@ public final class Server {
             State<Boolean> serverIsWorkingState = new State<>(true);
             HistoryManager historyManager = new HistoryManagerImpl();
             Database database = new Database(connection, LOGGER);
-            DataManager dataManager = new com.ruskaof.server.data.remote.posturesql.DataManager(database, LOGGER);
+            DataManager dataManager = new DataManagerImpl(database, LOGGER);
             Console console = new Console(serverIsWorkingState, LOGGER);
             MainApp serverApp;
             serverApp = new MainApp(

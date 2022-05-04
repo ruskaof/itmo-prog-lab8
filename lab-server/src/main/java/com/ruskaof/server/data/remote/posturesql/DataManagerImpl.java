@@ -15,14 +15,14 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class DataManager implements com.ruskaof.common.util.DataManager {
+public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
     private final Database database;
     private TreeSet<StudyGroup> mainData = new TreeSet<>();
     private TreeSet<User> users = new TreeSet<>();
     private final Logger logger;
     private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
-    public DataManager(Database database, Logger logger) {
+    public DataManagerImpl(Database database, Logger logger) {
         this.database = database;
         this.logger = logger;
 
