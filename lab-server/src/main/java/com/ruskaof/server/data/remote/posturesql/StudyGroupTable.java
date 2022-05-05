@@ -15,18 +15,32 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeSet;
 
-public class StudyGroupTable extends Table<StudyGroup> {
+public class StudyGroupTable implements Table<StudyGroup> {
+    private static final int PARAMETER_OFFSET_NAME = 1;
+    private static final int PARAMETER_OFFSET_COORDINATES_X = 2;
+    private static final int PARAMETER_OFFSET_COORDINATES_Y = 3;
+    private static final int PARAMETER_OFFSET_TIMESTAMP = 4;
+    private static final int PARAMETER_OFFSET_STUDENTS_COUNT = 5;
+    private static final int PARAMETER_OFFSET_FORM_OF_EDUCATION = 6;
+    private static final int PARAMETER_OFFSET_SEMESTER_ENUM = 7;
+    private static final int PARAMETER_OFFSET_ADMIN_NAME = 8;
+    private static final int PARAMETER_OFFSET_ADMIN_HEIGHT = 9;
+    private static final int PARAMETER_OFFSET_ADMIN_NATIONALITY = 10;
+    private static final int PARAMETER_OFFSET_ADMIN_LOCATION_X = 11;
+    private static final int PARAMETER_OFFSET_ADMIN_LOCATION_Y = 12;
+    private static final int PARAMETER_OFFSET_ADMIN_LOCATION_NAME = 13;
+    private static final int PARAMETER_OFFSET_AUTHOR = 14;
     private final Connection connection;
+
 
     public StudyGroupTable(Connection connection) {
         this.connection = connection;
     }
 
 
+    @Override
     public void init() throws SQLException {
         try (
                 Statement statement = connection.createStatement()
@@ -86,7 +100,7 @@ public class StudyGroupTable extends Table<StudyGroup> {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "INSERT INTO study_groups VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
         )) {
-            makePreparedStatement(preparedStatement, element);
+            makePreparedStatementOfStudyGroup(preparedStatement, element);
             try (
                     ResultSet resultSet = preparedStatement.executeQuery()
             ) {
@@ -96,39 +110,37 @@ public class StudyGroupTable extends Table<StudyGroup> {
         }
     }
 
-    // А в котлине было бы красивее ()
-    private void makePreparedStatement(PreparedStatement preparedStatement, StudyGroup studyGroup) throws SQLException {
-        int currentParameterOffset = 0;
-        preparedStatement.setString(++currentParameterOffset, studyGroup.getName());
-        preparedStatement.setLong(++currentParameterOffset, studyGroup.getCoordinates().getX());
-        preparedStatement.setDouble(++currentParameterOffset, studyGroup.getCoordinates().getY());
-        preparedStatement.setTimestamp(++currentParameterOffset, Timestamp.valueOf(studyGroup.getCreationDate().atStartOfDay()));
+    private void makePreparedStatementOfStudyGroup(PreparedStatement preparedStatement, StudyGroup studyGroup) throws SQLException {
+        preparedStatement.setString(PARAMETER_OFFSET_NAME, studyGroup.getName());
+        preparedStatement.setLong(PARAMETER_OFFSET_COORDINATES_X, studyGroup.getCoordinates().getX());
+        preparedStatement.setDouble(PARAMETER_OFFSET_COORDINATES_Y, studyGroup.getCoordinates().getY());
+        preparedStatement.setTimestamp(PARAMETER_OFFSET_TIMESTAMP, Timestamp.valueOf(studyGroup.getCreationDate().atStartOfDay()));
         if (studyGroup.getStudentsCount() != null) {
-            preparedStatement.setInt(++currentParameterOffset, studyGroup.getStudentsCount());
+            preparedStatement.setInt(PARAMETER_OFFSET_STUDENTS_COUNT, studyGroup.getStudentsCount());
         } else {
-            preparedStatement.setNull(++currentParameterOffset, Types.INTEGER);
+            preparedStatement.setNull(PARAMETER_OFFSET_STUDENTS_COUNT, Types.INTEGER);
         }
-        preparedStatement.setString(++currentParameterOffset, studyGroup.getFormOfEducation().toString());
+        preparedStatement.setString(PARAMETER_OFFSET_FORM_OF_EDUCATION, studyGroup.getFormOfEducation().toString());
         if (studyGroup.getSemesterEnum() != null) {
-            preparedStatement.setString(++currentParameterOffset, studyGroup.getSemesterEnum().toString());
+            preparedStatement.setString(PARAMETER_OFFSET_SEMESTER_ENUM, studyGroup.getSemesterEnum().toString());
         } else {
-            preparedStatement.setNull(++currentParameterOffset, Types.VARCHAR);
+            preparedStatement.setNull(PARAMETER_OFFSET_SEMESTER_ENUM, Types.VARCHAR);
         }
-        preparedStatement.setString(++currentParameterOffset, studyGroup.getGroupAdmin().getName());
-        preparedStatement.setInt(++currentParameterOffset, studyGroup.getGroupAdmin().getHeight());
+        preparedStatement.setString(PARAMETER_OFFSET_ADMIN_NAME, studyGroup.getGroupAdmin().getName());
+        preparedStatement.setInt(PARAMETER_OFFSET_ADMIN_HEIGHT, studyGroup.getGroupAdmin().getHeight());
         if (studyGroup.getGroupAdmin().getNationality() != null) {
-            preparedStatement.setString(++currentParameterOffset, studyGroup.getGroupAdmin().getNationality().toString());
+            preparedStatement.setString(PARAMETER_OFFSET_ADMIN_NATIONALITY, studyGroup.getGroupAdmin().getNationality().toString());
         } else {
-            preparedStatement.setNull(++currentParameterOffset, Types.VARCHAR);
+            preparedStatement.setNull(PARAMETER_OFFSET_ADMIN_NATIONALITY, Types.VARCHAR);
         }
-        preparedStatement.setFloat(++currentParameterOffset, studyGroup.getGroupAdmin().getLocation().getX());
-        preparedStatement.setLong(++currentParameterOffset, studyGroup.getGroupAdmin().getLocation().getY());
+        preparedStatement.setFloat(PARAMETER_OFFSET_ADMIN_LOCATION_X, studyGroup.getGroupAdmin().getLocation().getX());
+        preparedStatement.setLong(PARAMETER_OFFSET_ADMIN_LOCATION_Y, studyGroup.getGroupAdmin().getLocation().getY());
         if (studyGroup.getGroupAdmin().getLocation().getName() != null) {
-            preparedStatement.setString(++currentParameterOffset, studyGroup.getGroupAdmin().getLocation().getName());
+            preparedStatement.setString(PARAMETER_OFFSET_ADMIN_LOCATION_NAME, studyGroup.getGroupAdmin().getLocation().getName());
         } else {
-            preparedStatement.setNull(++currentParameterOffset, Types.VARCHAR);
+            preparedStatement.setNull(PARAMETER_OFFSET_ADMIN_LOCATION_NAME, Types.VARCHAR);
         }
-        preparedStatement.setString(++currentParameterOffset, studyGroup.getAuthorName());
+        preparedStatement.setString(PARAMETER_OFFSET_AUTHOR, studyGroup.getAuthorName());
     }
 
     @Override
@@ -136,18 +148,16 @@ public class StudyGroupTable extends Table<StudyGroup> {
         final TreeSet<StudyGroup> newCollection = new TreeSet<>();
 
         try (
-                Statement statement = connection.createStatement()
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM study_groups")
+
         ) {
-            try (
-                    ResultSet resultSet = statement.executeQuery("SELECT * FROM study_groups")
-            ) {
 
-
-                while (resultSet.next()) {
-                    StudyGroup studyGroup = mapRowToObject(resultSet);
-                    newCollection.add(studyGroup);
-                }
+            while (resultSet.next()) {
+                StudyGroup studyGroup = mapRowToObject(resultSet);
+                newCollection.add(studyGroup);
             }
+
         }
 
         return newCollection;
@@ -172,27 +182,6 @@ public class StudyGroupTable extends Table<StudyGroup> {
         }
     }
 
-    public String showSortedByName() throws SQLException {
-        final List<StudyGroup> sortedCollection = new ArrayList<>();
-
-        try (
-                Statement statement = connection.createStatement()
-        ) {
-            try (
-                    ResultSet resultSet = statement.executeQuery("SELECT * FROM study_groups ORDER BY name")
-            ) {
-
-
-                while (resultSet.next()) {
-                    StudyGroup studyGroup = mapRowToObject(resultSet);
-                    sortedCollection.add(studyGroup);
-                }
-            }
-        }
-
-        return sortedCollection.toString();
-    }
-
     public void updateById(int id, StudyGroup studyGroup) throws SQLException {
 
         String query = "UPDATE study_groups SET "
@@ -215,19 +204,11 @@ public class StudyGroupTable extends Table<StudyGroup> {
         try (
                 PreparedStatement preparedStatement = connection.prepareStatement(query)
         ) {
-            makePreparedStatement(preparedStatement, studyGroup);
+            makePreparedStatementOfStudyGroup(preparedStatement, studyGroup);
             preparedStatement.execute();
         }
 
 
     }
 
-    public void removeGreaterIfOwned(StudyGroup studyGroup, String username) throws SQLException {
-        try (
-                PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM study_groups WHERE students_count>" + studyGroup.getStudentsCount() + "AND author_username=?")
-        ) {
-            preparedStatement.setString(1, username);
-            preparedStatement.execute();
-        }
-    }
 }

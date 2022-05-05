@@ -42,11 +42,20 @@ public class CommandHandler {
             public void run() {
                 while (isWorkingState.getValue()) {
                     if (!queueToBeExecuted.isEmpty()) {
-
+                        Pair<CommandFromClientDto, SocketAddress> pairOfCommandAndClientAddress = queueToBeExecuted.poll();
                         Runnable executeFirstCommandTack = new Runnable() {
                             @Override
                             public void run() {
-                                pollAndExecute();
+                                logger.info("Starting to execute a new command");
+                                assert pairOfCommandAndClientAddress != null;
+                                CommandFromClientDto commandFromClientDto = pairOfCommandAndClientAddress.getFirst();
+                                SocketAddress clientAddress = pairOfCommandAndClientAddress.getSecond();
+
+                                executeWithValidation(commandFromClientDto, clientAddress);
+
+                                logger.info("Successfully executed the command command");
+
+
                             }
                         };
                         threadPool.submit(executeFirstCommandTack);
@@ -57,13 +66,7 @@ public class CommandHandler {
         threadPool.submit(startCheckingForAvailableCommandsToRun);
     }
 
-    private void pollAndExecute() {
-        Pair<CommandFromClientDto, SocketAddress> pairOfCommandAndClientAddress = queueToBeExecuted.poll();
-
-        logger.info("Starting to execute a new command");
-        assert pairOfCommandAndClientAddress != null;
-        CommandFromClientDto commandFromClientDto = pairOfCommandAndClientAddress.getFirst();
-        SocketAddress clientAddress = pairOfCommandAndClientAddress.getSecond();
+    private void executeWithValidation(CommandFromClientDto commandFromClientDto, SocketAddress clientAddress) {
         if (dataManager.validateUser(commandFromClientDto.getLogin(), commandFromClientDto.getPassword())) {
             if (commandFromClientDto.getCommand() instanceof PrivateAccessedStudyGroupCommand) {
                 final int id = ((PrivateAccessedStudyGroupCommand) commandFromClientDto.getCommand()).getStudyGroupId();
@@ -78,7 +81,6 @@ public class CommandHandler {
         } else {
             queueToBeSent.add(new Pair<>(new CommandResultDto("Invalid login or password. Command was not executed", false), clientAddress));
         }
-        logger.info("Successfully executed the command command");
-
     }
+
 }

@@ -44,4 +44,6 @@ public interface DataManager {
     void removeGreaterIfOwned(StudyGroup studyGroup, String username);
 
     boolean validateOwner(String username, int studyGroupId);
+
+    void initialiseData();
 }

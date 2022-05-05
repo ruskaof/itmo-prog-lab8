@@ -57,10 +57,10 @@ public final class Server {
 
             ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
             ForkJoinPool forkJoinPool = new ForkJoinPool();
-
             State<Boolean> serverIsWorkingState = new State<>(true);
             Database database = new Database(connection, LOGGER);
             DataManager dataManager = new DataManagerImpl(database, LOGGER);
+            dataManager.initialiseData();
             Console console = new Console(serverIsWorkingState, LOGGER);
             MainApp serverApp;
             serverApp = new MainApp(

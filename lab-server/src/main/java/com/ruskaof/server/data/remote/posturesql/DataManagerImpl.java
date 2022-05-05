@@ -9,11 +9,13 @@ import org.slf4j.Logger;
 
 import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
     private final Database database;
@@ -26,17 +28,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         this.database = database;
         this.logger = logger;
 
-        try {
-            initialiseData(
-                    database.getStudyGroupTable().getCollection(),
-                    database.getUsersTable().getCollection()
-            );
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
-        logger.info("Made a data manager with initialised collections:\n"
-                + mainData + "\n\n" + users);
     }
 
     @Override
@@ -51,7 +43,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            updateCollections();
+            users.add(user);
 
             logger.info("Successfully registered a new user: " + encryptedUser);
         } finally {
@@ -65,7 +57,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         try {
             writeLock.lock();
             database.getStudyGroupTable().add(studyGroup);
-            updateCollections();
+            mainData.add(studyGroup);
             logger.info("Successfully added a study group: " + studyGroup);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -114,7 +106,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         try {
             writeLock.lock();
             database.getStudyGroupTable().clearOwnedData(username);
-            updateCollections();
+            mainData.removeIf(it -> it.getName().equals(username));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -191,7 +183,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         try {
             writeLock.lock();
             database.getStudyGroupTable().removeById(id);
-            updateCollections();
+            mainData.removeIf(it -> it.getId() == id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -204,9 +196,10 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         Lock readLock = lock.readLock();
         try {
             readLock.lock();
-            return database.getStudyGroupTable().showSortedByName();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return mainData
+                    .stream()
+                    .sorted(Comparator.comparing(StudyGroup::getName))
+                    .collect(Collectors.toList()).toString();
         } finally {
             readLock.unlock();
         }
@@ -218,7 +211,8 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         try {
             writeLock.lock();
             database.getStudyGroupTable().updateById(id, studyGroup);
-            updateCollections();
+            mainData.removeIf(it -> it.getId() == id);
+            mainData.add(studyGroup);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -230,8 +224,17 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
     public void removeGreaterIfOwned(StudyGroup studyGroup, String username) {
         Lock writeLock = lock.writeLock();
         try {
-            database.getStudyGroupTable().removeGreaterIfOwned(studyGroup, username);
-            updateCollections();
+            final Set<Integer> idsToRemove =
+                    mainData
+                            .tailSet(studyGroup)
+                            .stream()
+                            .filter(it -> it.getName().equals(username))
+                            .map(StudyGroup::getId)
+                            .collect(Collectors.toSet());
+            for (int id : idsToRemove) {
+                database.getStudyGroupTable().removeById(id);
+                mainData.removeIf(it -> idsToRemove.contains(it.getId()));
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -250,16 +253,17 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         }
     }
 
-    private void updateCollections() {
+
+
+    @Override
+    public void initialiseData() {
         try {
-            initialiseData(database.getStudyGroupTable().getCollection(), database.getUsersTable().getCollection());
+            this.mainData = database.getStudyGroupTable().getCollection();
+            this.users = database.getUsersTable().getCollection();
+            logger.info("Made a data manager with initialised collections:\n"
+                    + mainData + "\n\n" + users);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void initialiseData(TreeSet<StudyGroup> studyGroups, TreeSet<User> newUsers) {
-        this.mainData = studyGroups;
-        this.users = newUsers;
     }
 }

@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.TreeSet;
 
-public class UsersTable extends Table<User> {
+public class UsersTable implements Table<User> {
     private final Connection connection;
 
     public UsersTable(Connection connection) {

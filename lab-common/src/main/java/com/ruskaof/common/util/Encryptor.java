@@ -6,6 +6,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public final class Encryptor {
+    private static final int HASHED_MESSAGE_RADIX = 16;
+    private static final int PRECENDING_ZEROS_FOR_MD2 = 32;
+
     private Encryptor() {
 
     }
@@ -19,12 +22,10 @@ public final class Encryptor {
             BigInteger no = new BigInteger(1, messageDigest);
 
 
-            // ну что я поделаю, если тут блин нужна 16-ричная система счисления,
-            // а 16 это МАГИЧЕСКОЕ ЧИСЛО
-            StringBuilder hashText = new StringBuilder(no.toString(2 * 2 * 2 * 2));
+            StringBuilder hashText = new StringBuilder(no.toString(HASHED_MESSAGE_RADIX));
 
             // а тут тупо по алгоритму нужно 32
-            while (hashText.length() < 2 * 2 * 2 * 2 * 2) {
+            while (hashText.length() < PRECENDING_ZEROS_FOR_MD2) {
                 hashText.insert(0, "0");
             }
 
