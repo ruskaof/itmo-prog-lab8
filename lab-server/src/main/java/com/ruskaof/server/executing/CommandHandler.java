@@ -46,7 +46,7 @@ public class CommandHandler {
                         Runnable executeFirstCommandTack = new Runnable() {
                             @Override
                             public void run() {
-
+                                pollAndExecute();
                             }
                         };
                         threadPool.submit(executeFirstCommandTack);
