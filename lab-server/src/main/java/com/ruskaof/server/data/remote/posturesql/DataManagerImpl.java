@@ -200,12 +200,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             readLock.lock();
             return mainData
                     .stream()
-                    .sorted((it, that) -> {
-                                final String itToComp = it.getName() == null ? "" : it.getName();
-                                final String thatToComp = that.getName() == null ? "" : that.getName();
-                                return itToComp.compareTo(thatToComp);
-                            }
-                    )
+                    .sorted(Comparator.comparing(StudyGroup::getName))
                     .collect(Collectors.toList()).toString();
         } finally {
             readLock.unlock();
