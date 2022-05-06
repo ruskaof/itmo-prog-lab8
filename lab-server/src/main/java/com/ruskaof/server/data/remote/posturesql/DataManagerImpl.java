@@ -39,11 +39,15 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             writeLock.lock();
             final User encryptedUser = new User(user.getId(), Encryptor.encryptThisString(user.getPassword()), user.getName());
 
+            final int generatedId;
+
             try {
-                database.getUsersTable().add(encryptedUser);
+                generatedId = database.getUsersTable().add(encryptedUser);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+
+            encryptedUser.setId(generatedId);
             users.add(encryptedUser);
 
             logger.info("Successfully registered a new user: " + encryptedUser);

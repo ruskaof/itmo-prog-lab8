@@ -3,7 +3,7 @@ package com.ruskaof.common.data;
 import java.util.Objects;
 
 public class User implements Comparable<User> {
-    private final long id;
+    private long id;
     private final String password;
     private final String name;
 
@@ -40,6 +40,10 @@ public class User implements Comparable<User> {
     @Override
     public int hashCode() {
         return Objects.hash(id, password, name);
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
