@@ -14,7 +14,7 @@ public class HistoryManagerImpl implements HistoryManager {
     private final Queue<String> history = new ArrayBlockingQueue<>(CAPACITY);
     private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
-
+    @Override
     public void addNote(String note) {
         Lock writeLock = lock.writeLock();
         try {
@@ -28,6 +28,7 @@ public class HistoryManagerImpl implements HistoryManager {
         }
     }
 
+    @Override
     public String niceToString() {
         StringJoiner stringJoiner = new StringJoiner("\n");
         stringJoiner.add("The last 6 commands were:");
