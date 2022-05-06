@@ -85,6 +85,7 @@ public class MainApp {
 
         } catch (BindException e) {
             logger.error("Could not start the server, bind exception. Please, use another port.");
+            isWorking.setValue(false);
         }
     }
 }

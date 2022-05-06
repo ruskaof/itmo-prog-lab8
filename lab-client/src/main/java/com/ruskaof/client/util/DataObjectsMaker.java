@@ -17,6 +17,7 @@ import java.util.function.Predicate;
  * Asks and receives user input data to make a StudyGroup/username&password object.
  */
 public class DataObjectsMaker {
+    private static final int MAX_STRING_LENGTH = 100;
     private static final String ERROR_MESSAGE = "Your enter was not correct type. Try again";
     private final OutputManager outputManager;
     private final Asker asker;
@@ -28,17 +29,17 @@ public class DataObjectsMaker {
         this.authorName = authorName;
     }
 
-    public String[] makeLoginAndPassword() throws IOException {
-        String login = asker.ask(arg -> arg.length() > 0, "Enter login", ERROR_MESSAGE, "Login must not be empty", x -> x, false);
-        String password = asker.ask(arg -> arg.length() > 0, "Enter password", ERROR_MESSAGE, "Password must not be empty", x -> x, false);
-
-        return new String[] {login, password};
-    }
+//    public String[] makeLoginAndPassword() throws IOException {
+//        String login = asker.ask(arg -> arg.length() > 0, "Enter login", ERROR_MESSAGE, "Login must not be empty", x -> x, false);
+//        String password = asker.ask(arg -> arg.length() > 0, "Enter password", ERROR_MESSAGE, "Password must not be empty", x -> x, false);
+//
+//        return new String[] {login, password};
+//    }
 
     public StudyGroup makeStudyGroup() throws IOException {
         outputManager.println("Enter studyGroup data");
-        String name = asker.ask(arg -> (arg).length() > 0, "Enter name (String)",
-                ERROR_MESSAGE, "The string must not be empty", x -> x, false);
+        String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String)",
+                ERROR_MESSAGE, "The string must not be empty and shorter than 100 chars", x -> x, false);
 
         Integer studentsCount = asker.ask(arg -> (arg) > 0, "Enter studentsCount (int) (can be null)",
                 ERROR_MESSAGE, "Your int must be >0. Try again", Integer::parseInt, true); // >0, null-able
@@ -69,8 +70,8 @@ public class DataObjectsMaker {
     private Person askForGroupAdmin() throws IOException {
         outputManager.println("Enter groupAdminData");
 
-        String name = asker.ask(arg -> (arg).length() > 0, "Enter name (String)",
-                ERROR_MESSAGE, "The string must not be empty. Try again", x -> x, false);
+        String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String)",
+                ERROR_MESSAGE, "The string must not be empty and shorter than 100 chars. Try again", x -> x, false);
 
         Integer height = asker.ask(arg -> (arg) > 0, "Enter height (Integer)",
                 ERROR_MESSAGE, "The integer must be >0. Try again", Integer::parseInt, false);
@@ -85,8 +86,8 @@ public class DataObjectsMaker {
 
     private Location askForLocation() throws IOException {
         outputManager.println("Enter location data");
-        String name = asker.ask(arg -> (arg).length() > 0, "Enter name (String) (can be null)",
-                ERROR_MESSAGE, "The string must not be empty. Try again", x -> x, true);
+        String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String) (can be null)",
+                ERROR_MESSAGE, "The string must not be empty and shorter than 100 chars. Try again", x -> x, true);
         float x = asker.ask(arg -> true, "Enter x (float)", ERROR_MESSAGE,
                 ERROR_MESSAGE, Float::parseFloat, false);
         long y = asker.ask(arg -> true, "Enter y (long)", ERROR_MESSAGE,

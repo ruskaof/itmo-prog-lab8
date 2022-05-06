@@ -96,7 +96,7 @@ public class StudyGroupTable implements Table<StudyGroup> {
     }
 
     @Override
-    public long add(StudyGroup element) throws SQLException {
+    public int add(StudyGroup element) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "INSERT INTO study_groups VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
         )) {
@@ -105,7 +105,7 @@ public class StudyGroupTable implements Table<StudyGroup> {
                     ResultSet resultSet = preparedStatement.executeQuery()
             ) {
                 resultSet.next();
-                return resultSet.getLong("id");
+                return resultSet.getInt("id");
             }
         }
     }

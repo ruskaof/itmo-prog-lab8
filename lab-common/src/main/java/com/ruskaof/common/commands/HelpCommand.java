@@ -25,7 +25,6 @@ public class HelpCommand extends Command {
                         + "update id {element} : update element info by it's id\n"
                         + "remove_by_id id : delete element by it's id\n"
                         + "clear : clears collection\n"
-                        + "save : saves collection to a file\n"
                         + "execute_script file_name : executes script entered in a file\n"
                         + "exit : exits the program (!!!does not save data!!!)\n"
                         + "add_if_min {element} : adds new element to the collection if it's value less than min element's value\n"

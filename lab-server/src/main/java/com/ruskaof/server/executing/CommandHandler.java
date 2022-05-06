@@ -1,6 +1,7 @@
 package com.ruskaof.server.executing;
 
 import com.ruskaof.common.commands.PrivateAccessedStudyGroupCommand;
+import com.ruskaof.common.commands.RegisterCommand;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataManager;
@@ -50,8 +51,12 @@ public class CommandHandler {
                                 assert pairOfCommandAndClientAddress != null;
                                 CommandFromClientDto commandFromClientDto = pairOfCommandAndClientAddress.getFirst();
                                 SocketAddress clientAddress = pairOfCommandAndClientAddress.getSecond();
+                                try {
 
-                                executeWithValidation(commandFromClientDto, clientAddress);
+                                    executeWithValidation(commandFromClientDto, clientAddress);
+                                } catch (Exception e) {
+                                    logger.error(e.getMessage());
+                                }
 
                                 logger.info("Successfully executed the command command");
 
@@ -67,7 +72,7 @@ public class CommandHandler {
     }
 
     private void executeWithValidation(CommandFromClientDto commandFromClientDto, SocketAddress clientAddress) {
-        if (dataManager.validateUser(commandFromClientDto.getLogin(), commandFromClientDto.getPassword())) {
+        if (dataManager.validateUser(commandFromClientDto.getLogin(), commandFromClientDto.getPassword()) || commandFromClientDto.getCommand() instanceof RegisterCommand) {
             if (commandFromClientDto.getCommand() instanceof PrivateAccessedStudyGroupCommand) {
                 final int id = ((PrivateAccessedStudyGroupCommand) commandFromClientDto.getCommand()).getStudyGroupId();
                 if (dataManager.validateOwner(commandFromClientDto.getLogin(), id)) {
@@ -75,9 +80,9 @@ public class CommandHandler {
                 } else {
                     queueToBeSent.add(new Pair<>(new CommandResultDto("You are not the owner of the object so you can't do anything with it", true), clientAddress));
                 }
-                return;
+            } else {
+                queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager, commandFromClientDto.getLogin()), clientAddress));
             }
-            queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager, commandFromClientDto.getLogin()), clientAddress));
         } else {
             queueToBeSent.add(new Pair<>(new CommandResultDto("Invalid login or password. Command was not executed", false), clientAddress));
         }

@@ -24,6 +24,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
     private final Logger logger;
     private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
+
     public DataManagerImpl(Database database, Logger logger) {
         this.database = database;
         this.logger = logger;
@@ -43,7 +44,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            users.add(user);
+            users.add(encryptedUser);
 
             logger.info("Successfully registered a new user: " + encryptedUser);
         } finally {
@@ -56,7 +57,8 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
-            database.getStudyGroupTable().add(studyGroup);
+            final int generatedId = database.getStudyGroupTable().add(studyGroup);
+            studyGroup.setId(generatedId);
             mainData.add(studyGroup);
             logger.info("Successfully added a study group: " + studyGroup);
         } catch (SQLException e) {
@@ -106,7 +108,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         try {
             writeLock.lock();
             database.getStudyGroupTable().clearOwnedData(username);
-            mainData.removeIf(it -> it.getName().equals(username));
+            mainData.removeIf(it -> it.getAuthorName().equals(username));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -198,7 +200,12 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             readLock.lock();
             return mainData
                     .stream()
-                    .sorted(Comparator.comparing(StudyGroup::getName))
+                    .sorted((it, that) -> {
+                                final String itToComp = it.getName() == null ? "" : it.getName();
+                                final String thatToComp = that.getName() == null ? "" : that.getName();
+                                return itToComp.compareTo(thatToComp);
+                            }
+                    )
                     .collect(Collectors.toList()).toString();
         } finally {
             readLock.unlock();
@@ -224,11 +231,12 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
     public void removeGreaterIfOwned(StudyGroup studyGroup, String username) {
         Lock writeLock = lock.writeLock();
         try {
+            writeLock.lock();
             final Set<Integer> idsToRemove =
                     mainData
                             .tailSet(studyGroup)
                             .stream()
-                            .filter(it -> it.getName().equals(username))
+                            .filter(it -> it.getAuthorName().equals(username))
                             .map(StudyGroup::getId)
                             .collect(Collectors.toSet());
             for (int id : idsToRemove) {
@@ -237,6 +245,8 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             writeLock.unlock();
         }
@@ -252,7 +262,6 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             readLock.unlock();
         }
     }
-
 
 
     @Override

@@ -37,6 +37,7 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
         this.creationDate = creationDate;
         this.authorName = authorName;
     }
+
     //CHECKSTYLE:ON
     public Coordinates getCoordinates() {
         return coordinates;
@@ -60,16 +61,17 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
 
     @Override
     public String toString() {
-        return "StudyGroup{"
-                + "id=" + id
-                + ", name='" + name + '\''
+        return "StudyGroup:"
+                + "name='" + name + '\''
                 + ", coordinates=" + coordinates
                 + ", creationDate=" + creationDate
                 + ", studentsCount=" + studentsCount
                 + ", formOfEducation=" + formOfEducation
                 + ", semesterEnum=" + semesterEnum
                 + ", groupAdmin=" + groupAdmin
-                + '}';
+                + ", id=" + id
+                + ", authorName='" + authorName + '\''
+                + "}";
     }
 
     public Semester getSemesterEnum() {

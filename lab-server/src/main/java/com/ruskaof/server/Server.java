@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.channels.UnresolvedAddressException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -34,6 +35,8 @@ public final class Server {
     private static String dbName;
     private static String username;
     private static String password;
+    private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool();
+    private static final ExecutorService CACHED_THREAD_POOL = Executors.newCachedThreadPool();
 
     private Server() {
         throw new UnsupportedOperationException("This is an utility class and can not be instantiated");
@@ -54,29 +57,28 @@ public final class Server {
                 return;
             }
             LOGGER.info("Successfully made a connection with the database");
-
-            ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
-            ForkJoinPool forkJoinPool = new ForkJoinPool();
             State<Boolean> serverIsWorkingState = new State<>(true);
             Database database = new Database(connection, LOGGER);
             DataManager dataManager = new DataManagerImpl(database, LOGGER);
             dataManager.initialiseData();
             Console console = new Console(serverIsWorkingState, LOGGER);
             MainApp serverApp;
-            serverApp = new MainApp(
-                    LOGGER,
+            serverApp = new MainApp(LOGGER,
                     serverPort,
                     serverIp,
-                    cachedThreadPool,
-                    forkJoinPool,
-                    dataManager
-            );
-            cachedThreadPool.submit(console::start);
+                    CACHED_THREAD_POOL,
+                    FORK_JOIN_POOL,
+                    dataManager);
+            CACHED_THREAD_POOL.submit(console::start);
             serverApp.start(serverIsWorkingState);
-            cachedThreadPool.shutdown();
-            forkJoinPool.shutdown();
+
         } catch (IOException e) {
             LOGGER.error("An unexpected IO error occurred. The message is: " + e.getMessage());
+        } catch (UnresolvedAddressException e) {
+            LOGGER.error("Could not resolve the address you entered. Please re-start the server with another one");
+        } finally {
+            CACHED_THREAD_POOL.shutdown();
+            FORK_JOIN_POOL.shutdown();
         }
     }
 

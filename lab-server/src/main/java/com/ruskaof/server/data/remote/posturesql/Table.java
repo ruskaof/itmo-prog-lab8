@@ -11,5 +11,5 @@ public interface Table<T> {
 
     T mapRowToObject(ResultSet resultSet) throws SQLException;
 
-    long add(T element) throws SQLException;
+    int add(T element) throws SQLException;
 }

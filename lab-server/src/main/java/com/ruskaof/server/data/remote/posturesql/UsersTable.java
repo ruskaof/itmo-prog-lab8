@@ -23,8 +23,8 @@ public class UsersTable implements Table<User> {
         ) {
             statement.execute("CREATE TABLE IF NOT EXISTS users ("
                     + "    id serial PRIMARY KEY,"
-                    + "    login varchar(50) NOT NULL UNIQUE,"
-                    + "    password varchar(70) NOT NULL)");
+                    + "    login varchar(100) NOT NULL UNIQUE,"
+                    + "    password varchar(100) NOT NULL)");
         }
     }
 
@@ -41,7 +41,7 @@ public class UsersTable implements Table<User> {
     }
 
     @Override
-    public long add(User element) throws SQLException {
+    public int add(User element) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "INSERT INTO users VALUES (default, ?, ?) RETURNING id"
         )) {
@@ -50,7 +50,7 @@ public class UsersTable implements Table<User> {
                     ResultSet resultSet = preparedStatement.executeQuery()
             ) {
                 resultSet.next();
-                return resultSet.getLong("id");
+                return resultSet.getInt("id");
             }
         }
     }

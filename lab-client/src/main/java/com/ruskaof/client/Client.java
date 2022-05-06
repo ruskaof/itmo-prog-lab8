@@ -70,7 +70,7 @@ public final class Client {
         Client.LIST_OF_COMMANDS.add("execute_script");
         Client.LIST_OF_COMMANDS.add("filter_less_than_semester_enum");
         Client.LIST_OF_COMMANDS.add("print_ascending");
-//        Client.LIST_OF_COMMANDS.add("register");
+        Client.LIST_OF_COMMANDS.add("register");
     }
 
 

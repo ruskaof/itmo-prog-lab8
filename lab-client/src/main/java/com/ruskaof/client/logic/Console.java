@@ -33,10 +33,10 @@ import java.util.NoSuchElementException;
 
 
 public class Console {
+    private static final int MAX_STRING_LENGTH = 100;
     private final OutputManager outputManager;
     private final InputManager inputManager;
     private final ConnectionManager connectionManager;
-    private final DataObjectsMaker dataObjectsMaker;
     private final Collection<String> listOfCommands;
     private String username;
     private String password;
@@ -52,11 +52,11 @@ public class Console {
         this.inputManager = inputManager;
         this.connectionManager = connectionManager;
         this.listOfCommands = listOfCommands;
-        this.dataObjectsMaker = new DataObjectsMaker(inputManager, outputManager, username);
     }
 
     public void start() throws ClassNotFoundException, IOException, DataCantBeSentException, UnresolvedAddressException {
         initUsernameAndPassword();
+        DataObjectsMaker dataObjectsMaker = new DataObjectsMaker(inputManager, outputManager, username);
         String input;
         do {
             input = readNextCommand();
@@ -75,9 +75,9 @@ public class Console {
                     commandArg2 = (String) commandArg;
                     commandArg = dataObjectsMaker.makeStudyGroup();
                 }
-                if ("register".equals(commandName)) {
-                    commandArg = dataObjectsMaker.makeLoginAndPassword();
-                }
+//                if ("register".equals(commandName)) {
+//                    commandArg = dataObjectsMaker.makeLoginAndPassword();
+//                }
                 if ("execute_script".equals(commandName)) {
                     new ExecuteScriptCommand((String) commandArg).execute(inputManager);
                 } else {
@@ -103,6 +103,11 @@ public class Console {
             final String loginToRegister = inputManager.nextLine();
             outputManager.println("Enter new password");
             final String passwordToRegister = inputManager.nextLine();
+
+            if (loginToRegister.length() > MAX_STRING_LENGTH || passwordToRegister.length() > MAX_STRING_LENGTH) {
+                outputManager.println("Your password or login was too long");
+                return;
+            }
 
 
             CommandResultDto registerCommandResult = connectionManager.sendCommand(new CommandFromClientDto(new RegisterCommand(new String[]{loginToRegister, passwordToRegister})));
