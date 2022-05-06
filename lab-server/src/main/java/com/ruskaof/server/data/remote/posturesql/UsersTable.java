@@ -61,16 +61,14 @@ public class UsersTable implements Table<User> {
         final TreeSet<User> newCollection = new TreeSet<>();
 
         try (
-                Statement statement = connection.createStatement()
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
         ) {
-            try (
-                    ResultSet resultSet = statement.executeQuery("SELECT * FROM users")
-            ) {
 
-                while (resultSet.next()) {
-                    User user = mapRowToObject(resultSet);
-                    newCollection.add(user);
-                }
+            while (resultSet.next()) {
+                User user = mapRowToObject(resultSet);
+                newCollection.add(user);
+
             }
         }
 
