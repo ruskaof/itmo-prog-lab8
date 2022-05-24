@@ -47,6 +47,9 @@
 				</executions>
 			</plugin>
 
+
+
+
 		</plugins>
 	</build>
 
@@ -59,9 +62,11 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.30</version>
+			<version>1.7.36</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency><dependencies>
+
+	</dependencies>
 	</dependencies>
 
 </project>

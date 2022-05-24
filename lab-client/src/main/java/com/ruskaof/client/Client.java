@@ -5,6 +5,12 @@ import com.ruskaof.client.logic.Console;
 import com.ruskaof.client.util.InputManager;
 import com.ruskaof.client.util.OutputManager;
 import com.ruskaof.common.util.DataCantBeSentException;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,11 +33,12 @@ public final class Client {
     private static String serverIp;
 
 
-    private Client() {
-        throw new UnsupportedOperationException("This is an utility class and can not be instantiated");
-    }
+//    private Client() {
+//        throw new UnsupportedOperationException("This is an utility class and can not be instantiated");
+//    }
 
     public static void main(String[] args) {
+
         initCommandList();
         try {
             initMainInfoForConnection();
