@@ -25,11 +25,14 @@ public class MainApplication extends Application {
         final Scene scene = new Scene(root, mainBackgroundColor);
         final Image icon = new Image("icon.png");
 
+        stage.setHeight(600);
+        stage.setWidth(800);
+
         stage.setMinHeight(600);
         stage.setMinWidth(800);
 
         scene.getStylesheets()
-                .add(Objects.requireNonNull(getClass().getResource("/screen_login.css")).toExternalForm());
+                .add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
         stage.getIcons().add(icon);
         stage.setTitle(appName);
         stage.setScene(scene);

@@ -1,6 +1,5 @@
 package com.ruskaof.server.data.remote.posturesql;
 
-import com.ruskaof.common.commands.InfoCommand;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.data.User;

@@ -9,15 +9,8 @@ import com.ruskaof.common.commands.AddCommand;
 import com.ruskaof.common.commands.AddIfMinCommand;
 import com.ruskaof.common.commands.ClearCommand;
 import com.ruskaof.common.commands.Command;
-import com.ruskaof.common.commands.FilterLessThanSemesterEnumCommand;
-import com.ruskaof.common.commands.HelpCommand;
-import com.ruskaof.common.commands.HistoryCommand;
-import com.ruskaof.common.commands.InfoCommand;
-import com.ruskaof.common.commands.MinByIDCommand;
-import com.ruskaof.common.commands.PrintAscendingCommand;
 import com.ruskaof.common.commands.RegisterCommand;
 import com.ruskaof.common.commands.RemoveByIdCommand;
-import com.ruskaof.common.commands.RemoveGreaterCommand;
 import com.ruskaof.common.commands.ShowCommand;
 import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
@@ -110,7 +103,7 @@ public class Console {
             }
 
 
-            CommandResultDto registerCommandResult = connectionManager.sendCommand(new CommandFromClientDto(new RegisterCommand(new String[]{loginToRegister, passwordToRegister})));
+            CommandResultDto registerCommandResult = connectionManager.sendCommand(new CommandFromClientDto(new RegisterCommand(loginToRegister, passwordToRegister)));
             if (registerCommandResult.isWasExecutedCorrectly()) {
                 if (!((RegisterCommand.RegisterCommandResult) registerCommandResult).isWasRegistered()) {
                     outputManager.println("User was not registered because the username was not unique.");
@@ -160,26 +153,13 @@ public class Console {
                 break;
             case "clear": command = new ClearCommand();
                 break;
-            case "filter_less_than_semester_enum": command = new FilterLessThanSemesterEnumCommand((String) arg);
-                break;
-            case "history": command = new HistoryCommand();
-                break;
-            case "info": command = new InfoCommand();
-                break;
-            case "min_by_id": command = new MinByIDCommand((String) arg);
-                break;
-            case "print_ascending": command = new PrintAscendingCommand();
-                break;
             case "remove_by_id": command = new RemoveByIdCommand((String) arg);
-                break;
-            case "remove_greater": command = new RemoveGreaterCommand((StudyGroup) arg);
                 break;
             case "show": command = new ShowCommand();
                 break;
             case "update": command = new UpdateCommand((StudyGroup) arg, arg2);
                 break;
-            default: command = new HelpCommand();
-                break;
+            default: return null;
         }
         return command;
     }

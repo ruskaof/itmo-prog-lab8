@@ -78,13 +78,13 @@ public class CommandHandler {
                 if (dataManager.validateOwner(commandFromClientDto.getLogin(), id)) {
                     queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager, commandFromClientDto.getLogin()), clientAddress));
                 } else {
-                    queueToBeSent.add(new Pair<>(new CommandResultDto("You are not the owner of the object so you can't do anything with it", true), clientAddress));
+                    queueToBeSent.add(new Pair<>(new CommandResultDto( true), clientAddress));
                 }
             } else {
                 queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager, commandFromClientDto.getLogin()), clientAddress));
             }
         } else {
-            queueToBeSent.add(new Pair<>(new CommandResultDto("Invalid login or password. Command was not executed", false), clientAddress));
+            queueToBeSent.add(new Pair<>(new CommandResultDto(false), clientAddress));
         }
     }
 

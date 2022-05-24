@@ -10,12 +10,13 @@ import java.util.Objects;
 /**
  * This command doesn't even need a user to use correct login+password because it doesn't check on server side
  */
-public class RegisterCommand extends Command {
-    private final String[] loginAndPassword;
+public class RegisterCommand implements Command {
+    private final String login;
+    private final String password;
 
-    public RegisterCommand(String[] loginAndPassword) {
-        super("register");
-        this.loginAndPassword = loginAndPassword;
+    public RegisterCommand(String login, String password) {
+        this.login = login;
+        this.password = password;
     }
 
     @Override
@@ -24,23 +25,19 @@ public class RegisterCommand extends Command {
             HistoryManager historyManager,
             String username
     ) {
-        historyManager.addNote(this.getName());
-
-        if (dataManager.checkIfUsernameUnique(loginAndPassword[0])) {
-            dataManager.addUser(new User(-1, loginAndPassword[1], loginAndPassword[0]));
+        if (dataManager.checkIfUsernameUnique(login)) {
+            dataManager.addUser(new User(-1, login, password));
+            return new RegisterCommand.RegisterCommandResult(true);
         } else {
             return new RegisterCommand.RegisterCommandResult(false);
         }
-
-
-        return new RegisterCommand.RegisterCommandResult(true);
     }
 
     public static class RegisterCommandResult extends CommandResultDto {
         private final boolean wasRegistered;
 
         public RegisterCommandResult(boolean wasRegistered) {
-            super(wasRegistered ? "New user registered!" : "Username was not unique so the user was not registered.", true);
+            super(wasRegistered);
             this.wasRegistered = wasRegistered;
         }
 

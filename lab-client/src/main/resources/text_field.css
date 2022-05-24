@@ -1,0 +1,7 @@
+.text-field {
+    -fx-font-family: "Roboto Light";
+    -fx-background-radius: 5;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+}

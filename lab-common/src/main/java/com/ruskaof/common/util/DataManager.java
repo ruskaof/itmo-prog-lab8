@@ -1,6 +1,5 @@
 package com.ruskaof.common.util;
 
-import com.ruskaof.common.commands.InfoCommand;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.data.User;
@@ -24,8 +23,6 @@ public interface DataManager {
     void clearOwnedData(String username);
 
     String filterLessThanSemesterEnumToString(Semester inpEnum);
-
-    InfoCommand.InfoCommandResult getInfoAboutCollections();
 
     /**
      *

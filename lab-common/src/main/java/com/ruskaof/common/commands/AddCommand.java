@@ -5,11 +5,10 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
-public class AddCommand extends Command {
+public class AddCommand implements Command {
     private final StudyGroup arg;
 
     public AddCommand(StudyGroup arg) {
-        super("add");
         this.arg = arg;
     }
 
@@ -19,10 +18,9 @@ public class AddCommand extends Command {
             HistoryManager historyManager,
             String username
     ) {
-        historyManager.addNote(this.getName());
         StudyGroup studyGroup = arg;
         studyGroup.setId(-1);
         dataManager.addStudyGroup(studyGroup);
-        return new CommandResultDto("The element was added successfully", true);
+        return new CommandResultDto(true);
     }
 }
