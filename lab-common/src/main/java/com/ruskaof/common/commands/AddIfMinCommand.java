@@ -6,28 +6,25 @@ import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 
-public class AddIfMinCommand implements Command {
-    private final StudyGroup arg;
+public class AddIfMinCommand extends Command {
+    private final StudyGroup studyGroupToAdd;
 
-    public AddIfMinCommand(StudyGroup arg) {
-        this.arg = arg;
+    public AddIfMinCommand(String username, String password, StudyGroup studyGroupToAdd) {
+        super(username, password);
+        this.studyGroupToAdd = studyGroupToAdd;
     }
+
 
     @Override
     public CommandResultDto execute(
             DataManager dataManager,
-            HistoryManager historyManager,
-            String username
+            HistoryManager historyManager
     ) {
-
-        StudyGroup studyGroup = arg;
-
-        // stream api would be worse in this case (I would lose TreeSet optimisation)
-        if (dataManager.checkIfMin(studyGroup)) {
-            dataManager.addStudyGroup(studyGroup);
+        if (dataManager.checkIfMin(studyGroupToAdd)) {
+            dataManager.addStudyGroup(studyGroupToAdd);
             return new CommandResultDto(true);
         } else {
-            return new CommandResultDto(true);
+            return new CommandResultDto(false);
         }
     }
 }

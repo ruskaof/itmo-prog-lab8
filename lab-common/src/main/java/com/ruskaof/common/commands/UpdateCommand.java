@@ -6,41 +6,29 @@ import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class UpdateCommand extends Command implements PrivateAccessedStudyGroupCommand {
-    private final String idArg;
-    private final StudyGroup studyGroup;
+    private final int idToUpdate;
+    private final StudyGroup newStudyGroup;
 
-    public UpdateCommand(StudyGroup studyGroup, String id) {
-        super("update");
-        this.idArg = id;
-        this.studyGroup = studyGroup;
+    public UpdateCommand(String username, String password, int idToUpdate, StudyGroup newStudyGroup) {
+        super(username, password);
+        this.idToUpdate = idToUpdate;
+        this.newStudyGroup = newStudyGroup;
     }
+
 
     @Override
     public CommandResultDto execute(
             DataManager dataManager,
-            HistoryManager historyManager,
-            String username
+            HistoryManager historyManager
     ) {
-        historyManager.addNote(this.getName());
-        int intArg;
-        try {
-            intArg = Integer.parseInt(idArg);
-        } catch (NumberFormatException e) {
-            return new CommandResultDto("Your argument was incorrect. The command was not executed.", true);
-        }
+        dataManager.updateStudyGroupById(idToUpdate, newStudyGroup);
 
-        dataManager.updateStudyGroupById(intArg, studyGroup);
-
-        return new CommandResultDto("Element was updated if it was in the table", true);
+        return new CommandResultDto(true);
     }
 
 
     @Override
     public int getStudyGroupId() {
-        try {
-            return Integer.parseInt(idArg);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
+        return idToUpdate;
     }
 }

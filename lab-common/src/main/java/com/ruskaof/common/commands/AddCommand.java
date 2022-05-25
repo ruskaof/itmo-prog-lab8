@@ -5,21 +5,22 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
-public class AddCommand implements Command {
-    private final StudyGroup arg;
+public class AddCommand extends Command {
+    private final StudyGroup studyGroupToAdd;
 
-    public AddCommand(StudyGroup arg) {
-        this.arg = arg;
+    public AddCommand(String username, String password, StudyGroup studyGroupToAdd) {
+        super(username, password);
+        this.studyGroupToAdd = studyGroupToAdd;
     }
+
 
     @Override
     public CommandResultDto execute(
             DataManager dataManager,
-            HistoryManager historyManager,
-            String username
+            HistoryManager historyManager
     ) {
-        StudyGroup studyGroup = arg;
-        studyGroup.setId(-1);
+        StudyGroup studyGroup = studyGroupToAdd;
+
         dataManager.addStudyGroup(studyGroup);
         return new CommandResultDto(true);
     }

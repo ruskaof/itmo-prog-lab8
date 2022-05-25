@@ -6,12 +6,7 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataCantBeSentException;
 import com.ruskaof.common.util.Pair;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.BindException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -44,10 +39,8 @@ public final class ConnectionManager {
             datagramChannel.configureBlocking(false); // нужно, чтобы в случае, если от сервера не придет никакого ответа не блокироваться навсегда
             send(datagramChannel, commandFromClientDto);
             return receiveCommandResult(datagramChannel);
-        } catch (BindException e) {
-            return new CommandResultDto("Could not send data on the Inet address, bind exception. Please re-start client with another arguments", false);
         } catch (IOException e) {
-            return new CommandResultDto("Something went wrong executing the command, the message is: " + e.getMessage(), false);
+            return new CommandResultDto(false);
         }
 
     }
@@ -102,10 +95,8 @@ public final class ConnectionManager {
 
             return (CommandResultDto) deserialize(dataBytes);
 
-        } catch (TimeoutException e) {
-            return new CommandResultDto("Could not receive any answer from server", false);
-        } catch (ClassNotFoundException e) {
-            return new CommandResultDto("Received incorrect answer from server", false);
+        } catch (TimeoutException | ClassNotFoundException e) {
+            return new CommandResultDto(false);
         }
     }
 

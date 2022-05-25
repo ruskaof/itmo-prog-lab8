@@ -7,10 +7,7 @@ import com.ruskaof.common.util.Encryptor;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -133,31 +130,6 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         }
     }
 
-    @Override
-    public InfoCommand.InfoCommandResult getInfoAboutCollections() {
-        Lock readLock = lock.readLock();
-        try {
-            readLock.lock();
-            if (mainData.isEmpty()) {
-                return new InfoCommand.InfoCommandResult(
-                        0,
-                        0
-                );
-            }
-            if (mainData.first().getStudentsCount() == null) {
-                return new InfoCommand.InfoCommandResult(
-                        mainData.size(),
-                        0
-                );
-            }
-            return new InfoCommand.InfoCommandResult(
-                    mainData.size(),
-                    mainData.first().getStudentsCount()
-            );
-        } finally {
-            readLock.unlock();
-        }
-    }
 
 
     @Override
@@ -197,14 +169,14 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
     }
 
     @Override
-    public String showSortedByName() {
+    public List<StudyGroup> showSortedByName() {
         Lock readLock = lock.readLock();
         try {
             readLock.lock();
             return mainData
                     .stream()
                     .sorted(Comparator.comparing(StudyGroup::getName))
-                    .collect(Collectors.toList()).toString();
+                    .collect(Collectors.toList());
         } finally {
             readLock.unlock();
         }

@@ -2,8 +2,12 @@ package com.ruskaof.client;
 
 import com.ruskaof.client.connection.ConnectionManager;
 import com.ruskaof.client.util.OutputManager;
+import com.ruskaof.common.commands.RegisterCommand;
+import com.ruskaof.common.commands.ShowCommand;
+import com.ruskaof.common.commands.ValidateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
+import com.ruskaof.common.util.DataCantBeSentException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,8 +16,6 @@ import java.util.List;
 public final class ClientApi {
     private static final OutputManager OUTPUT_MANAGER = new OutputManager(System.out);
     private static final Collection<String> LIST_OF_COMMANDS = new HashSet<>();
-    private static int serverPort;
-    private static String serverIp;
     private static ConnectionManager connectionManager;
     private static boolean serverInfoWasInitialised = false;
     private static ClientApi instance;
@@ -31,35 +33,54 @@ public final class ClientApi {
     }
 
 
-    public static void init(int enteredPort, String enteredIp) {
-
-        serverPort = enteredPort;
-        serverIp = enteredIp;
-
-        connectionManager = new ConnectionManager(0, serverPort, "0.0.0.0", serverIp, OUTPUT_MANAGER);
+    public void init(int enteredPort, String enteredIp) {
+        connectionManager = new ConnectionManager(0, enteredPort, "0.0.0.0", enteredIp, OUTPUT_MANAGER);
         serverInfoWasInitialised = true;
-
     }
 
-    public static List<StudyGroup> getCurrentData() {
-        return connectionManager.sendCommand(new CommandFromClientDto());
+    public List<StudyGroup> getCurrentData() throws DataCantBeSentException {
+        checkConnection();
+        return (
+                (ShowCommand.ShowCommandResult)
+                        connectionManager.sendCommand(
+                                new CommandFromClientDto(new ShowCommand(password, login))
+                        )
+        ).getData();
     }
 
     /**
-     *
-     * @param newLogin
-     * @param newPassword
      * @return true if login and password are correct
      */
-    public static boolean setLoginAndPassword(String newLogin, String newPassword) {
+    public boolean setLoginAndPassword(String newLogin, String newPassword) throws DataCantBeSentException {
+        checkConnection();
         login = newLogin;
         password = newPassword;
-        connectionManager.sendCommand(new CommandFromClientDto())
+        return (
+                (ValidateCommand.ValidateCommandResult)
+                        connectionManager.sendCommand(
+                                new CommandFromClientDto(
+                                        new ValidateCommand(newLogin, newPassword)
+                                )
+                        )
+        ).isLoginAndPasswordCorrect();
+    }
+
+    public boolean registerUser(String login, String password) throws DataCantBeSentException {
+        return ((RegisterCommand.RegisterCommandResult)
+                connectionManager.sendCommand(
+                        new CommandFromClientDto(new RegisterCommand(login, password))
+                )
+        ).wasRegistered();
+    }
+
+    private void checkConnection() {
+        if (!serverInfoWasInitialised) {
+            throw new RuntimeException("You must connect to the server first");
+        }
     }
 
 
-
-    private static void initCommandList() {
+    private void initCommandList() {
         ClientApi.LIST_OF_COMMANDS.add("add");
         ClientApi.LIST_OF_COMMANDS.add("add_if_min");
         ClientApi.LIST_OF_COMMANDS.add("clear");

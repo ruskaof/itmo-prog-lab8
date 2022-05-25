@@ -8,25 +8,22 @@ import com.ruskaof.common.util.HistoryManager;
 import java.util.Objects;
 
 /**
- * This command doesn't even need a user to use correct login+password because it doesn't check on server side
+ * Login and password of this command represent login and password of a new user you want
+ * to register.
  */
-public class RegisterCommand implements Command {
-    private final String login;
-    private final String password;
+public class RegisterCommand extends Command {
 
-    public RegisterCommand(String login, String password) {
-        this.login = login;
-        this.password = password;
+    public RegisterCommand(String loginToRegister, String passwordToRegister) {
+        super(loginToRegister, passwordToRegister);
     }
 
     @Override
     public CommandResultDto execute(
             DataManager dataManager,
-            HistoryManager historyManager,
-            String username
+            HistoryManager historyManager
     ) {
-        if (dataManager.checkIfUsernameUnique(login)) {
-            dataManager.addUser(new User(-1, login, password));
+        if (dataManager.checkIfUsernameUnique(getUsername())) {
+            dataManager.addUser(new User(-1, getUsername(), getPassword()));
             return new RegisterCommand.RegisterCommandResult(true);
         } else {
             return new RegisterCommand.RegisterCommandResult(false);
@@ -58,7 +55,7 @@ public class RegisterCommand implements Command {
             return Objects.hash(wasRegistered);
         }
 
-        public boolean isWasRegistered() {
+        public boolean wasRegistered() {
             return wasRegistered;
         }
 

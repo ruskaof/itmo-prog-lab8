@@ -4,6 +4,8 @@ import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.data.User;
 
+import java.util.List;
+
 /**
  * This interface does everything but giving the collection itself, so no SOLID principles should be
  * violated :)
@@ -34,7 +36,7 @@ public interface DataManager {
 
     void removeStudyGroupById(int id);
 
-    String showSortedByName();
+    List<StudyGroup> showSortedByName();
 
     void updateStudyGroupById(int id, StudyGroup studyGroup);
 

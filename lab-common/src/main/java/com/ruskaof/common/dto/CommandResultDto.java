@@ -11,4 +11,5 @@ public class CommandResultDto implements Serializable {
 
     public boolean isWasExecutedCorrectly() {
         return wasExecutedCorrectly;
-    }}
+    }
+}

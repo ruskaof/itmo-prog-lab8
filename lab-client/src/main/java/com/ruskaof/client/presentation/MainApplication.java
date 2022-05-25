@@ -21,18 +21,17 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         final Parent root = FXMLLoader
-                .load(Objects.requireNonNull(getClass().getResource("/screen_login.fxml")));
+                .load(Objects.requireNonNull(getClass().getResource("/screen_connection_info.fxml")));
         final Scene scene = new Scene(root, mainBackgroundColor);
         final Image icon = new Image("icon.png");
+
+        stage.setMinHeight(480);
+        stage.setMinWidth(640);
 
         stage.setHeight(600);
         stage.setWidth(800);
 
-        stage.setMinHeight(600);
-        stage.setMinWidth(800);
-
-        scene.getStylesheets()
-                .add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
         stage.getIcons().add(icon);
         stage.setTitle(appName);
         stage.setScene(scene);

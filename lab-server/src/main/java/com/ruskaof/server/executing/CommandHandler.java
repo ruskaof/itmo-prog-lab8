@@ -72,16 +72,16 @@ public class CommandHandler {
     }
 
     private void executeWithValidation(CommandFromClientDto commandFromClientDto, SocketAddress clientAddress) {
-        if (dataManager.validateUser(commandFromClientDto.getLogin(), commandFromClientDto.getPassword()) || commandFromClientDto.getCommand() instanceof RegisterCommand) {
+        if (dataManager.validateUser(commandFromClientDto.getCommand().getUsername(), commandFromClientDto.getCommand().getPassword()) || commandFromClientDto.getCommand() instanceof RegisterCommand) {
             if (commandFromClientDto.getCommand() instanceof PrivateAccessedStudyGroupCommand) {
                 final int id = ((PrivateAccessedStudyGroupCommand) commandFromClientDto.getCommand()).getStudyGroupId();
-                if (dataManager.validateOwner(commandFromClientDto.getLogin(), id)) {
-                    queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager, commandFromClientDto.getLogin()), clientAddress));
+                if (dataManager.validateOwner(commandFromClientDto.getCommand().getUsername(), id)) {
+                    queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager), clientAddress));
                 } else {
-                    queueToBeSent.add(new Pair<>(new CommandResultDto( true), clientAddress));
+                    queueToBeSent.add(new Pair<>(new CommandResultDto(true), clientAddress));
                 }
             } else {
-                queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager, commandFromClientDto.getLogin()), clientAddress));
+                queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager), clientAddress));
             }
         } else {
             queueToBeSent.add(new Pair<>(new CommandResultDto(false), clientAddress));

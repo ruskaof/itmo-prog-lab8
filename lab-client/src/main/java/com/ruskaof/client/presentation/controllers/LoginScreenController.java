@@ -1,4 +1,4 @@
-package com.ruskaof.client.presentation.screen_login;
+package com.ruskaof.client.presentation.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,21 +13,14 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class LoginScreenController {
-    public LoginScreenController(String s) {
-        System.out.println(s);
-    }
-
     @FXML
     private TextField loginField;
 
-    public void register(ActionEvent event) throws IOException {
-        final Parent root = FXMLLoader
-                .load(Objects.requireNonNull(getClass().getResource("/screen_register.fxml")));
-        root.autosize();
+    public void login(ActionEvent event) throws IOException {
+        final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/screen_register.fxml")));
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         final Scene scene = new Scene(root);
-        scene.getStylesheets()
-                .add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
         stage.setScene(scene);
     }
 }

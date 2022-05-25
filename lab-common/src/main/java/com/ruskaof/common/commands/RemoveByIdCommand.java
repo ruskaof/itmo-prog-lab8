@@ -5,40 +5,27 @@ import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class RemoveByIdCommand extends Command implements PrivateAccessedStudyGroupCommand {
-    private final String arg;
+    private final int idToRemove;
 
-    public RemoveByIdCommand(String arg) {
-        super("remove_by_id");
-        this.arg = arg;
+    public RemoveByIdCommand(String username, String password, int idToRemove) {
+        super(username, password);
+        this.idToRemove = idToRemove;
     }
+
 
     @Override
     public CommandResultDto execute(
             DataManager dataManager,
-            HistoryManager historyManager,
-            String username
+            HistoryManager historyManager
     ) {
 
-        historyManager.addNote(this.getName());
+        dataManager.removeStudyGroupById(idToRemove);
 
-        int intArg;
-        try {
-            intArg = Integer.parseInt(arg);
-        } catch (NumberFormatException e) {
-            return new CommandResultDto("Your argument was incorrect. The command was not executed.", true);
-        }
-
-        dataManager.removeStudyGroupById(intArg);
-
-        return new CommandResultDto("The element was removed if it was in the data", true);
+        return new CommandResultDto(true);
     }
 
     @Override
     public int getStudyGroupId() {
-        try {
-            return Integer.parseInt(arg);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
+        return idToRemove;
     }
 }
