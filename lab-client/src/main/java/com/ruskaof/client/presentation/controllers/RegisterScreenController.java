@@ -22,9 +22,11 @@ public class RegisterScreenController {
     @FXML
     TextField repeatedPasswordField;
 
+    @FXML
     public void register(ActionEvent event) throws IOException, DataCantBeSentException {
         if (passwordField.getText().equals(repeatedPasswordField.getText())) {
             ClientApi.getInstance().registerUser(loginField.getText(), passwordField.getText());
+            ClientApi.getInstance().setLoginAndPassword(loginField.getText(), passwordField.getText());
 
             final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/screen_main.fxml")));
             final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
