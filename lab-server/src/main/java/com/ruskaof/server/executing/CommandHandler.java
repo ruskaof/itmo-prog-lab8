@@ -78,7 +78,7 @@ public class CommandHandler {
                 if (dataManager.validateOwner(commandFromClientDto.getCommand().getUsername(), id)) {
                     queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager), clientAddress));
                 } else {
-                    queueToBeSent.add(new Pair<>(new CommandResultDto(true), clientAddress));
+                    queueToBeSent.add(new Pair<>(new CommandResultDto(false), clientAddress));
                 }
             } else {
                 queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager), clientAddress));

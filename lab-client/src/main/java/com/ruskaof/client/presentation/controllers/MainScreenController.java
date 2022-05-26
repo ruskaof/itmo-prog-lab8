@@ -16,7 +16,7 @@ public class MainScreenController {
     void navigateToTableView(ActionEvent event) throws IOException {
         visualisation.setVisible(false);
         visualisation.setManaged(false);
-        System.out.println("1");
+
         tableView.setVisible(true);
         tableView.setManaged(true);
     }
@@ -25,7 +25,7 @@ public class MainScreenController {
     void navigateToVisualisation(ActionEvent event) throws IOException {
         tableView.setVisible(false);
         tableView.setManaged(false);
-        System.out.println("2");
+
         visualisation.setVisible(true);
         visualisation.setManaged(true);
     }

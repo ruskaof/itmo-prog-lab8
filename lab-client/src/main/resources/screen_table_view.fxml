@@ -1,12 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/8.0.171"
-            fx:controller="com.ruskaof.client.presentation.controllers.TableViewScreenController" fx:id="tableView">
-   <children>
-      <ProgressBar layoutX="192.0" layoutY="191.0" prefWidth="200.0" progress="0.0"/>
-   </children>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171"
+            fx:controller="com.ruskaof.client.presentation.controllers.TableViewScreenController">
+    <children>
+        <VBox prefHeight="425.0" prefWidth="1122.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#reload" text="Reload"/>
+                <AnchorPane fx:id="tableView" prefHeight="400.0" prefWidth="1122.0">
+                    <children>
+                        <TableView fx:id="table" layoutX="126.0" layoutY="85.0" prefHeight="400.0" prefWidth="1129.0"
+                                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <!--                     <columns>-->
+                            <!--                        <TableColumn prefWidth="75.0" text="id" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Name" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="X coordinate" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Y coordinate" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Creation date" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Students count" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Form of education" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Semester" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Admin name" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Admin height" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Admin nationality" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Admin x" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Admin y" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Admin location name" />-->
+                            <!--                        <TableColumn prefWidth="75.0" text="Created by" />-->
+                            <!--                     </columns>-->
+                        </TableView>
+                    </children>
+                </AnchorPane>
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>
