@@ -13,12 +13,12 @@
             <children>
                 <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
                     <children>
-                        <TextField fx:id="loginField" prefHeight="25.0" prefWidth="243.0"/>
+                        <TextField fx:id="loginField" prefHeight="25.0" prefWidth="243.0" promptText="login"/>
                     </children>
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
                     <children>
-                        <TextField fx:id="passwordField" prefHeight="25.0" prefWidth="243.0"/>
+                        <TextField fx:id="passwordField" prefHeight="25.0" prefWidth="243.0" promptText="password"/>
                     </children>
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">

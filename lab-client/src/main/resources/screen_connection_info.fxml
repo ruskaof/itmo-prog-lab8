@@ -17,7 +17,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
                <children>
-                  <TextField fx:id="ipField" prefHeight="25.0" prefWidth="243.0" promptText="ip"/>
+                  <TextField fx:id="ipField" prefHeight="25.0" prefWidth="243.0" promptText="ip" text="localhost"/>
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="51.0" prefWidth="600.0">

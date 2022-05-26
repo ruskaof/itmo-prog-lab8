@@ -7,9 +7,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.*;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
@@ -17,12 +20,6 @@ import java.util.stream.Collectors;
 public class TableViewScreenController {
     @FXML
     TableView<StudyGroupRow> table;
-
-    private static <T> void addColumn(TableView<StudyGroupRow> table, String fieldName, String columnName) {
-        final TableColumn<StudyGroupRow, T> newColumn = new TableColumn<>(columnName);
-        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
-        table.getColumns().add(newColumn);
-    }
 
     @FXML
     public void reload(ActionEvent event) {
@@ -34,25 +31,75 @@ public class TableViewScreenController {
         } catch (DataCantBeSentException e) {
             e.printStackTrace();
         }
+    }
 
+    private static void addIntColumn(TableView<StudyGroupRow> table, String fieldName, String columnName) {
+        final TableColumn<StudyGroupRow, Integer> newColumn = new TableColumn<>(columnName);
+        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
+        newColumn.setEditable(true);
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Integer>forTableColumn(new IntegerStringConverter()));
+        table.getColumns().add(newColumn);
+    }
+
+    private static void addLongColumn(TableView<StudyGroupRow> table, String fieldName, String columnName) {
+        final TableColumn<StudyGroupRow, Long> newColumn = new TableColumn<>(columnName);
+        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
+        newColumn.setEditable(true);
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Long>forTableColumn(new LongStringConverter()));
+        table.getColumns().add(newColumn);
+    }
+
+    private static void addStringColumn(TableView<StudyGroupRow> table, String fieldName, String columnName) {
+        final TableColumn<StudyGroupRow, String> newColumn = new TableColumn<>(columnName);
+        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
+        newColumn.setEditable(true);
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow>forTableColumn());
+        table.getColumns().add(newColumn);
+    }
+
+    private static void addFloatColumn(TableView<StudyGroupRow> table, String fieldName, String columnName) {
+        final TableColumn<StudyGroupRow, Float> newColumn = new TableColumn<>(columnName);
+        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
+        newColumn.setEditable(true);
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Float>forTableColumn(new FloatStringConverter()));
+        table.getColumns().add(newColumn);
+    }
+
+    private static void addDoubleColumn(TableView<StudyGroupRow> table, String fieldName, String columnName) {
+        final TableColumn<StudyGroupRow, Double> newColumn = new TableColumn<>(columnName);
+        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
+        newColumn.setEditable(true);
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Double>forTableColumn(new DoubleStringConverter()));
+        table.getColumns().add(newColumn);
+    }
+
+    private static void addDateColumn(TableView<StudyGroupRow> table, String fieldName, String columnName) {
+        final TableColumn<StudyGroupRow, LocalDate> newColumn = new TableColumn<>(columnName);
+        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
+        newColumn.setEditable(true);
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, LocalDate>forTableColumn(new LocalDateStringConverter()));
+        table.getColumns().add(newColumn);
     }
 
     @FXML
     public void initialize() {
-        TableViewScreenController.<Integer>addColumn(table, "id", "id");
-        TableViewScreenController.<String>addColumn(table, "name", "name");
-        TableViewScreenController.<Long>addColumn(table, "x", "x");
-        TableViewScreenController.<Double>addColumn(table, "y", "y");
-        TableViewScreenController.<LocalDate>addColumn(table, "creationDate", "creationDate");
-        TableViewScreenController.<Integer>addColumn(table, "studentsCount", "studentsCount");
-        TableViewScreenController.<String>addColumn(table, "formOfEducation", "formOfEducation");
-        TableViewScreenController.<String>addColumn(table, "semester", "semester");
-        TableViewScreenController.<String>addColumn(table, "adminName", "adminName");
-        TableViewScreenController.<Integer>addColumn(table, "adminHeight", "adminHeight");
-        TableViewScreenController.<String>addColumn(table, "adminNationality", "adminNationality");
-        TableViewScreenController.<Float>addColumn(table, "adminX", "adminX");
-        TableViewScreenController.<Long>addColumn(table, "adminY", "adminY");
-        TableViewScreenController.<String>addColumn(table, "adminLocationName", "adminLocationName");
-        TableViewScreenController.<String>addColumn(table, "authorName", "authorName");
+        TableViewScreenController.addIntColumn(table, "id", "id");
+        TableViewScreenController.addStringColumn(table, "name", "name");
+        TableViewScreenController.addLongColumn(table, "x", "x");
+        TableViewScreenController.addDoubleColumn(table, "y", "y");
+        TableViewScreenController.addDateColumn(table, "creationDate", "creationDate");
+        TableViewScreenController.addIntColumn(table, "studentsCount", "studentsCount");
+        TableViewScreenController.addStringColumn(table, "formOfEducation", "formOfEducation");
+        TableViewScreenController.addStringColumn(table, "semester", "semester");
+        TableViewScreenController.addStringColumn(table, "adminName", "adminName");
+        TableViewScreenController.addIntColumn(table, "adminHeight", "adminHeight");
+        TableViewScreenController.addStringColumn(table, "adminNationality", "adminNationality");
+        TableViewScreenController.addFloatColumn(table, "adminX", "adminX");
+        TableViewScreenController.addLongColumn(table, "adminY", "adminY");
+        TableViewScreenController.addStringColumn(table, "adminLocationName", "adminLocationName");
+        TableViewScreenController.addStringColumn(table, "authorName", "authorName");
+
+        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        table.setEditable(true);
     }
 }

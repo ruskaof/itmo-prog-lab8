@@ -6,21 +6,21 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class StudyGroupRow {
-    private final int id;
-    private final String name;
-    private final long x;
-    private final double y;
-    private final LocalDate creationDate;
-    private final Integer studentsCount;
-    private final String formOfEducation;
-    private final String semester;
-    private final String adminName;
-    private final int adminHeight;
-    private final String adminNationality;
-    private final float adminX;
-    private final long adminY;
-    private final String adminLocationName;
-    private final String authorName;
+    private int id;
+    private String name;
+    private long x;
+    private double y;
+    private LocalDate creationDate;
+    private Integer studentsCount;
+    private String formOfEducation;
+    private String semester;
+    private String adminName;
+    private int adminHeight;
+    private String adminNationality;
+    private float adminX;
+    private long adminY;
+    private String adminLocationName;
+    private String authorName;
 
     public StudyGroupRow(int id, String name, long x, double y, LocalDate creationDate, int studentsCount, String formOfEducation, String semester, String adminName, int adminHeight, String adminNationality, float adminX, long adminY, String adminLocationName, String authorName) {
         this.id = id;
