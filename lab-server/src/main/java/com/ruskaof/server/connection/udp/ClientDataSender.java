@@ -1,4 +1,4 @@
-package com.ruskaof.server.connection;
+package com.ruskaof.server.connection.udp;
 
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.Pair;

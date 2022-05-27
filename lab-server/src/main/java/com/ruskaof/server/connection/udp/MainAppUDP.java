@@ -1,12 +1,12 @@
-package com.ruskaof.server.executing;
+package com.ruskaof.server.connection.udp;
 
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.Pair;
 import com.ruskaof.common.util.State;
-import com.ruskaof.server.connection.ClientDataReceiver;
-import com.ruskaof.server.connection.ClientDataSender;
+import com.ruskaof.server.connection.MainApp;
+import com.ruskaof.server.executing.CommandHandler;
 import com.ruskaof.server.util.HistoryManagerImpl;
 import org.slf4j.Logger;
 
@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class MainApp {
+public class MainAppUDP implements MainApp {
     private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
     private final Queue<Pair<CommandResultDto, SocketAddress>> queueToBeSent;
     private final Logger logger;
@@ -32,7 +32,7 @@ public class MainApp {
     private final ForkJoinPool forkJoinPool;
     private final DataManager dataManager;
 
-    public MainApp(
+    public MainAppUDP(
             Logger logger,
             int port,
             String ip,
@@ -54,7 +54,7 @@ public class MainApp {
 
     public void start(
             State<Boolean> isWorking
-    ) throws IOException {
+    ) {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.bind(new InetSocketAddress(ip, port));
             datagramChannel.configureBlocking(false);
@@ -86,6 +86,8 @@ public class MainApp {
         } catch (BindException e) {
             logger.error("Could not start the server, bind exception. Please, use another port.");
             isWorking.setValue(false);
+        } catch (IOException e) {
+            logger.error("There was some problem making a datagram channel.");
         }
     }
 }

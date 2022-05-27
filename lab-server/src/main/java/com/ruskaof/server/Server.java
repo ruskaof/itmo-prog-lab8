@@ -2,10 +2,11 @@ package com.ruskaof.server;
 
 import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.State;
+import com.ruskaof.server.connection.MainApp;
+import com.ruskaof.server.connection.udp.MainAppUDP;
 import com.ruskaof.server.data.remote.posturesql.DataManagerImpl;
 import com.ruskaof.server.data.remote.posturesql.Database;
 import com.ruskaof.server.executing.Console;
-import com.ruskaof.server.executing.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public final class Server {
             dataManager.initialiseData();
             Console console = new Console(serverIsWorkingState, LOGGER);
             MainApp serverApp;
-            serverApp = new MainApp(LOGGER,
+            serverApp = new MainAppUDP(LOGGER,
                     serverPort,
                     serverIp,
                     CACHED_THREAD_POOL,
