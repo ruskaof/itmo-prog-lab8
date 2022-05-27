@@ -32,6 +32,7 @@ public class MainApplication extends Application {
         stage.setWidth(800);
 
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/text_field.css")).toExternalForm());
         stage.getIcons().add(icon);
         stage.setTitle(appName);
         stage.setScene(scene);
