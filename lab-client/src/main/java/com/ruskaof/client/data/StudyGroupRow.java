@@ -1,11 +1,144 @@
 package com.ruskaof.client.data;
 
-import com.ruskaof.common.data.StudyGroup;
+import com.ruskaof.client.ClientApi;
+import com.ruskaof.common.data.*;
+import com.ruskaof.common.util.DataCantBeSentException;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class StudyGroupRow {
+    public void setId(int id) {
+        System.out.println("fads");
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setX(long x) {
+        this.x = x;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setY(double y) {
+        this.y = y;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setStudentsCount(Integer studentsCount) {
+        this.studentsCount = studentsCount;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setFormOfEducation(String formOfEducation) {
+        this.formOfEducation = formOfEducation;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setSemester(String semester) {
+        this.semester = semester;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAdminHeight(int adminHeight) {
+        this.adminHeight = adminHeight;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAdminNationality(String adminNationality) {
+        this.adminNationality = adminNationality;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAdminX(float adminX) {
+        this.adminX = adminX;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAdminY(long adminY) {
+        this.adminY = adminY;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAdminLocationName(String adminLocationName) {
+        this.adminLocationName = adminLocationName;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+        try {
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        } catch (DataCantBeSentException e) {
+            e.printStackTrace();
+        }
+    }
+
     private int id;
     private String name;
     private long x;
@@ -58,6 +191,31 @@ public class StudyGroupRow {
                 studyGroup.getGroupAdmin().getLocation().getName(),
                 studyGroup.getAuthorName()
         );
+    }
+
+    public StudyGroup mapToStudyGroup() {
+        final StudyGroup studyGroup = new StudyGroup(
+                this.getName(),
+                new Coordinates(
+                        this.getX(),
+                        this.getY()
+                ),
+                this.getStudentsCount(),
+                FormOfEducation.valueOf(this.getFormOfEducation()),
+                this.getSemester() == null ? null : Semester.valueOf(this.getSemester()),
+                new Person(
+                        this.getName(),
+                        this.getAdminHeight(),
+                        this.getAdminNationality() == null ? null : Country.valueOf(this.getAdminNationality()),
+                        new Location(
+                                this.getAdminX(), this.getAdminY(), this.getAdminLocationName()
+                        )
+                ),
+                this.getCreationDate(),
+                this.getAuthorName()
+        );
+        studyGroup.setId(this.id);
+        return studyGroup;
     }
 
     @Override

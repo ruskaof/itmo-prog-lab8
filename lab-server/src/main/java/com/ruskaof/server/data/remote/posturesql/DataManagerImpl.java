@@ -226,6 +226,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
     public boolean validateOwner(String username, int studyGroupId) {
         Lock readLock = lock.readLock();
         try {
+            com.ruskaof.server.util.Logger.log("Username to validate is " + username + " and study group id is " + studyGroupId);
             readLock.lock();
             return mainData.stream().anyMatch(it -> it.getId() == studyGroupId && it.getAuthorName().equals(username));
         } finally {

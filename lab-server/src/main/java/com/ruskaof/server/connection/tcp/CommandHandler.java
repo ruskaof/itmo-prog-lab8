@@ -7,6 +7,7 @@ import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
+import com.ruskaof.server.util.Logger;
 
 public class CommandHandler {
     private final DataManager dataManager;
@@ -26,6 +27,7 @@ public class CommandHandler {
                 if (dataManager.validateOwner(command.getUsername(), id)) {
                     return command.execute(dataManager, historyManager);
                 } else {
+                    Logger.log("The client was not the owner of a study group they wanted to update");
                     return new CommandResultDto(false);
                 }
             } else {
@@ -34,6 +36,7 @@ public class CommandHandler {
         } else if (command instanceof LoginNeedlessCommand) {
             return command.execute(dataManager, historyManager);
         } else {
+            Logger.log("The command from client was not with valid login or id");
             return new CommandResultDto(false);
         }
     }

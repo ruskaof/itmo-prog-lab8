@@ -9,9 +9,9 @@ public class UpdateCommand extends Command implements PrivateAccessedStudyGroupC
     private final int idToUpdate;
     private final StudyGroup newStudyGroup;
 
-    public UpdateCommand(String username, String password, int idToUpdate, StudyGroup newStudyGroup) {
+    public UpdateCommand(String username, String password, StudyGroup newStudyGroup) {
         super(username, password);
-        this.idToUpdate = idToUpdate;
+        this.idToUpdate = newStudyGroup.getId();
         this.newStudyGroup = newStudyGroup;
     }
 

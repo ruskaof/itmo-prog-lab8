@@ -5,6 +5,7 @@ import com.ruskaof.client.connection.ConnectionManagerTCP;
 import com.ruskaof.client.util.OutputManager;
 import com.ruskaof.common.commands.RegisterCommand;
 import com.ruskaof.common.commands.ShowCommand;
+import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.commands.ValidateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
@@ -75,6 +76,11 @@ public final class ClientApi {
                 )
         ).wasRegistered();
     }
+
+    public void update(StudyGroup newStudyGroup) throws DataCantBeSentException {
+        connectionManager.sendCommand(new CommandFromClientDto(new UpdateCommand(login, password, newStudyGroup)));
+    }
+
 
     private void checkConnection() {
         if (!serverInfoWasInitialised) {

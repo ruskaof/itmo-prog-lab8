@@ -1,4 +1,4 @@
-package com.ruskaof.server.executing;
+package com.ruskaof.server.connection.udp;
 
 import com.ruskaof.common.commands.PrivateAccessedStudyGroupCommand;
 import com.ruskaof.common.commands.RegisterCommand;

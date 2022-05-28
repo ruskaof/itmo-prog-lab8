@@ -19,9 +19,8 @@ public class AddCommand extends Command {
             DataManager dataManager,
             HistoryManager historyManager
     ) {
-        StudyGroup studyGroup = studyGroupToAdd;
 
-        dataManager.addStudyGroup(studyGroup);
+        dataManager.addStudyGroup(studyGroupToAdd);
         return new CommandResultDto(true);
     }
 }
