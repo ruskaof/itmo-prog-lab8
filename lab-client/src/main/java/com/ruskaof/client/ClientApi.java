@@ -1,6 +1,7 @@
 package com.ruskaof.client;
 
 import com.ruskaof.client.connection.ConnectionManager;
+import com.ruskaof.client.connection.ConnectionManagerTCP;
 import com.ruskaof.client.util.OutputManager;
 import com.ruskaof.common.commands.RegisterCommand;
 import com.ruskaof.common.commands.ShowCommand;
@@ -9,6 +10,7 @@ import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -33,8 +35,9 @@ public final class ClientApi {
     }
 
 
-    public void init(int enteredPort, String enteredIp) {
-        connectionManager = new ConnectionManager(0, enteredPort, "0.0.0.0", enteredIp, OUTPUT_MANAGER);
+    public void init(int enteredPort, String enteredIp) throws IOException {
+//        connectionManager = new ConnectionManagerUDP(0, enteredPort, "0.0.0.0", enteredIp, OUTPUT_MANAGER);
+        connectionManager = new ConnectionManagerTCP(enteredPort, enteredIp);
         serverInfoWasInitialised = true;
     }
 

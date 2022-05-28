@@ -11,7 +11,7 @@ import java.util.Objects;
  * Login and password of this command represent login and password of a new user you want
  * to register.
  */
-public class RegisterCommand extends Command {
+public class RegisterCommand extends Command implements LoginNeedlessCommand {
 
     public RegisterCommand(String loginToRegister, String passwordToRegister) {
         super(loginToRegister, passwordToRegister);
