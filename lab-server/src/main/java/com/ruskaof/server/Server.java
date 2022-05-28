@@ -45,36 +45,33 @@ public final class Server {
     public static void main(String[] args) {
         try {
             initMainInfoForConnection();
-            try
-                    (
-                            Connection connection = DriverManager.getConnection(
-                                    "jdbc:postgresql://" + dbHost + "/" + dbName,
-                                    username,
-                                    password
-                            )) {
-                LOGGER.info("Successfully made a connection with the database");
-                State<Boolean> serverIsWorkingState = new State<>(true);
-                Database database = new Database(connection, LOGGER);
-                DataManager dataManager = new DataManagerImpl(database, LOGGER);
-                dataManager.initialiseData();
-                Console console = new Console(serverIsWorkingState, LOGGER);
-                MainApp serverApp;
+
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:postgresql://" + dbHost + "/" + dbName,
+                    username,
+                    password);
+            LOGGER.info("Successfully made a connection with the database");
+            State<Boolean> serverIsWorkingState = new State<>(true);
+            Database database = new Database(connection, LOGGER);
+            DataManager dataManager = new DataManagerImpl(database, LOGGER);
+            dataManager.initialiseData();
+            Console console = new Console(serverIsWorkingState, LOGGER);
+            MainApp serverApp;
 //                serverApp = new MainAppUDP(LOGGER,
 //                        serverPort,
 //                        serverIp,
 //                        CACHED_THREAD_POOL,
 //                        FORK_JOIN_POOL,
 //                        dataManager);
-                serverApp = new MainAppTCP(
-                        new CommandHandler(
-                                dataManager, new HistoryManagerImpl()
-                        )
-                );
+            serverApp = new MainAppTCP(
+                    new CommandHandler(
+                            dataManager, new HistoryManagerImpl()
+                    )
+            );
 
 
-                new Thread(console::start).start();
-                serverApp.start(serverIsWorkingState);
-            }
+            new Thread(console::start).start();
+            serverApp.start(serverIsWorkingState);
 
 
         } catch (IOException e) {

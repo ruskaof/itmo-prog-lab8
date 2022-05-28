@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientServant implements Runnable {
     private final Socket clientSocket;
@@ -25,15 +26,16 @@ public class ClientServant implements Runnable {
             final ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
             Logger.log("Started a new client servant");
             while (true) {
-                final CommandFromClientDto commandFromClientDto = (CommandFromClientDto) objectInputStream.readObject();
-                Logger.log("Found new command, executing it");
                 try {
+                    final CommandFromClientDto commandFromClientDto = (CommandFromClientDto) objectInputStream.readObject();
+                    Logger.log("Found new command, executing it");
 
                     final CommandResultDto commandResultDto = commandHandler.handle(commandFromClientDto);
                     Logger.log("Sending the result to the client");
                     objectOutputStream.writeObject(commandResultDto);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (SocketException e) {
+                    Logger.log("A client disconnected");
+                    break;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

@@ -25,6 +25,7 @@ public class ConnectionInfoController {
         final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/screen_login.fxml")));
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         final Scene scene = new Scene(root);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/label.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
         stage.setScene(scene);
     }

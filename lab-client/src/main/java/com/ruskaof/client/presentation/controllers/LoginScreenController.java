@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -19,15 +20,22 @@ public class LoginScreenController {
     private TextField loginField;
     @FXML
     private TextField passwordField;
+    @FXML
+    private Label errorLabel;
 
     public void login(ActionEvent event) throws IOException, DataCantBeSentException {
-        ClientApi.getInstance().setLoginAndPassword(loginField.getText(), passwordField.getText());
+        if (
+                ClientApi.getInstance().setLoginAndPassword(loginField.getText(), passwordField.getText())
+        ) {
+            final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/screen_main.fxml")));
+            final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            final Scene scene = new Scene(root);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
+            stage.setScene(scene);
+        } else {
+            errorLabel.setVisible(true);
+        }
 
-        final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/screen_main.fxml")));
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        final Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
-        stage.setScene(scene);
     }
 
     public void register(ActionEvent event) throws IOException, DataCantBeSentException {

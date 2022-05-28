@@ -4,7 +4,7 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
-public class ValidateCommand extends Command {
+public class ValidateCommand extends Command implements LoginNeedlessCommand {
 
     public ValidateCommand(String username, String password) {
         super(username, password);
