@@ -3,10 +3,7 @@ package com.ruskaof.client;
 import com.ruskaof.client.connection.ConnectionManager;
 import com.ruskaof.client.connection.ConnectionManagerTCP;
 import com.ruskaof.client.util.OutputManager;
-import com.ruskaof.common.commands.RegisterCommand;
-import com.ruskaof.common.commands.ShowCommand;
-import com.ruskaof.common.commands.UpdateCommand;
-import com.ruskaof.common.commands.ValidateCommand;
+import com.ruskaof.common.commands.*;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
@@ -81,6 +78,13 @@ public final class ClientApi {
         connectionManager.sendCommand(new CommandFromClientDto(new UpdateCommand(login, password, newStudyGroup)));
     }
 
+    public static String getLogin() {
+        return login;
+    }
+
+    public void add(StudyGroup newStudyGroup) throws DataCantBeSentException {
+        connectionManager.sendCommand(new CommandFromClientDto(new AddCommand(login, password, newStudyGroup)));
+    }
 
     private void checkConnection() {
         if (!serverInfoWasInitialised) {
@@ -88,6 +92,9 @@ public final class ClientApi {
         }
     }
 
+    public void addIfMin(StudyGroup newStudyGroup) throws DataCantBeSentException {
+        connectionManager.sendCommand(new CommandFromClientDto(new AddIfMinCommand(login, password, newStudyGroup)));
+    }
 
     private void initCommandList() {
         ClientApi.LIST_OF_COMMANDS.add("add");

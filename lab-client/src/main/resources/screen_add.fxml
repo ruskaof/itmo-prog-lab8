@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-      minHeight="-Infinity" minWidth="-Infinity" prefHeight="346.0" prefWidth="438.0"
+      minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="438.0"
       xmlns="http://javafx.com/javafx/8.0.171"
       fx:controller="com.ruskaof.client.presentation.controllers.AddScreenController">
    <children>
@@ -29,12 +29,12 @@
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <ComboBox fx:id="formOfEducationCombo" prefWidth="150.0" promptText="form of education"/>
+            <ComboBox fx:id="formOfEducationCombo" prefWidth="373.0" promptText="form of education"/>
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <ComboBox fx:id="semesterCombo" prefWidth="150.0" promptText="semester"/>
+            <ComboBox fx:id="semesterCombo" prefWidth="373.0" promptText="semester"/>
          </children>
       </HBox>
       <HBox alignment="CENTER">
@@ -44,27 +44,28 @@
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <TextField fx:id="adminHeightField" promptText="admin height"/>
+            <TextField fx:id="adminHeightField" prefHeight="25.0" prefWidth="373.0" promptText="admin height"/>
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="185.0">
          <children>
-            <TextField fx:id="adminNationalityField" promptText="admin nationality"/>
+            <ComboBox fx:id="adminNationalityCombo" prefHeight="25.0" prefWidth="373.0" promptText="admin nationality"/>
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="235.0">
          <children>
-            <TextField fx:id="adminXField" promptText="admin x"/>
+            <TextField fx:id="adminXField" prefHeight="25.0" prefWidth="373.0" promptText="admin x"/>
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="260.0">
          <children>
-            <TextField fx:id="adminYField" promptText="admin y"/>
+            <TextField fx:id="adminYField" prefHeight="25.0" prefWidth="373.0" promptText="admin y"/>
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="285.0">
          <children>
-            <TextField fx:id="adminLocationNameField" promptText="admin location name"/>
+            <TextField fx:id="adminLocationNameField" prefHeight="25.0" prefWidth="373.0"
+                       promptText="admin location name"/>
             <HBox alignment="CENTER"/>
          </children>
       </HBox>
@@ -75,5 +76,6 @@
             <Button mnemonicParsing="false" onAction="#cancel" text="Cancel"/>
          </children>
       </HBox>
+      <Label fx:id="errorLabel"/>
    </children>
 </VBox>
