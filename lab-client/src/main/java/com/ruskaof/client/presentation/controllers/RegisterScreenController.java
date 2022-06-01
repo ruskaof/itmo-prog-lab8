@@ -22,6 +22,7 @@ public class RegisterScreenController {
             ClientApi.getInstance().registerUser(loginField.getText(), passwordField.getText());
             ClientApi.getInstance().setLoginAndPassword(loginField.getText(), passwordField.getText());
 
+            ClientApi.getInstance().startUpdating();
             Navigator.navigateToMainScreen(event, getClass());
         }
     }

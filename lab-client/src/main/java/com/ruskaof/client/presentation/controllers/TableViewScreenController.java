@@ -22,7 +22,6 @@ import javafx.util.converter.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class TableViewScreenController {
     @FXML
@@ -38,11 +37,21 @@ public class TableViewScreenController {
         stage.setScene(scene);
     }
 
+    private static void addIntColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<Integer> onCommitCellModifier, boolean editable) {
+        final TableColumn<StudyGroupRow, Integer> newColumn = new TableColumn<>(columnName);
+        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
+        newColumn.setEditable(editable);
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Integer>forTableColumn(new IntegerStringConverter()));
+        newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
+        table.getColumns().add(newColumn);
+    }
+
     @FXML
-    public void reload(ActionEvent event) {
+    public void reload() {
         try {
+            ClientApi.getInstance().updateData();
             final ObservableList<StudyGroupRow> list = FXCollections.observableList(
-                    ClientApi.getInstance().getCurrentData().stream().map(StudyGroupRow::mapStudyGroupToRow).collect(Collectors.toList())
+                    ClientApi.getInstance().getCurrentData()
             );
             table.setItems(list);
             table.refresh();
@@ -53,16 +62,16 @@ public class TableViewScreenController {
 
     @FXML
     public void initialize() {
-        TableViewScreenController.addIntColumn(table, "id", "id", StudyGroupRow::setId);
+        TableViewScreenController.addIntColumn(table, "id", "id", StudyGroupRow::setId, false);
         TableViewScreenController.addStringColumn(table, "name", "name", StudyGroupRow::setName);
         TableViewScreenController.addLongColumn(table, "x", "x", StudyGroupRow::setX);
         TableViewScreenController.addDoubleColumn(table, "y", "y", StudyGroupRow::setY);
         TableViewScreenController.addDateColumn(table, "creationDate", "creationDate", StudyGroupRow::setCreationDate);
-        TableViewScreenController.addIntColumn(table, "studentsCount", "studentsCount", StudyGroupRow::setStudentsCount);
+        TableViewScreenController.addIntColumn(table, "studentsCount", "studentsCount", StudyGroupRow::setStudentsCount, true);
         TableViewScreenController.addStringColumn(table, "formOfEducation", "formOfEducation", StudyGroupRow::setFormOfEducation);
         TableViewScreenController.addStringColumn(table, "semester", "semester", StudyGroupRow::setSemester);
         TableViewScreenController.addStringColumn(table, "adminName", "adminName", StudyGroupRow::setAdminName);
-        TableViewScreenController.addIntColumn(table, "adminHeight", "adminHeight", StudyGroupRow::setAdminHeight);
+        TableViewScreenController.addIntColumn(table, "adminHeight", "adminHeight", StudyGroupRow::setAdminHeight, true);
         TableViewScreenController.addStringColumn(table, "adminNationality", "adminNationality", StudyGroupRow::setAdminNationality);
         TableViewScreenController.addFloatColumn(table, "adminX", "adminX", StudyGroupRow::setAdminX);
         TableViewScreenController.addLongColumn(table, "adminY", "adminY", StudyGroupRow::setAdminY);
@@ -71,15 +80,7 @@ public class TableViewScreenController {
 
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.setEditable(true);
-    }
-
-    private static void addIntColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<Integer> onCommitCellModifier) {
-        final TableColumn<StudyGroupRow, Integer> newColumn = new TableColumn<>(columnName);
-        newColumn.setCellValueFactory(new PropertyValueFactory<>(fieldName));
-        newColumn.setEditable(true);
-        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Integer>forTableColumn(new IntegerStringConverter()));
-        newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
-        table.getColumns().add(newColumn);
+        reload();
     }
 
     private static void addLongColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<Long> onCommitCellModifier) {

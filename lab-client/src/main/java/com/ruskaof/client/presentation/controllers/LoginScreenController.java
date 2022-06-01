@@ -21,6 +21,7 @@ public class LoginScreenController {
         if (
                 ClientApi.getInstance().setLoginAndPassword(loginField.getText(), passwordField.getText())
         ) {
+            ClientApi.getInstance().startUpdating();
             Navigator.navigateToMainScreen(event, getClass());
         } else {
             errorLabel.setVisible(true);

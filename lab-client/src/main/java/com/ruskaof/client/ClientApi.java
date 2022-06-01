@@ -2,6 +2,7 @@ package com.ruskaof.client;
 
 import com.ruskaof.client.connection.ConnectionManager;
 import com.ruskaof.client.connection.ConnectionManagerTCP;
+import com.ruskaof.client.data.StudyGroupRow;
 import com.ruskaof.client.util.OutputManager;
 import com.ruskaof.common.commands.*;
 import com.ruskaof.common.data.StudyGroup;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ClientApi {
     private static final OutputManager OUTPUT_MANAGER = new OutputManager(System.out);
@@ -21,8 +23,11 @@ public final class ClientApi {
     private static ClientApi instance;
     private static String login;
     private static String password;
+    private static List<StudyGroupRow> currentData;
+
 
     private ClientApi() {
+
     }
 
     public static ClientApi getInstance() {
@@ -39,14 +44,18 @@ public final class ClientApi {
         serverInfoWasInitialised = true;
     }
 
-    public List<StudyGroup> getCurrentData() throws DataCantBeSentException {
+    public void updateData() throws DataCantBeSentException {
         checkConnection();
-        return (
+        currentData = (
                 (ShowCommand.ShowCommandResult)
                         connectionManager.sendCommand(
                                 new CommandFromClientDto(new ShowCommand(password, login))
                         )
-        ).getData();
+        ).getData().stream().map(StudyGroupRow::mapStudyGroupToRow).collect(Collectors.toList());
+    }
+
+    public List<StudyGroupRow> getCurrentData() throws DataCantBeSentException {
+        return currentData;
     }
 
     /**
@@ -114,5 +123,26 @@ public final class ClientApi {
         ClientApi.LIST_OF_COMMANDS.add("filter_less_than_semester_enum");
         ClientApi.LIST_OF_COMMANDS.add("print_ascending");
         ClientApi.LIST_OF_COMMANDS.add("register");
+    }
+
+    public void startUpdating() {
+        final Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!Thread.interrupted()) {
+                    try {
+                        Thread.sleep(3000);
+                        System.out.println("update");
+                        updateData();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (DataCantBeSentException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        t.setDaemon(true);
+        t.start();
     }
 }

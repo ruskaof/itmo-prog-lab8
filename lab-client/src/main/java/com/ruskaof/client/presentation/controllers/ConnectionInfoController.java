@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -18,17 +19,24 @@ public class ConnectionInfoController {
     private TextField portField;
     @FXML
     private TextField ipField;
+    @FXML
+    private Label errorLabel;
 
     public void connect(ActionEvent event) throws IOException {
-        ClientApi.getInstance().init(Integer.parseInt(portField.getText()), ipField.getText());
+        try {
+            ClientApi.getInstance().init(Integer.parseInt(portField.getText()), ipField.getText());
+            final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/screen_login.fxml")));
+            final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            final Scene scene = new Scene(root);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/label.css")).toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
+            stage.setScene(scene);
+        } catch (IllegalArgumentException e) {
+            errorLabel.setText("Invalid port value");
+        } catch (IOException e) {
+            errorLabel.setText("Could not connect to server ");
+        }
 
-        final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/screen_login.fxml")));
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        final Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/label.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
-        stage.setScene(scene);
     }
-
 
 }
