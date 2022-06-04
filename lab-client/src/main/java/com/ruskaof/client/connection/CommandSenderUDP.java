@@ -15,7 +15,7 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings("FieldCanBeLocal")
-public final class ConnectionManagerUDP implements ConnectionManager {
+public final class CommandSenderUDP implements CommandSender {
     private final int clientPort;
     private final int serverPort;
     private final String clientIp;
@@ -26,7 +26,7 @@ public final class ConnectionManagerUDP implements ConnectionManager {
     private final int countOfBytesForSize = 4;
     private final int timeoutToSend = 10;
 
-    public ConnectionManagerUDP(int clientPort, int serverPort, String clientIp, String serverIp, OutputManager outputManager) {
+    public CommandSenderUDP(int clientPort, int serverPort, String clientIp, String serverIp, OutputManager outputManager) {
         this.clientPort = clientPort;
         this.serverPort = serverPort;
         this.clientIp = clientIp;

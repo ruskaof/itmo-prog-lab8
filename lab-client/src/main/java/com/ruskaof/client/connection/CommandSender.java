@@ -4,6 +4,6 @@ import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataCantBeSentException;
 
-public interface ConnectionManager {
+public interface CommandSender {
     CommandResultDto sendCommand(CommandFromClientDto commandFromClientDto) throws DataCantBeSentException;
 }

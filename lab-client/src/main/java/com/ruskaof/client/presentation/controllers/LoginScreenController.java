@@ -19,10 +19,11 @@ public class LoginScreenController {
 
     public void login(ActionEvent event) throws IOException, DataCantBeSentException {
         if (
-                ClientApi.getInstance().setLoginAndPassword(loginField.getText(), passwordField.getText())
+                ClientApi.getInstance().setLoginAndPasswordAndStartUpdating(loginField.getText(), passwordField.getText())
         ) {
             ClientApi.getInstance().startUpdating();
             Navigator.navigateToMainScreen(event, getClass());
+            ClientApi.startUpdating();
         } else {
             errorLabel.setVisible(true);
         }

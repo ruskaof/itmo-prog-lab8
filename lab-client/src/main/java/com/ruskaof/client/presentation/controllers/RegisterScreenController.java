@@ -19,11 +19,12 @@ public class RegisterScreenController {
     @FXML
     public void register(ActionEvent event) throws IOException, DataCantBeSentException {
         if (passwordField.getText().equals(repeatedPasswordField.getText())) {
-            ClientApi.getInstance().registerUser(loginField.getText(), passwordField.getText());
-            ClientApi.getInstance().setLoginAndPassword(loginField.getText(), passwordField.getText());
+            if (ClientApi.getInstance().registerUser(loginField.getText(), passwordField.getText())) {
+                ClientApi.getInstance().setLoginAndPasswordAndStartUpdating(loginField.getText(), passwordField.getText());
 
-            ClientApi.getInstance().startUpdating();
-            Navigator.navigateToMainScreen(event, getClass());
+                ClientApi.getInstance().startUpdating();
+                Navigator.navigateToMainScreen(event, getClass());
+            }
         }
     }
 }

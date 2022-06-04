@@ -10,11 +10,11 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class ConnectionManagerTCP implements ConnectionManager {
+public class CommandSenderTCP implements CommandSender {
     private final ObjectOutputStream objectOutputStream;
     private final ObjectInputStream objectInputStream;
 
-    public ConnectionManagerTCP(int port, String ip) throws IOException {
+    public CommandSenderTCP(int port, String ip) throws IOException {
         Socket socket = new Socket();
         socket.connect(new InetSocketAddress(ip, port));
         objectInputStream = new ObjectInputStream(socket.getInputStream());
