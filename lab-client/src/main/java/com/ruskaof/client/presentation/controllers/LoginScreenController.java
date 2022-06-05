@@ -21,7 +21,6 @@ public class LoginScreenController {
         if (
                 ClientApi.getInstance().setLoginAndPasswordAndStartUpdating(loginField.getText(), passwordField.getText())
         ) {
-            ClientApi.getInstance().startUpdating();
             Navigator.navigateToMainScreen(event, getClass());
             ClientApi.startUpdating();
         } else {

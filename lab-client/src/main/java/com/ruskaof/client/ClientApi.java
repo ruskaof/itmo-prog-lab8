@@ -65,7 +65,6 @@ public final class ClientApi {
 
         commandSender = new CommandSenderTCP(enteredPort, enteredIp);
         serverInfoWasInitialised = true;
-
     }
 
     public List<StudyGroupRow> getCurrentData() throws DataCantBeSentException {

@@ -4,6 +4,7 @@ import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.server.util.Logger;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,6 +36,9 @@ public class ClientServant implements Runnable {
                     objectOutputStream.writeObject(commandResultDto);
                 } catch (SocketException e) {
                     Logger.log("A client disconnected");
+                    break;
+                } catch (EOFException ignored) {
+                    System.out.println("eof");
                     break;
                 }
             }
