@@ -94,23 +94,6 @@ public class TableViewScreenController {
         }
     };
 
-//    private final static StringConverter<LocalDate> safeDateStringConverter = new StringConverter<LocalDate>() {
-//        @Override
-//        public String toString(LocalDate object) {
-//            return object.toString();
-//        }
-//
-//        @Override
-//        public LocalDate fromString(String string) {
-//            try {
-//                final LocalDate localDate = LocalDate.parse(string);
-//                return localDate;
-//            } catch (DateTimeParseException e) {
-//                return LocalDate.now();
-//            }
-//        }
-//    };
-
 
     @FXML
     TableView<StudyGroupRow> table;

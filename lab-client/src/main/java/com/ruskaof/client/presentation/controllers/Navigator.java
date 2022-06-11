@@ -1,5 +1,7 @@
 package com.ruskaof.client.presentation.controllers;
 
+import com.ruskaof.client.data.StudyGroupRow;
+import com.ruskaof.common.util.DataCantBeSentException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -31,5 +33,39 @@ public class Navigator {
         stage.setScene(scene);
     }
 
+    public static void navigateToLoginScreen(ActionEvent event, Class<?> clazz) throws IOException {
+        final Parent root = FXMLLoader.load(Objects.requireNonNull(clazz.getResource("/screen_login.fxml")));
+        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        final Scene scene = new Scene(root);
+        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/label.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/button.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/text_field.css")).toExternalForm());
 
+        stage.setScene(scene);
+    }
+
+    public static void navigateToInfoScreen(Object source, Class<?> clazz, StudyGroupRow object) throws IOException, DataCantBeSentException {
+//        FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(clazz.getResource("/screen_info.fxml")));
+//        final Parent root = fxmlLoader.load();
+//        final InfoScreenController infoScreenController = fxmlLoader.getController();
+//        infoScreenController.setObject(object);
+//        final Stage stage = (Stage) ((Node) source).getScene().getWindow();
+//        final Scene scene = new Scene(root);
+//
+//        stage.setScene(scene);
+
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(clazz.getResource("/screen_info.fxml")));
+
+        final Parent root = loader.load();
+        ((InfoScreenController) loader.getController()).setObject(object);
+        ((InfoScreenController) loader.getController()).setListOfObjectData();
+        System.out.println(object);
+        final Stage stage = (Stage) ((Node) source).getScene().getWindow();
+        final Scene scene = new Scene(root);
+        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/label.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/button.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/text_field.css")).toExternalForm());
+
+        stage.setScene(scene);
+    }
 }

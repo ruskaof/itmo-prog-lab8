@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="visualisation" prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/8.0.171"
             fx:controller="com.ruskaof.client.presentation.controllers.VisualisationScreenController">
-   <children>
-      <Canvas height="400.0" width="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" fx:id="canvas"/>
-   </children>
+    <children>
+        <Canvas fx:id="canvas" height="400.0" width="600.0"/>
+    </children>
 </AnchorPane>
