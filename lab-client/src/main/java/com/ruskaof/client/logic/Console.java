@@ -1,166 +1,106 @@
-//package com.ruskaof.client.logic;
-//
-//import com.ruskaof.client.connection.ConnectionManager;
-//import com.ruskaof.client.commands.ExecuteScriptCommand;
-//import com.ruskaof.client.util.InputManager;
-//import com.ruskaof.client.util.OutputManager;
-//import com.ruskaof.client.util.DataObjectsMaker;
-//import com.ruskaof.common.commands.AddCommand;
-//import com.ruskaof.common.commands.AddIfMinCommand;
-//import com.ruskaof.common.commands.ClearCommand;
-//import com.ruskaof.common.commands.Command;
-//import com.ruskaof.common.commands.RegisterCommand;
-//import com.ruskaof.common.commands.RemoveByIdCommand;
-//import com.ruskaof.common.commands.ShowCommand;
-//import com.ruskaof.common.commands.UpdateCommand;
-//import com.ruskaof.common.data.StudyGroup;
-//import com.ruskaof.common.dto.CommandFromClientDto;
-//import com.ruskaof.common.dto.CommandResultDto;
-//import com.ruskaof.common.util.DataCantBeSentException;
-//
-//import java.io.IOException;
-//import java.io.Serializable;
-//import java.nio.channels.UnresolvedAddressException;
-//import java.util.Collection;
-//import java.util.NoSuchElementException;
-//
-//
-//public class Console {
-//    private static final int MAX_STRING_LENGTH = 100;
-//    private final OutputManager outputManager;
-//    private final InputManager inputManager;
-//    private final ConnectionManager connectionManager;
-//    private final Collection<String> listOfCommands;
-//    private String username;
-//    private String password;
-//
-//
-//    public Console(
-//            OutputManager outputManager,
-//            InputManager inputManager,
-//            ConnectionManager connectionManager,
-//            Collection<String> listOfCommands
-//    ) {
-//        this.outputManager = outputManager;
-//        this.inputManager = inputManager;
-//        this.connectionManager = connectionManager;
-//        this.listOfCommands = listOfCommands;
-//    }
-//
-//    public void start() throws ClassNotFoundException, IOException, DataCantBeSentException, UnresolvedAddressException {
-//        initUsernameAndPassword();
-//        DataObjectsMaker dataObjectsMaker = new DataObjectsMaker(inputManager, outputManager, username);
-//        String input;
-//        do {
-//            input = readNextCommand();
-//            if ("exit".equals(input)) {
-//                break;
-//            }
-//            final String[] parsedInp = parseToNameAndArg(input);
-//            final String commandName = parsedInp[0];
-//            Serializable commandArg = parsedInp[1];
-//            String commandArg2 = ""; // only for update command in this case
-//            if (listOfCommands.contains(commandName)) {
-//                if ("add".equals(commandName) || "add_if_min".equals(commandName) || "remove_greater".equals(commandName)) {
-//                    commandArg = dataObjectsMaker.makeStudyGroup();
-//                }
-//                if ("update".equals(commandName)) {
-//                    commandArg2 = (String) commandArg;
-//                    commandArg = dataObjectsMaker.makeStudyGroup();
-//                }
-////                if ("register".equals(commandName)) {
-////                    commandArg = dataObjectsMaker.makeLoginAndPassword();
-////                }
-//                if ("execute_script".equals(commandName)) {
-//                    new ExecuteScriptCommand((String) commandArg).execute(inputManager);
-//                } else {
-//                    try {
-//                        outputManager.println(
-//                                connectionManager.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), username, password)).toString()
-//                        );
-//                    } catch (DataCantBeSentException e) {
-//                        outputManager.println("Could not send a command");
-//                    }
-//                }
-//            } else {
-//                outputManager.println("The command was not found. Please use \"help\" to know about commands.");
-//            }
-//        } while (true);
-//    }
-//
-//    private void initUsernameAndPassword() throws IOException, DataCantBeSentException, UnresolvedAddressException {
-//        outputManager.println("Would you like to register first? (type \"yes\" to register or something else to continue with your own password+login).");
-//        final String answer = inputManager.nextLine();
-//        if ("yes".equals(answer)) {
-//            outputManager.println("Enter your new login");
-//            final String loginToRegister = inputManager.nextLine();
-//            outputManager.println("Enter new password");
-//            final String passwordToRegister = inputManager.nextLine();
-//
-//            if (loginToRegister.length() > MAX_STRING_LENGTH || passwordToRegister.length() > MAX_STRING_LENGTH) {
-//                outputManager.println("Your password or login was too long");
-//                return;
-//            }
-//
-//
-//            CommandResultDto registerCommandResult = connectionManager.sendCommand(new CommandFromClientDto(new RegisterCommand(loginToRegister, passwordToRegister)));
-//            if (registerCommandResult.isWasExecutedCorrectly()) {
-//                if (!((RegisterCommand.RegisterCommandResult) registerCommandResult).isWasRegistered()) {
-//                    outputManager.println("User was not registered because the username was not unique.");
-//                    initUsernameAndPassword();
-//                } else {
-//                    password = passwordToRegister;
-//                    username = loginToRegister;
-//                }
-//            } else {
-//                throw new DataCantBeSentException();
-//            }
-//        } else {
-//            outputManager.println("Enter login");
-//            username = inputManager.nextLine();
-//            outputManager.println("Enter password");
-//            password = inputManager.nextLine();
-//        }
-//    }
-//
-//    private String[] parseToNameAndArg(String input) {
-//        String[] arrayInput = input.split(" ");
-//        String inputCommand = arrayInput[0];
-//        String inputArg = "";
-//
-//        if (arrayInput.length >= 2) {
-//            inputArg = arrayInput[1];
-//        }
-//
-//        return new String[]{inputCommand, inputArg};
-//    }
-//
-//    private String readNextCommand() throws IOException {
-//        outputManager.print(">>>");
-//        try {
-//            return inputManager.nextLine();
-//        } catch (NoSuchElementException e) {
-//            return "exit";
-//        }
-//    }
-//
-//    private Command getCommandObjectByName(String commandName, Serializable arg, String arg2) {
-//        Command command;
-//        switch (commandName) {
-//            case "add": command = new AddCommand((StudyGroup) arg);
-//                break;
-//            case "add_if_min": command = new AddIfMinCommand((StudyGroup) arg);
-//                break;
-//            case "clear": command = new ClearCommand();
-//                break;
-//            case "remove_by_id": command = new RemoveByIdCommand((String) arg);
-//                break;
-//            case "show": command = new ShowCommand();
-//                break;
-//            case "update": command = new UpdateCommand((StudyGroup) arg, arg2);
-//                break;
-//            default: return null;
-//        }
-//        return command;
-//    }
-//}
+package com.ruskaof.client.logic;
+
+import com.ruskaof.client.ClientApi;
+import com.ruskaof.client.connection.CommandSender;
+import com.ruskaof.client.util.DataObjectsMaker;
+import com.ruskaof.common.commands.*;
+import com.ruskaof.common.data.StudyGroup;
+import com.ruskaof.common.dto.CommandFromClientDto;
+import com.ruskaof.common.util.DataCantBeSentException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+
+public class Console {
+    private final List<String> listOfCommands = Arrays.asList("add");
+
+
+    public void start(String script, String username, CommandSender commandSender) throws IOException {
+        if (script == null) {
+            System.out.println("wtf");
+            return;
+        } else {
+            System.out.println("the script is");
+            System.out.println(script);
+        }
+        LinkedList<String> splitted = new LinkedList<>(Arrays.asList(script.split("\n")));
+        DataObjectsMaker dataObjectsMaker = new DataObjectsMaker(splitted, username);
+        String input;
+        for (int lineInd = 0; lineInd < splitted.size(); lineInd++) {
+            System.out.println("executing command");
+            input = splitted.get(lineInd);
+            if ("exit".equals(input)) {
+                break;
+            }
+            final String[] parsedInp = parseToNameAndArg(input);
+            final String commandName = parsedInp[0].trim();
+            Serializable commandArg = parsedInp[1];
+            String commandArg2 = ""; // only for update command in this case
+            if (listOfCommands.contains(commandName)) {
+                if ("add".equals(commandName) || "add_if_min".equals(commandName) || "remove_greater".equals(commandName)) {
+                    System.out.println("executing add");
+                    commandArg = dataObjectsMaker.makeStudyGroup();
+                }
+                if ("update".equals(commandName)) {
+                    commandArg2 = (String) commandArg;
+                    commandArg = dataObjectsMaker.makeStudyGroup();
+                }
+                if ("execute_script".equals(commandName)) {
+                    ClientApi.getInstance().executeScript(new File((String) commandArg));
+                } else {
+                    try {
+                        commandSender.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2)));
+
+                    } catch (DataCantBeSentException e) {
+
+                    }
+                }
+            } else {
+                System.out.println("no such command");
+            }
+        }
+    }
+
+
+    private String[] parseToNameAndArg(String input) {
+        String[] arrayInput = input.split(" ");
+        String inputCommand = arrayInput[0];
+        String inputArg = "";
+
+        if (arrayInput.length >= 2) {
+            inputArg = arrayInput[1];
+        }
+
+        return new String[]{inputCommand, inputArg};
+    }
+
+
+    private Command getCommandObjectByName(String commandName, Serializable arg, String arg2) {
+        Command command;
+        switch (commandName) {
+            case "add":
+                command = new AddCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+                break;
+            case "add_if_min":
+                command = new AddIfMinCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+                break;
+            case "clear":
+                command = new ClearCommand(ClientApi.getLogin(), ClientApi.getPassword());
+                break;
+            case "remove_by_id":
+                command = new RemoveByIdCommand(ClientApi.getLogin(), ClientApi.getPassword(), Integer.parseInt((String) arg));
+                break;
+            case "update":
+                command = new UpdateCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+                break;
+            default:
+                return null;
+        }
+        return command;
+    }
+}

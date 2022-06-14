@@ -25,7 +25,6 @@ public class StudyGroupRow {
     private String authorName;
 
     public void setId(int id) {
-        System.out.println("fads");
         this.id = id;
     }
 

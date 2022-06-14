@@ -29,7 +29,9 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
                <children>
-                  <Button fx:id="button_register" alignment="CENTER" mnemonicParsing="false" onAction="#register" prefHeight="36.0" prefWidth="113.0" text="Регистрация" textAlignment="CENTER" textFill="WHITE" />
+                  <Button fx:id="registerBTN" alignment="CENTER" mnemonicParsing="false" onAction="#register"
+                          prefHeight="36.0" prefWidth="113.0" text="Регистрация" textAlignment="CENTER"
+                          textFill="WHITE"/>
                </children>
             </HBox>
          </children>

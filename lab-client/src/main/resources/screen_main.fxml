@@ -7,8 +7,9 @@
             fx:controller="com.ruskaof.client.presentation.controllers.MainScreenController">
     <left>
         <VBox spacing="5">
-            <Button onAction="#navigateToTableView" prefHeight="25.0" prefWidth="56.0" text="Table"/>
-            <Button onAction="#navigateToVisualisation" text="Objects"/>
+            <Button fx:id="tableBTN" onAction="#navigateToTableView" prefHeight="25.0" prefWidth="56.0" text="Table"/>
+            <Button fx:id="objectsBTN" onAction="#navigateToVisualisation" text="Objects"/>
+            <Button fx:id="scriptBTN" onAction="#navigateToExecute" prefHeight="25.0" prefWidth="56.0" text="Script"/>
         </VBox>
     </left>
     <center>
@@ -19,6 +20,11 @@
             <fx:include fx:id="visualisation" managed="false" source="screen_visualisation.fxml" visible="false"
                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                         AnchorPane.topAnchor="0.0"/>
+
+            <fx:include fx:id="execute" managed="false" source="screen_execute.fxml" visible="false"
+                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                        AnchorPane.topAnchor="0.0"/>
+
         </AnchorPane>
     </center>
 </BorderPane>

@@ -22,14 +22,14 @@
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
                     <children>
-                        <Button fx:id="button_enter" alignment="CENTER" mnemonicParsing="false" onAction="#login"
+                        <Button fx:id="enterBTN" alignment="CENTER" mnemonicParsing="false" onAction="#login"
                                 prefHeight="36.0" prefWidth="113.0" text="Войти" textAlignment="CENTER"
                                 textFill="WHITE"/>
                     </children>
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
                     <children>
-                        <Button fx:id="button_register" alignment="CENTER" mnemonicParsing="false" onAction="#register"
+                        <Button fx:id="registerBTN" alignment="CENTER" mnemonicParsing="false" onAction="#register"
                                 prefHeight="36.0" prefWidth="113.0" text="Регистрация" textAlignment="CENTER"
                                 textFill="WHITE">
                         </Button>

@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
 
@@ -94,44 +95,45 @@ public class AddScreenController {
     }
 
     private boolean checkFieldsAndAdd() {
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("labels");
         if (!checkString(nameField.getText())) {
-            errorLabel.setText("name must not be empty and longer than 100");
+            errorLabel.setText(resourceBundle.getString("error.string_field"));
             return false;
         }
         if (!checkLong(xField.getText(), (l) -> l > -896)) {
-            errorLabel.setText("x must be long and >-896");
+            errorLabel.setText(resourceBundle.getString("error.x_field"));
             return false;
         }
         if (!checkDouble(yField.getText(), (d) -> d <= 135)) {
-            errorLabel.setText("y must be double and <= 135");
+            errorLabel.setText(resourceBundle.getString("error.y_field"));
             return false;
         }
         if (!checkLong(studentsCountField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE)) {
-            errorLabel.setText("students count must be >0 and int");
+            errorLabel.setText(resourceBundle.getString("error.students_count"));
             return false;
         }
         if (!checkString(adminNameField.getText())) {
-            errorLabel.setText("admin name must not be empty and longer than 100");
+            errorLabel.setText(resourceBundle.getString("error.admin_name"));
             return false;
         }
         if (!checkLong(adminHeightField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE)) {
-            errorLabel.setText("admin height must be int > 0");
+            errorLabel.setText(resourceBundle.getString("error.admin_height"));
             return false;
         }
         if (!checkFloat(adminXField.getText(), (f) -> true)) {
-            errorLabel.setText("admin x must be a float");
+            errorLabel.setText(resourceBundle.getString("error.admin_x"));
             return false;
         }
         if (!checkLong(adminYField.getText(), (l) -> true)) {
-            errorLabel.setText("admin y must be a long");
+            errorLabel.setText(resourceBundle.getString("error.admin_y"));
             return false;
         }
         if (!checkString(adminLocationNameField.getText())) {
-            errorLabel.setText("admin location must not be empty and longer than 100");
+            errorLabel.setText(resourceBundle.getString("error.admin_location"));
             return false;
         }
         if (adminNationalityCombo.getValue() == null || formOfEducationCombo.getValue() == null || semesterCombo == null) {
-            errorLabel.setText("you must choose options in combo boxes");
+            errorLabel.setText(resourceBundle.getString("error.you_must_choose"));
             return false;
         }
         return true;
@@ -146,7 +148,7 @@ public class AddScreenController {
                 ),
                 Integer.parseInt(studentsCountField.getText()),
                 FormOfEducation.valueOf(formOfEducationCombo.getValue()),
-                Semester.valueOf(semesterCombo.getValue()),
+                semesterCombo.getValue().equals("null") ? null : Semester.valueOf(semesterCombo.getValue()),
                 new Person(
                         adminNameField.getText(),
                         Integer.parseInt(adminXField.getText()),

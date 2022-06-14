@@ -1,15 +1,10 @@
 package com.ruskaof.client.util;
 
-import com.ruskaof.common.data.Coordinates;
-import com.ruskaof.common.data.Country;
-import com.ruskaof.common.data.FormOfEducation;
-import com.ruskaof.common.data.Location;
-import com.ruskaof.common.data.Person;
-import com.ruskaof.common.data.Semester;
-import com.ruskaof.common.data.StudyGroup;
+import com.ruskaof.common.data.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -19,25 +14,18 @@ import java.util.function.Predicate;
 public class DataObjectsMaker {
     private static final int MAX_STRING_LENGTH = 100;
     private static final String ERROR_MESSAGE = "Your enter was not correct type. Try again";
-    private final OutputManager outputManager;
+    private final LinkedList<String> linkedList;
     private final Asker asker;
     private final String authorName;
 
-    public DataObjectsMaker(InputManager inputManager, OutputManager outputManager, String authorName) {
-        this.outputManager = outputManager;
-        this.asker = new Asker(inputManager, outputManager);
+    public DataObjectsMaker(LinkedList<String> data, String authorName) {
+        this.linkedList = data;
+        this.asker = new Asker(data);
         this.authorName = authorName;
     }
 
-//    public String[] makeLoginAndPassword() throws IOException {
-//        String login = asker.ask(arg -> arg.length() > 0, "Enter login", ERROR_MESSAGE, "Login must not be empty", x -> x, false);
-//        String password = asker.ask(arg -> arg.length() > 0, "Enter password", ERROR_MESSAGE, "Password must not be empty", x -> x, false);
-//
-//        return new String[] {login, password};
-//    }
 
     public StudyGroup makeStudyGroup() throws IOException {
-        outputManager.println("Enter studyGroup data");
         String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String)",
                 ERROR_MESSAGE, "The string must not be empty and shorter than 100 chars", x -> x, false);
 
@@ -57,7 +45,6 @@ public class DataObjectsMaker {
     }
 
     private Coordinates askForCoordinates() throws IOException {
-        outputManager.println("Enter coordinates data");
         final long xLimitation = -896;
         final double yLimitation = 135;
         long x = asker.ask(arg -> (arg) > xLimitation, "Enter x (long)",
@@ -68,7 +55,6 @@ public class DataObjectsMaker {
     }
 
     private Person askForGroupAdmin() throws IOException {
-        outputManager.println("Enter groupAdminData");
 
         String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String)",
                 ERROR_MESSAGE, "The string must not be empty and shorter than 100 chars. Try again", x -> x, false);
@@ -85,7 +71,6 @@ public class DataObjectsMaker {
     }
 
     private Location askForLocation() throws IOException {
-        outputManager.println("Enter location data");
         String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String) (can be null)",
                 ERROR_MESSAGE, "The string must not be empty and shorter than 100 chars. Try again", x -> x, true);
         float x = asker.ask(arg -> true, "Enter x (float)", ERROR_MESSAGE,
@@ -98,13 +83,10 @@ public class DataObjectsMaker {
 
     public static class Asker {
 
-        private final InputManager inputManager;
-        private final OutputManager outputManager;
+        private final LinkedList<String> data;
 
-
-        public Asker(InputManager inputManager, OutputManager outputManager) {
-            this.inputManager = inputManager;
-            this.outputManager = outputManager;
+        public Asker(LinkedList<String> data) {
+            this.data = data;
         }
 
         public <T> T ask(Predicate<T> predicate,
@@ -113,12 +95,13 @@ public class DataObjectsMaker {
                          String wrongValueMessage,
                          Function<String, T> converter,
                          boolean nullable) throws IOException {
-            outputManager.println(askMessage);
             String input;
             T value;
             do {
                 try {
-                    input = inputManager.nextLine();
+                    System.out.println(askMessage);
+                    input = data.getFirst().trim();
+                    data.removeFirst();
                     if ("".equals(input) && nullable) {
                         return null;
                     }
@@ -126,13 +109,13 @@ public class DataObjectsMaker {
                     value = converter.apply(input);
 
                 } catch (IllegalArgumentException e) {
-                    outputManager.println(errorMessage);
+                    System.out.println(errorMessage);
                     continue;
                 }
                 if (predicate.test(value)) {
                     return value;
                 } else {
-                    outputManager.println(wrongValueMessage);
+                    System.out.println(wrongValueMessage);
                 }
             } while (true);
         }

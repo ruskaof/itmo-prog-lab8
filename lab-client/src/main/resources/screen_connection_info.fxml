@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/8.0.171"
@@ -32,6 +30,7 @@
                   <Label fx:id="errorLabel"/>
                </children>
             </HBox>
+            <ComboBox fx:id="languageCB" prefWidth="150.0" promptText="Language"/>
          </children>
       </VBox>
    </children>
