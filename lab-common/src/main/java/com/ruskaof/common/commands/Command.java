@@ -19,8 +19,12 @@ public abstract class Command implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Command command = (Command) o;
         return Objects.equals(username, command.username) && Objects.equals(password, command.password);
     }
@@ -40,10 +44,10 @@ public abstract class Command implements Serializable {
 
     @Override
     public String toString() {
-        return "Command{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+        return "Command{"
+                + "username='" + username + '\''
+                + ", password='" + password + '\''
+                + '}';
     }
 
     public abstract CommandResultDto execute(

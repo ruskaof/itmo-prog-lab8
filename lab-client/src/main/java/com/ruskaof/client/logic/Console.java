@@ -17,7 +17,7 @@ import java.util.List;
 
 
 public class Console {
-    private final List<String> listOfCommands = Arrays.asList("add");
+    private final List<String> listOfCommands = Arrays.asList("add", "add_if_min", "clear", "remove_by_id", "update");
 
 
     public void start(String script, String username, CommandSender commandSender) throws IOException {

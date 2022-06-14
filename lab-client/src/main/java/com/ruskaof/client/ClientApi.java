@@ -9,6 +9,8 @@ import com.ruskaof.common.commands.*;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +32,12 @@ public final class ClientApi {
     private static ClientApi instance;
     private static String login;
     private static String password;
+
+    private static Stage stage;
+
+    public static void setStage(Stage stage) {
+        ClientApi.stage = stage;
+    }
 
     private static Locale locale;
 
@@ -164,26 +172,6 @@ public final class ClientApi {
         commandSender.sendCommand(new CommandFromClientDto(new AddCommand(login, password, newStudyGroup)));
     }
 
-    private void initCommandList() {
-        ClientApi.LIST_OF_COMMANDS.add("add");
-        ClientApi.LIST_OF_COMMANDS.add("add_if_min");
-        ClientApi.LIST_OF_COMMANDS.add("clear");
-        ClientApi.LIST_OF_COMMANDS.add("exit");
-        ClientApi.LIST_OF_COMMANDS.add("help");
-        ClientApi.LIST_OF_COMMANDS.add("history");
-        ClientApi.LIST_OF_COMMANDS.add("info");
-        ClientApi.LIST_OF_COMMANDS.add("min_by_id");
-        ClientApi.LIST_OF_COMMANDS.add("print_ascending");
-        ClientApi.LIST_OF_COMMANDS.add("remove_by_id");
-        ClientApi.LIST_OF_COMMANDS.add("remove_greater");
-        ClientApi.LIST_OF_COMMANDS.add("show");
-        ClientApi.LIST_OF_COMMANDS.add("update");
-        ClientApi.LIST_OF_COMMANDS.add("execute_script");
-        ClientApi.LIST_OF_COMMANDS.add("filter_less_than_semester_enum");
-        ClientApi.LIST_OF_COMMANDS.add("print_ascending");
-        ClientApi.LIST_OF_COMMANDS.add("register");
-    }
-
     public void addIfMin(StudyGroup newStudyGroup) throws DataCantBeSentException {
         commandSender.sendCommand(new CommandFromClientDto(new AddIfMinCommand(login, password, newStudyGroup)));
     }
@@ -206,5 +194,14 @@ public final class ClientApi {
     public void executeScript(File selectedFile) throws IOException {
 
         new Console().start(readFileAsString(selectedFile.getAbsolutePath()), getLogin(), commandSender);
+    }
+
+    public void notifyDisconnect() {
+
+        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+        errorAlert.setHeaderText("Disconnected from server");
+        errorAlert.showAndWait();
+
+        System.exit(1);
     }
 }

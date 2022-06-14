@@ -1,5 +1,6 @@
 package com.ruskaof.client.connection;
 
+import com.ruskaof.client.ClientApi;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataCantBeSentException;
@@ -26,8 +27,12 @@ public class CommandSenderTCP implements CommandSender {
         try {
             objectOutputStream.writeObject(commandFromClientDto);
             return (CommandResultDto) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
+            ClientApi.getInstance().notifyDisconnect();
+
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 }
