@@ -1,7 +1,13 @@
 package com.ruskaof.client.presentation.controllers;
 
 import com.ruskaof.client.ClientApi;
-import com.ruskaof.common.data.*;
+import com.ruskaof.common.data.Coordinates;
+import com.ruskaof.common.data.Country;
+import com.ruskaof.common.data.FormOfEducation;
+import com.ruskaof.common.data.Location;
+import com.ruskaof.common.data.Person;
+import com.ruskaof.common.data.Semester;
+import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.util.DataCantBeSentException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

@@ -22,7 +22,7 @@ public class ConnectionInfoController {
     private ComboBox<String> languageCB;
 
 
-    public void connect(ActionEvent event) throws IOException {
+    public void connect(ActionEvent event) {
         if (languageCB.getValue() != null) {
             try {
                 ClientApi.getInstance().init(Integer.parseInt(portField.getText()), ipField.getText());

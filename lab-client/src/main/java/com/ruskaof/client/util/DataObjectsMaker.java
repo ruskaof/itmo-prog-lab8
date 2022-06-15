@@ -1,6 +1,12 @@
 package com.ruskaof.client.util;
 
-import com.ruskaof.common.data.*;
+import com.ruskaof.common.data.Coordinates;
+import com.ruskaof.common.data.Country;
+import com.ruskaof.common.data.FormOfEducation;
+import com.ruskaof.common.data.Location;
+import com.ruskaof.common.data.Person;
+import com.ruskaof.common.data.Semester;
+import com.ruskaof.common.data.StudyGroup;
 
 import java.io.IOException;
 import java.time.LocalDate;

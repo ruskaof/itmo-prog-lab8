@@ -92,9 +92,9 @@ public class VisualisationScreenController {
             rotateTransition.play();
 
             RotateTransition rotateTransition2 = new RotateTransition();
-            rotateTransition2.setDuration(Duration.millis(1000));
+            rotateTransition2.setDuration(Duration.millis(ANIM_DURATION));
             rotateTransition2.setNode(circle);
-            rotateTransition2.setByAngle(360);
+            rotateTransition2.setByAngle(ANGLE_OF_ROTATION);
             rotateTransition2.setCycleCount(1);
             rotateTransition2.setAutoReverse(false);
             rotateTransition2.play();

@@ -285,7 +285,6 @@ public class TableViewScreenController {
     }
 
     private boolean filterValue(StudyGroupRow studyGroupRow) {
-
         switch (filterField) {
             case X:
                 return studyGroupRow.getX() <= rightValue && studyGroupRow.getX() >= leftValue;
