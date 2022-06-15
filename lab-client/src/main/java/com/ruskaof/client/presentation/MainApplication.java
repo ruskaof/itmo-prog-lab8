@@ -11,6 +11,10 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class MainApplication extends Application {
+    private static final int MIN_HEIGHT = 480;
+    private static final int MIN_WIDTH = 640;
+    private static final int HEIGHT = 600;
+    private static final int WIDTH = 800;
     private final Color mainBackgroundColor = Color.WHITE;
     private final String appName = "Study group manager";
 
@@ -25,11 +29,11 @@ public class MainApplication extends Application {
         final Scene scene = new Scene(root, mainBackgroundColor);
         final Image icon = new Image("icon.png");
 
-        stage.setMinHeight(480);
-        stage.setMinWidth(640);
+        stage.setMinHeight(MIN_HEIGHT);
+        stage.setMinWidth(MIN_WIDTH);
 
-        stage.setHeight(600);
-        stage.setWidth(800);
+        stage.setHeight(HEIGHT);
+        stage.setWidth(WIDTH);
 
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/text_field.css")).toExternalForm());

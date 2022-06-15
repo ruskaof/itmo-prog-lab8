@@ -21,8 +21,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class VisualisationScreenController {
-    private static final double objectHeight = 100D;
-    private static final double objectWidth = 100D;
+    private static final double OBJECT_HEIGHT = 100D;
+    private static final double OBJECT_WIDTH = 100D;
+    private static final double CIRCLE_RADIUS = 10D;
+    private static final double ANIM_DURATION = 1000D;
+    private static final double ANGLE_OF_ROTATION = 360D;
+    private static final double LINE_WIDTH = 3;
 
     @FXML
     private Button reloadBTN;
@@ -54,8 +58,8 @@ public class VisualisationScreenController {
     }
 
     private boolean objectIsClickedOn(StudyGroupRow object, double x, double y) {
-        return (x <= object.getX() + objectWidth / 2 && x >= object.getX() - objectWidth / 2)
-                && (y <= object.getY() + objectHeight / 2 && y >= object.getY() - objectHeight / 2);
+        return (x <= object.getX() + OBJECT_WIDTH / 2 && x >= object.getX() - OBJECT_WIDTH / 2)
+                && (y <= object.getY() + OBJECT_HEIGHT / 2 && y >= object.getY() - OBJECT_HEIGHT / 2);
     }
 
     private void refresh() throws DataCantBeSentException {
@@ -72,17 +76,17 @@ public class VisualisationScreenController {
 
 
         for (StudyGroupRow studyGroupRow : data) {
-            Rectangle rectangle = new Rectangle(convertX(studyGroupRow.getX()) - objectWidth / 2, convertY(studyGroupRow.getY()) - objectHeight / 2, objectWidth, objectWidth);
+            Rectangle rectangle = new Rectangle(convertX(studyGroupRow.getX()) - OBJECT_WIDTH / 2, convertY(studyGroupRow.getY()) - OBJECT_HEIGHT / 2, OBJECT_WIDTH, OBJECT_WIDTH);
             rectangle.setFill(Color.RED);
 
-            Circle circle = new Circle(convertX(studyGroupRow.getX()), convertY(studyGroupRow.getY()) - objectHeight / 2, objectWidth, Color.BLACK);
-            circle.setRadius(10);
+            Circle circle = new Circle(convertX(studyGroupRow.getX()), convertY(studyGroupRow.getY()) - OBJECT_HEIGHT / 2, OBJECT_WIDTH, Color.BLACK);
+            circle.setRadius(CIRCLE_RADIUS);
 
             ScaleTransition scaleTransition = new ScaleTransition();
             RotateTransition rotateTransition = new RotateTransition();
-            rotateTransition.setDuration(Duration.millis(1000));
+            rotateTransition.setDuration(Duration.millis(ANIM_DURATION));
             rotateTransition.setNode(rectangle);
-            rotateTransition.setByAngle(360);
+            rotateTransition.setByAngle(ANGLE_OF_ROTATION);
             rotateTransition.setCycleCount(1);
             rotateTransition.setAutoReverse(false);
             rotateTransition.play();
@@ -120,7 +124,7 @@ public class VisualisationScreenController {
     private void drawAxis() {
         gc.setFill(Color.BLACK);
         gc.setStroke(Color.BLACK);
-        gc.setLineWidth(3);
+        gc.setLineWidth(LINE_WIDTH);
         gc.strokeLine(0, canvas.getHeight() / 2, canvas.getWidth(), canvas.getHeight() / 2);
         gc.strokeLine(canvas.getWidth() / 2, 0, canvas.getWidth() / 2, canvas.getHeight());
     }

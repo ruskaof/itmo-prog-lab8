@@ -12,13 +12,13 @@ import java.util.ResourceBundle;
 
 public class RegisterScreenController {
     @FXML
-    TextField loginField;
+    private TextField loginField;
     @FXML
-    TextField passwordField;
+    private TextField passwordField;
     @FXML
-    TextField repeatedPasswordField;
+    private TextField repeatedPasswordField;
     @FXML
-    Button registerBTN;
+    private Button registerBTN;
 
     @FXML
     public void register(ActionEvent event) throws IOException, DataCantBeSentException {

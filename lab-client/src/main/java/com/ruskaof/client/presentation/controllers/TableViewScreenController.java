@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TableViewScreenController {
-    private static final StringConverter<Integer> safeIntegerStringConverter = new StringConverter<Integer>() {
+    private static final StringConverter<Integer> SAFE_INTEGER_STRING_CONVERTER = new StringConverter<Integer>() {
         @Override
         public String toString(Integer object) {
             return NumberFormat.getInstance(ClientApi.getLocale()).format(object);
@@ -46,7 +46,7 @@ public class TableViewScreenController {
             }
         }
     };
-    private static final StringConverter<LocalDate> safeDateConverter = new StringConverter<LocalDate>() {
+    private static final StringConverter<LocalDate> LOCAL_DATE_STRING_CONVERTER = new StringConverter<LocalDate>() {
         @Override
         public String toString(LocalDate object) {
             return DateFormat.getDateInstance(DateFormat.FULL, ClientApi.getLocale()).format(convertToDateViaInstant(object));
@@ -61,7 +61,7 @@ public class TableViewScreenController {
             }
         }
     };
-    private static final StringConverter<Long> safeLongStringConverter = new StringConverter<Long>() {
+    private static final StringConverter<Long> SAFE_LONG_STRING_CONVERTER = new StringConverter<Long>() {
 
         @Override
         public String toString(Long object) {
@@ -77,7 +77,7 @@ public class TableViewScreenController {
             }
         }
     };
-    private static final StringConverter<Double> safeDoubleStringConverter = new StringConverter<Double>() {
+    private static final StringConverter<Double> SAFE_DOUBLE_STRING_CONVERTER = new StringConverter<Double>() {
         @Override
         public String toString(Double object) {
             return NumberFormat.getInstance(ClientApi.getLocale()).format(object);
@@ -92,7 +92,7 @@ public class TableViewScreenController {
             }
         }
     };
-    private static final StringConverter<Float> safeFloatStringConverter = new StringConverter<Float>() {
+    private static final StringConverter<Float> SAFE_FLOAT_STRING_CONVERTER = new StringConverter<Float>() {
         @Override
         public String toString(Float object) {
             return NumberFormat.getInstance(ClientApi.getLocale()).format(object);
@@ -173,7 +173,7 @@ public class TableViewScreenController {
 
     private static void addIntColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<Integer> onCommitCellModifier, boolean editable) {
         TableColumn<StudyGroupRow, Integer> newColumn = makeStandardColumnConfig(columnName, fieldName, editable);
-        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Integer>forTableColumn(safeIntegerStringConverter));
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Integer>forTableColumn(SAFE_INTEGER_STRING_CONVERTER));
         newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
         table.getColumns().add(newColumn);
     }
@@ -211,7 +211,7 @@ public class TableViewScreenController {
     private static void addLongColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<Long> onCommitCellModifier) {
         TableColumn<StudyGroupRow, Long> newColumn = makeStandardColumnConfig(columnName, fieldName, true);
 
-        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Long>forTableColumn(safeLongStringConverter));
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Long>forTableColumn(SAFE_LONG_STRING_CONVERTER));
         newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
         table.getColumns().add(newColumn);
     }
@@ -219,7 +219,7 @@ public class TableViewScreenController {
     private static void addFloatColumn(TableView<StudyGroupRow> table, OnCommitCellModifier<Float> onCommitCellModifier) {
         TableColumn<StudyGroupRow, Float> newColumn = makeStandardColumnConfig("adminX", "adminX", true);
 
-        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Float>forTableColumn(safeFloatStringConverter));
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Float>forTableColumn(SAFE_FLOAT_STRING_CONVERTER));
         newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
         table.getColumns().add(newColumn);
     }
@@ -249,14 +249,14 @@ public class TableViewScreenController {
     private static void addDoubleColumn(TableView<StudyGroupRow> table, OnCommitCellModifier<Double> onCommitCellModifier) {
         TableColumn<StudyGroupRow, Double> newColumn = makeStandardColumnConfig("y", "y", true);
 
-        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Double>forTableColumn(safeDoubleStringConverter));
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Double>forTableColumn(SAFE_DOUBLE_STRING_CONVERTER));
         newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
         table.getColumns().add(newColumn);
     }
 
     private static void addDateColumn(TableView<StudyGroupRow> table) {
         TableColumn<StudyGroupRow, LocalDate> newColumn = makeStandardColumnConfig("creationDate", "creationDate", false);
-        newColumn.setCellFactory(TextFieldTableCell.forTableColumn(safeDateConverter));
+        newColumn.setCellFactory(TextFieldTableCell.forTableColumn(LOCAL_DATE_STRING_CONVERTER));
         table.getColumns().add(newColumn);
     }
 
@@ -386,9 +386,9 @@ public class TableViewScreenController {
         void modifyColumn(StudyGroupRow studyGroupRow, T newValue);
     }
 
-    public void setLeftAndRightValues(double leftValue, double rightValue) {
-        this.leftValue = leftValue;
-        this.rightValue = rightValue;
+    public void setLeftAndRightValues(double newLeftValue, double newRightValue) {
+        this.leftValue = newLeftValue;
+        this.rightValue = newRightValue;
     }
 
     @FXML

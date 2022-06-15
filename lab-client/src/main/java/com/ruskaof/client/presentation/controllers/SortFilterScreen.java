@@ -13,17 +13,17 @@ import java.util.stream.Collectors;
 
 public class SortFilterScreen {
     @FXML
-    ComboBox<String> sortingOrderCB;
+    private ComboBox<String> sortingOrderCB;
     @FXML
-    ComboBox<String> sortingFieldCB;
+    private ComboBox<String> sortingFieldCB;
     @FXML
-    ComboBox<String> filteringFieldCB;
+    private ComboBox<String> filteringFieldCB;
     @FXML
-    TextField rightField;
+    private TextField rightField;
     @FXML
-    TextField leftField;
+    private TextField leftField;
     @FXML
-    Label errorLabel;
+    private Label errorLabel;
 
     @FXML
     public void initialize() {

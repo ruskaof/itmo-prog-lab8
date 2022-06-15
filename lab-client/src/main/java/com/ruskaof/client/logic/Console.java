@@ -3,7 +3,12 @@ package com.ruskaof.client.logic;
 import com.ruskaof.client.ClientApi;
 import com.ruskaof.client.connection.CommandSender;
 import com.ruskaof.client.util.DataObjectsMaker;
-import com.ruskaof.common.commands.*;
+import com.ruskaof.common.commands.AddCommand;
+import com.ruskaof.common.commands.AddIfMinCommand;
+import com.ruskaof.common.commands.ClearCommand;
+import com.ruskaof.common.commands.Command;
+import com.ruskaof.common.commands.RemoveByIdCommand;
+import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
@@ -78,23 +83,17 @@ public class Console {
     private Command getCommandObjectByName(String commandName, Serializable arg, String arg2) {
         Command command;
         switch (commandName) {
-            case "add":
-                command = new AddCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+            case "add": command = new AddCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
                 break;
-            case "add_if_min":
-                command = new AddIfMinCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+            case "add_if_min": command = new AddIfMinCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
                 break;
-            case "clear":
-                command = new ClearCommand(ClientApi.getLogin(), ClientApi.getPassword());
+            case "clear": command = new ClearCommand(ClientApi.getLogin(), ClientApi.getPassword());
                 break;
-            case "remove_by_id":
-                command = new RemoveByIdCommand(ClientApi.getLogin(), ClientApi.getPassword(), Integer.parseInt((String) arg));
+            case "remove_by_id": command = new RemoveByIdCommand(ClientApi.getLogin(), ClientApi.getPassword(), Integer.parseInt((String) arg));
                 break;
-            case "update":
-                command = new UpdateCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+            case "update": command = new UpdateCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
                 break;
-            default:
-                return null;
+            default: return null;
         }
         return command;
     }

@@ -10,17 +10,17 @@ import java.util.ResourceBundle;
 
 public class MainScreenController {
     @FXML
-    AnchorPane tableView;
+    private AnchorPane tableView;
     @FXML
-    AnchorPane visualisation;
+    private AnchorPane visualisation;
     @FXML
-    AnchorPane execute;
+    private AnchorPane execute;
     @FXML
-    Button tableBTN;
+    private Button tableBTN;
     @FXML
-    Button objectsBTN;
+    private Button objectsBTN;
     @FXML
-    Button scriptBTN;
+    private Button scriptBTN;
 
     @FXML
     private TableViewScreenController tableViewController;

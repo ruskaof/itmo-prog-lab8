@@ -16,6 +16,9 @@ import java.util.function.Predicate;
 
 
 public class AddScreenController {
+    private static final long X_FIELD_LIMITATION = -896;
+    private static final double Y_FIELD_LIMITATION = 135;
+    private static final int STRING_LENGTH_LIMITATION = 100;
     @FXML
     private TextField nameField;
     @FXML
@@ -42,6 +45,7 @@ public class AddScreenController {
     private TextField adminLocationNameField;
     @FXML
     private Label errorLabel;
+
 
     @FXML
     public void add(ActionEvent event) throws IOException {
@@ -97,11 +101,11 @@ public class AddScreenController {
             errorLabel.setText(resourceBundle.getString("error.string_field"));
             return false;
         }
-        if (!checkLong(xField.getText(), (l) -> l > -896)) {
+        if (!checkLong(xField.getText(), (l) -> l > -X_FIELD_LIMITATION)) {
             errorLabel.setText(resourceBundle.getString("error.x_field"));
             return false;
         }
-        if (!checkDouble(yField.getText(), (d) -> d <= 135)) {
+        if (!checkDouble(yField.getText(), (d) -> d <= Y_FIELD_LIMITATION)) {
             errorLabel.setText(resourceBundle.getString("error.y_field"));
             return false;
         }
@@ -187,7 +191,7 @@ public class AddScreenController {
     }
 
     private boolean checkString(String s) {
-        return s.length() > 0 && s.length() < 100;
+        return s.length() > 0 && s.length() < STRING_LENGTH_LIMITATION;
     }
 
 
