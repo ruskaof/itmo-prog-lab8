@@ -1,6 +1,5 @@
 package com.ruskaof.client.presentation;
 
-import com.ruskaof.client.ClientApi;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -39,8 +38,6 @@ public class MainApplication extends Application {
         stage.setTitle(appName);
         stage.setScene(scene);
         stage.show();
-
-        ClientApi.setStage(stage);
     }
 
 }

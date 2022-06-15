@@ -10,20 +10,18 @@ import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
 import com.ruskaof.common.util.DataCantBeSentException;
 import javafx.scene.control.Alert;
-import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 public final class ClientApi {
-    private static final Collection<String> LIST_OF_COMMANDS = new HashSet<>();
+    private static final long UPDATE_PERIOD = 3000;
+    private static volatile List<StudyGroupRow> currentData;
     private static CommandSender commandSender;
     private static CommandSender updater;
     private static boolean serverInfoWasInitialised = false;
@@ -33,13 +31,13 @@ public final class ClientApi {
     private static String login;
     private static String password;
 
-    private static Stage stage;
-
-    public static void setStage(Stage stage) {
-        ClientApi.stage = stage;
-    }
 
     private static Locale locale;
+
+
+    private ClientApi() {
+
+    }
 
     public static Locale getLocale() {
         return locale;
@@ -51,31 +49,32 @@ public final class ClientApi {
 
     public static void setLocalisation(Localisation localisation) {
         switch (localisation) {
-            case SPANISH: {
+            case SPANISH:
                 ClientApi.locale = new Locale("es");
                 break;
-            }
 
-            case FRENCH: {
+
+            case FRENCH:
                 ClientApi.locale = Locale.FRENCH;
                 break;
-            }
-            case RUSSIAN: {
+
+            case RUSSIAN:
                 ClientApi.locale = new Locale("ru");
                 break;
-            }
-            case ROMANIAN: {
+
+            case ROMANIAN:
                 ClientApi.locale = new Locale("ro");
                 break;
-            }
+
+
+            default:
+                throw new RuntimeException();
         }
     }
 
-    private volatile static List<StudyGroupRow> currentData;
 
-
-    private ClientApi() {
-
+    public static String getLogin() {
+        return login;
     }
 
     public static ClientApi getInstance() {
@@ -91,7 +90,7 @@ public final class ClientApi {
         final Thread updatingThread = new Thread(() -> {
             while (!Thread.interrupted()) {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(UPDATE_PERIOD);
                     currentData =
                             ((ShowCommand.ShowCommandResult) updater.sendCommand(new CommandFromClientDto(new ShowCommand(login, password)))).getData()
                                     .stream().map(StudyGroupRow::mapStudyGroupToRow).collect(Collectors.toList());
@@ -146,16 +145,12 @@ public final class ClientApi {
         return result;
     }
 
-    public boolean registerUser(String login, String password) throws DataCantBeSentException {
+    public boolean registerUser() throws DataCantBeSentException {
         return ((RegisterCommand.RegisterCommandResult)
                 commandSender.sendCommand(
                         new CommandFromClientDto(new RegisterCommand(login, password))
                 )
         ).wasRegistered();
-    }
-
-    public static String getLogin() {
-        return login;
     }
 
     public void update(StudyGroup newStudyGroup) throws DataCantBeSentException {

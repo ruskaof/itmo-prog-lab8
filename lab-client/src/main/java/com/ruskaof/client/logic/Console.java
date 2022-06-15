@@ -22,11 +22,7 @@ public class Console {
 
     public void start(String script, String username, CommandSender commandSender) throws IOException {
         if (script == null) {
-            System.out.println("wtf");
             return;
-        } else {
-            System.out.println("the script is");
-            System.out.println(script);
         }
         LinkedList<String> splitted = new LinkedList<>(Arrays.asList(script.split("\n")));
         DataObjectsMaker dataObjectsMaker = new DataObjectsMaker(splitted, username);
@@ -55,9 +51,8 @@ public class Console {
                 } else {
                     try {
                         commandSender.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2)));
-
                     } catch (DataCantBeSentException e) {
-
+                        e.printStackTrace();
                     }
                 }
             } else {

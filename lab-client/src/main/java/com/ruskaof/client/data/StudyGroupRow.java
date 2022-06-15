@@ -24,6 +24,24 @@ public class StudyGroupRow {
     private String adminLocationName;
     private String authorName;
 
+    public StudyGroupRow(int id, String name, long x, double y, LocalDate creationDate, int studentsCount, String formOfEducation, String semester, String adminName, int adminHeight, String adminNationality, float adminX, long adminY, String adminLocationName, String authorName) {
+        this.id = id;
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.creationDate = creationDate;
+        this.studentsCount = studentsCount;
+        this.formOfEducation = formOfEducation;
+        this.semester = semester;
+        this.adminName = adminName;
+        this.adminHeight = adminHeight;
+        this.adminNationality = adminNationality;
+        this.adminX = adminX;
+        this.adminY = adminY;
+        this.adminLocationName = adminLocationName;
+        this.authorName = authorName;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -152,24 +170,6 @@ public class StudyGroupRow {
         } catch (DataCantBeSentException e) {
             e.printStackTrace();
         }
-    }
-
-    public StudyGroupRow(int id, String name, long x, double y, LocalDate creationDate, int studentsCount, String formOfEducation, String semester, String adminName, int adminHeight, String adminNationality, float adminX, long adminY, String adminLocationName, String authorName) {
-        this.id = id;
-        this.name = name;
-        this.x = x;
-        this.y = y;
-        this.creationDate = creationDate;
-        this.studentsCount = studentsCount;
-        this.formOfEducation = formOfEducation;
-        this.semester = semester;
-        this.adminName = adminName;
-        this.adminHeight = adminHeight;
-        this.adminNationality = adminNationality;
-        this.adminX = adminX;
-        this.adminY = adminY;
-        this.adminLocationName = adminLocationName;
-        this.authorName = authorName;
     }
 
     public static StudyGroupRow mapStudyGroupToRow(StudyGroup studyGroup) {
