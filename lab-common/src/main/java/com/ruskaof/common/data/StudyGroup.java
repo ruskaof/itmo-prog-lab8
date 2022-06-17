@@ -16,6 +16,8 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
     private final Person groupAdmin; //not null
     private int id; // >0, unique, automatic generation
     private final String authorName;
+    private final String color;
+
 
     //CHECKSTYLE:OFF
     public StudyGroup(
@@ -26,8 +28,8 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
             Semester semesterEnum,
             Person groupAdmin,
             LocalDate creationDate,
-            String authorName
-    ) {
+            String authorName,
+            String color) {
         this.name = name;
         this.coordinates = coordinates;
         this.studentsCount = studentsCount;
@@ -36,9 +38,13 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
         this.groupAdmin = groupAdmin;
         this.creationDate = creationDate;
         this.authorName = authorName;
+        this.color = color;
     }
-
     //CHECKSTYLE:ON
+
+    public String getColor() {
+        return color;
+    }
     public Coordinates getCoordinates() {
         return coordinates;
     }
@@ -71,6 +77,7 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
                 + ", groupAdmin=" + groupAdmin
                 + ", id=" + id
                 + ", authorName='" + authorName + '\''
+                + ", color='" + color + '\''
                 + "}";
     }
 

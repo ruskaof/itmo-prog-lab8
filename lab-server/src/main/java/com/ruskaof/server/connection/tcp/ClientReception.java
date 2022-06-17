@@ -23,7 +23,7 @@ class ClientReception implements Runnable {
             }
     );
 
-    public ClientReception(State<Boolean> isWorking, ServerSocket server, CommandHandler commandHandler) {
+    ClientReception(State<Boolean> isWorking, ServerSocket server, CommandHandler commandHandler) {
         this.isWorking = isWorking;
         this.server = server;
         this.commandHandler = commandHandler;

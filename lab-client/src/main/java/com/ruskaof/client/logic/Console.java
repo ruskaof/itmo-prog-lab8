@@ -11,7 +11,6 @@ import com.ruskaof.common.commands.RemoveByIdCommand;
 import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
-import com.ruskaof.common.util.DataCantBeSentException;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,11 +53,8 @@ public class Console {
                 if ("execute_script".equals(commandName)) {
                     ClientApi.getInstance().executeScript(new File((String) commandArg));
                 } else {
-                    try {
-                        commandSender.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2)));
-                    } catch (DataCantBeSentException e) {
-                        e.printStackTrace();
-                    }
+                    commandSender.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2)));
+
                 }
             } else {
                 System.out.println("no such command");
@@ -83,17 +79,23 @@ public class Console {
     private Command getCommandObjectByName(String commandName, Serializable arg, String arg2) {
         Command command;
         switch (commandName) {
-            case "add": command = new AddCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+            case "add":
+                command = new AddCommand(ClientApi.getInstance().getLogin(), ClientApi.getInstance().getPassword(), (StudyGroup) arg);
                 break;
-            case "add_if_min": command = new AddIfMinCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+            case "add_if_min":
+                command = new AddIfMinCommand(ClientApi.getInstance().getLogin(), ClientApi.getInstance().getPassword(), (StudyGroup) arg);
                 break;
-            case "clear": command = new ClearCommand(ClientApi.getLogin(), ClientApi.getPassword());
+            case "clear":
+                command = new ClearCommand(ClientApi.getInstance().getLogin(), ClientApi.getInstance().getPassword());
                 break;
-            case "remove_by_id": command = new RemoveByIdCommand(ClientApi.getLogin(), ClientApi.getPassword(), Integer.parseInt((String) arg));
+            case "remove_by_id":
+                command = new RemoveByIdCommand(ClientApi.getInstance().getLogin(), ClientApi.getInstance().getPassword(), Integer.parseInt((String) arg));
                 break;
-            case "update": command = new UpdateCommand(ClientApi.getLogin(), ClientApi.getPassword(), (StudyGroup) arg);
+            case "update":
+                command = new UpdateCommand(ClientApi.getInstance().getLogin(), ClientApi.getInstance().getPassword(), (StudyGroup) arg);
                 break;
-            default: return null;
+            default:
+                return null;
         }
         return command;
     }

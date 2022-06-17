@@ -1,7 +1,6 @@
 package com.ruskaof.client.presentation.controllers;
 
 import com.ruskaof.client.data.StudyGroupRow;
-import com.ruskaof.common.util.DataCantBeSentException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -21,7 +20,7 @@ public final class Navigator {
         final Parent root = FXMLLoader.load(Objects.requireNonNull(clazz.getResource("/screen_main.fxml")));
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         final Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/button.css")).toExternalForm());
+        new CSSBuilder(scene).addButtonCSS();
         stage.setScene(scene);
     }
 
@@ -30,9 +29,7 @@ public final class Navigator {
         final Parent root = loader.load();
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         final Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/label.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/button.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/text_field.css")).toExternalForm());
+        new CSSBuilder(scene).addButtonCSS().addTextFieldCSS();
         stage.setScene(scene);
         ((MainScreenController) loader.getController()).getTableViewScreenController().setLeftAndRightValues(leftValue, rightValue);
         ((MainScreenController) loader.getController()).getTableViewScreenController().setFilterField(filteringField);
@@ -44,7 +41,7 @@ public final class Navigator {
         final Parent root = FXMLLoader.load(Objects.requireNonNull(clazz.getResource("/screen_register.fxml")));
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         final Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/button.css")).toExternalForm());
+        new CSSBuilder(scene).addButtonCSS().addTextFieldCSS();
         stage.setScene(scene);
     }
 
@@ -52,14 +49,11 @@ public final class Navigator {
         final Parent root = FXMLLoader.load(Objects.requireNonNull(clazz.getResource("/screen_login.fxml")));
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         final Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/label.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/button.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/text_field.css")).toExternalForm());
-
+        new CSSBuilder(scene).addButtonCSS().addTextFieldCSS();
         stage.setScene(scene);
     }
 
-    public static void navigateToInfoScreen(Object source, Class<?> clazz, StudyGroupRow object) throws IOException, DataCantBeSentException {
+    public static void navigateToInfoScreen(Object source, Class<?> clazz, StudyGroupRow object) throws IOException {
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(clazz.getResource("/screen_info.fxml")));
         final Parent root = loader.load();
         ((InfoScreenController) loader.getController()).setObject(object);
@@ -67,9 +61,7 @@ public final class Navigator {
         System.out.println(object);
         final Stage stage = (Stage) ((Node) source).getScene().getWindow();
         final Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/label.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/button.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/text_field.css")).toExternalForm());
+        new CSSBuilder(scene).addButtonCSS().addTextFieldCSS();
         stage.setScene(scene);
     }
 
@@ -77,10 +69,30 @@ public final class Navigator {
         final Parent root = FXMLLoader.load(Objects.requireNonNull(clazz.getResource("/screen_sort_filter.fxml")));
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         final Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/label.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/button.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(clazz.getResource("/text_field.css")).toExternalForm());
-
+        new CSSBuilder(scene).addButtonCSS().addTextFieldCSS();
         stage.setScene(scene);
+    }
+
+    private static class CSSBuilder {
+        private final Scene scene;
+
+        CSSBuilder(Scene scene) {
+            this.scene = scene;
+        }
+
+        public CSSBuilder addLabelCSS() {
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/label.css")).toExternalForm());
+            return this;
+        }
+
+        public CSSBuilder addButtonCSS() {
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/button.css")).toExternalForm());
+            return this;
+        }
+
+        public CSSBuilder addTextFieldCSS() {
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/text_field.css")).toExternalForm());
+            return this;
+        }
     }
 }

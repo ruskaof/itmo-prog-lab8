@@ -2,7 +2,7 @@ package com.ruskaof.client.presentation.controllers;
 
 import com.ruskaof.client.ClientApi;
 import com.ruskaof.client.data.StudyGroupRow;
-import com.ruskaof.common.util.DataCantBeSentException;
+import com.ruskaof.client.util.Localisator;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,7 +26,10 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -34,7 +37,7 @@ public class TableViewScreenController {
     private static final StringConverter<Integer> SAFE_INTEGER_STRING_CONVERTER = new StringConverter<Integer>() {
         @Override
         public String toString(Integer object) {
-            return NumberFormat.getInstance(ClientApi.getLocale()).format(object);
+            return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).format(object);
         }
 
         @Override
@@ -49,13 +52,13 @@ public class TableViewScreenController {
     private static final StringConverter<LocalDate> LOCAL_DATE_STRING_CONVERTER = new StringConverter<LocalDate>() {
         @Override
         public String toString(LocalDate object) {
-            return DateFormat.getDateInstance(DateFormat.FULL, ClientApi.getLocale()).format(convertToDateViaInstant(object));
+            return DateFormat.getDateInstance(DateFormat.FULL, ClientApi.getInstance().getLocale()).format(convertToDateViaInstant(object));
         }
 
         @Override
         public LocalDate fromString(String string) {
             try {
-                return convertToLocalDate(DateFormat.getDateInstance(DateFormat.FULL, ClientApi.getLocale()).parse(string));
+                return convertToLocalDate(DateFormat.getDateInstance(DateFormat.FULL, ClientApi.getInstance().getLocale()).parse(string));
             } catch (IllegalArgumentException | ParseException e) {
                 return LocalDate.now();
             }
@@ -65,7 +68,7 @@ public class TableViewScreenController {
 
         @Override
         public String toString(Long object) {
-            return NumberFormat.getInstance(ClientApi.getLocale()).format(object);
+            return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).format(object);
         }
 
         @Override
@@ -80,7 +83,7 @@ public class TableViewScreenController {
     private static final StringConverter<Double> SAFE_DOUBLE_STRING_CONVERTER = new StringConverter<Double>() {
         @Override
         public String toString(Double object) {
-            return NumberFormat.getInstance(ClientApi.getLocale()).format(object);
+            return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).format(object);
         }
 
         @Override
@@ -95,7 +98,7 @@ public class TableViewScreenController {
     private static final StringConverter<Float> SAFE_FLOAT_STRING_CONVERTER = new StringConverter<Float>() {
         @Override
         public String toString(Float object) {
-            return NumberFormat.getInstance(ClientApi.getLocale()).format(object);
+            return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).format(object);
         }
 
         @Override
@@ -107,46 +110,54 @@ public class TableViewScreenController {
             }
         }
     };
+    @FXML
+    private TableView<StudyGroupRow> table;
     private Field sortingField = Field.ID;
     private SortingOrder sortingOrder = SortingOrder.ASCENDING;
+
+    //CHECKSTYLE:OFF
     private final Comparator<StudyGroupRow> comparator = new Comparator<StudyGroupRow>() {
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
+            int toRet = 0;
             switch (sortingField) {
-                case ID:
-                    return compareValues(o1.getId(), o2.getId());
-                case NAME:
-                    return compareValues(o1.getName(), o2.getName());
-                case X:
-                    return compareValues(o1.getX(), o2.getX());
-                case Y:
-                    return compareValues(o1.getY(), o2.getY());
-                case CREATION_DATE:
-                    return compareValues(o1.getCreationDate(), o2.getCreationDate());
-                case STUDENTS_COUNT:
-                    return compareValues(o1.getStudentsCount(), o2.getStudentsCount());
-                case FORM_OF_EDUCATION:
-                    return compareValues(o1.getFormOfEducation(), o2.getFormOfEducation());
-                case SEMESTER:
-                    return compareValues(o1.getSemester(), o2.getSemester());
-                case ADMIN_NAME:
-                    return compareValues(o1.getAdminName(), o2.getAdminName());
-                case ADMIN_HEIGHT:
-                    return compareValues(o1.getAdminHeight(), o2.getAdminHeight());
-                case ADMIN_NATIONALITY:
-                    return compareValues(o1.getAdminNationality(), o2.getAdminNationality());
-                case ADMIN_X:
-                    return compareValues(o1.getAdminX(), o2.getAdminX());
-                case ADMIN_Y:
-                    return compareValues(o1.getAdminY(), o2.getAdminY());
-                case ADMIN_LOCATION_NAME:
-                    return compareValues(o1.getAdminLocationName(), o2.getAdminLocationName());
-                case AUTHOR_NAME:
-                    return compareValues(o1.getAuthorName(), o2.getAuthorName());
+                case ID: toRet = compareValues(o1.getId(), o2.getId());
+                    break;
+                case NAME: toRet = compareValues(o1.getName(), o2.getName());
+                    break;
+                case X: toRet = compareValues(o1.getX(), o2.getX());
+                    break;
+                case Y: toRet = compareValues(o1.getY(), o2.getY());
+                    break;
+                case CREATION_DATE: toRet = compareValues(o1.getCreationDate(), o2.getCreationDate());
+                    break;
+                case STUDENTS_COUNT: toRet = compareValues(o1.getStudentsCount(), o2.getStudentsCount());
+                    break;
+                case FORM_OF_EDUCATION: toRet = compareValues(o1.getFormOfEducation(), o2.getFormOfEducation());
+                    break;
+                case SEMESTER: toRet = compareValues(o1.getSemester(), o2.getSemester());
+                    break;
+                case ADMIN_NAME: toRet = compareValues(o1.getAdminName(), o2.getAdminName());
+                    break;
+                case ADMIN_HEIGHT: toRet = compareValues(o1.getAdminHeight(), o2.getAdminHeight());
+                    break;
+                case ADMIN_NATIONALITY: toRet = compareValues(o1.getAdminNationality(), o2.getAdminNationality());
+                    break;
+                case ADMIN_X: toRet = compareValues(o1.getAdminX(), o2.getAdminX());
+                    break;
+                case ADMIN_Y: toRet = compareValues(o1.getAdminY(), o2.getAdminY());
+                    break;
+                case ADMIN_LOCATION_NAME: toRet = compareValues(o1.getAdminLocationName(), o2.getAdminLocationName());
+                    break;
+                case AUTHOR_NAME: toRet = compareValues(o1.getAuthorName(), o2.getAuthorName());
+                    break;
+                default: break;
             }
-            return 0;
+            return toRet;
         }
     };
+    //CHECKSTYLE:ON
+
     private Field filterField = Field.ID;
     private List<StudyGroupRow> data;
     private double leftValue;
@@ -160,6 +171,7 @@ public class TableViewScreenController {
     @FXML
     private Button removeSelectedBTN;
     private Predicate<StudyGroupRow> filterPred;
+
 
     public static LocalDate convertToLocalDate(Date dateToConvert) {
         return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -226,9 +238,6 @@ public class TableViewScreenController {
 
 
     @FXML
-    TableView<StudyGroupRow> table;
-
-    @FXML
     public void add(ActionEvent event) throws IOException {
         final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/screen_add.fxml")));
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -238,9 +247,9 @@ public class TableViewScreenController {
         stage.setScene(scene);
     }
 
-    private static void addStringColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<String> onCommitCellModifier) {
+    private static void addStringColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<String> onCommitCellModifier, boolean editable) {
         TableColumn<StudyGroupRow, String> newColumn = makeStandardColumnConfig(columnName, fieldName, true);
-
+        newColumn.setEditable(editable);
         newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow>forTableColumn());
         newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
         table.getColumns().add(newColumn);
@@ -268,15 +277,18 @@ public class TableViewScreenController {
         return newColumn;
     }
 
+    public void setLeftAndRightValues(double newLeftValue, double newRightValue) {
+        this.leftValue = newLeftValue;
+        this.rightValue = newRightValue;
+    }
+
     @FXML
     public void onRemoveClick(ActionEvent event) {
         table.getSelectionModel().getSelectedItems().forEach(it -> {
-            try {
-                ClientApi.getInstance().removeById(it.getId());
-                reload();
-            } catch (DataCantBeSentException e) {
-                e.printStackTrace();
-            }
+
+            ClientApi.getInstance().removeById(it.getId());
+            reload();
+
         });
     }
 
@@ -285,23 +297,25 @@ public class TableViewScreenController {
     }
 
     private boolean filterValue(StudyGroupRow studyGroupRow) {
+        boolean toRet = true;
         switch (filterField) {
-            case X:
-                return studyGroupRow.getX() <= rightValue && studyGroupRow.getX() >= leftValue;
-            case Y:
-                return studyGroupRow.getY() <= rightValue && studyGroupRow.getY() >= leftValue;
-            case ID:
-                return studyGroupRow.getId() <= rightValue && studyGroupRow.getId() >= leftValue;
-            case STUDENTS_COUNT:
-                return studyGroupRow.getStudentsCount() <= rightValue && studyGroupRow.getStudentsCount() >= leftValue;
-            case ADMIN_HEIGHT:
-                return studyGroupRow.getAdminHeight() <= rightValue && studyGroupRow.getAdminHeight() >= leftValue;
-            case ADMIN_X:
-                return studyGroupRow.getAdminX() <= rightValue && studyGroupRow.getAdminX() >= leftValue;
-            case ADMIN_Y:
-                return studyGroupRow.getAdminY() <= rightValue && studyGroupRow.getAdminY() >= leftValue;
+            case X: toRet = studyGroupRow.getX() <= rightValue && studyGroupRow.getX() >= leftValue;
+                break;
+            case Y: toRet = studyGroupRow.getY() <= rightValue && studyGroupRow.getY() >= leftValue;
+                break;
+            case ID: toRet = studyGroupRow.getId() <= rightValue && studyGroupRow.getId() >= leftValue;
+                break;
+            case STUDENTS_COUNT: toRet = studyGroupRow.getStudentsCount() <= rightValue && studyGroupRow.getStudentsCount() >= leftValue;
+                break;
+            case ADMIN_HEIGHT: toRet = studyGroupRow.getAdminHeight() <= rightValue && studyGroupRow.getAdminHeight() >= leftValue;
+                break;
+            case ADMIN_X: toRet = studyGroupRow.getAdminX() <= rightValue && studyGroupRow.getAdminX() >= leftValue;
+                break;
+            case ADMIN_Y: toRet = studyGroupRow.getAdminY() <= rightValue && studyGroupRow.getAdminY() >= leftValue;
+                break;
+            default: break;
         }
-        return true;
+        return toRet;
     }
 
     private <T extends Comparable<T>> int compareValues(T o1, T o2) {
@@ -338,34 +352,37 @@ public class TableViewScreenController {
     }
 
     @FXML
+    public void onSortFilterBTN(ActionEvent event) throws IOException {
+        Navigator.navigateToSortFilterScreen(event, this.getClass());
+    }
+
+    @FXML
     public void reload() {
-        try {
-            ClientApi.getInstance().updateData();
-            data = ClientApi.getInstance().getCurrentData();
-            table.setItems(FXCollections.observableList(data));
-            table.refresh();
-        } catch (DataCantBeSentException e) {
-            e.printStackTrace();
-        }
+
+        ClientApi.getInstance().updateData();
+        data = ClientApi.getInstance().getCurrentData();
+        table.setItems(FXCollections.observableList(data));
+        table.refresh();
+
     }
 
     @FXML
     public void initialize() {
         TableViewScreenController.addIntColumn(table, "id", "id", StudyGroupRow::setId, false);
-        TableViewScreenController.addStringColumn(table, "name", "name", StudyGroupRow::setName);
+        TableViewScreenController.addStringColumn(table, "name", "name", StudyGroupRow::setName, true);
         TableViewScreenController.addLongColumn(table, "x", "x", StudyGroupRow::setX);
         TableViewScreenController.addDoubleColumn(table, StudyGroupRow::setY);
         TableViewScreenController.addDateColumn(table);
         TableViewScreenController.addIntColumn(table, "studentsCount", "studentsCount", StudyGroupRow::setStudentsCount, true);
         TableViewScreenController.addFormOfEduColumn(table, StudyGroupRow::setFormOfEducation);
         TableViewScreenController.addSemesterColumn(table, StudyGroupRow::setSemester);
-        TableViewScreenController.addStringColumn(table, "adminName", "adminName", StudyGroupRow::setAdminName);
+        TableViewScreenController.addStringColumn(table, "adminName", "adminName", StudyGroupRow::setAdminName, true);
         TableViewScreenController.addIntColumn(table, "adminHeight", "adminHeight", StudyGroupRow::setAdminHeight, true);
         TableViewScreenController.addAdminNationalityColumn(table, "adminNationality", "adminNationality", StudyGroupRow::setAdminNationality);
         TableViewScreenController.addFloatColumn(table, StudyGroupRow::setAdminX);
         TableViewScreenController.addLongColumn(table, "adminY", "adminY", StudyGroupRow::setAdminY);
-        TableViewScreenController.addStringColumn(table, "adminLocationName", "adminLocationName", StudyGroupRow::setAdminLocationName);
-        TableViewScreenController.addStringColumn(table, "authorName", "authorName", StudyGroupRow::setAuthorName);
+        TableViewScreenController.addStringColumn(table, "adminLocationName", "adminLocationName", StudyGroupRow::setAdminLocationName, false);
+        TableViewScreenController.addStringColumn(table, "authorName", "authorName", StudyGroupRow::setAuthorName, false);
         setLocalisation();
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.setEditable(true);
@@ -373,26 +390,16 @@ public class TableViewScreenController {
     }
 
     private void setLocalisation() {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("labels", ClientApi.getLocale());
-        reloadBTN.setText(resourceBundle.getString("button.reload"));
-        addBTN.setText(resourceBundle.getString("button.add"));
-        sortFilterBTN.setText(resourceBundle.getString("button.sort_filter"));
-        removeSelectedBTN.setText(resourceBundle.getString("button.remove_selected"));
+        Localisator localisator = new Localisator();
+        reloadBTN.setText(localisator.get("button.reload"));
+        addBTN.setText(localisator.get("button.add"));
+        sortFilterBTN.setText(localisator.get("button.sort_filter"));
+        removeSelectedBTN.setText(localisator.get("button.remove_selected"));
     }
 
     @FunctionalInterface
     interface OnCommitCellModifier<T> {
         void modifyColumn(StudyGroupRow studyGroupRow, T newValue);
-    }
-
-    public void setLeftAndRightValues(double newLeftValue, double newRightValue) {
-        this.leftValue = newLeftValue;
-        this.rightValue = newRightValue;
-    }
-
-    @FXML
-    public void onSortFilterBTN(ActionEvent event) throws IOException {
-        Navigator.navigateToSortFilterScreen(event, this.getClass());
     }
 
 

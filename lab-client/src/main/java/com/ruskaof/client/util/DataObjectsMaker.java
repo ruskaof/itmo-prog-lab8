@@ -1,5 +1,6 @@
 package com.ruskaof.client.util;
 
+import com.ruskaof.client.ClientApi;
 import com.ruskaof.common.data.Coordinates;
 import com.ruskaof.common.data.Country;
 import com.ruskaof.common.data.FormOfEducation;
@@ -47,7 +48,7 @@ public class DataObjectsMaker {
         Coordinates coordinates = askForCoordinates(); //not null
         Person groupAdmin = askForGroupAdmin(); //not null
         return new StudyGroup(name, coordinates, studentsCount,
-                formOfEducation, semesterEnum, groupAdmin, LocalDate.now(), authorName);
+                formOfEducation, semesterEnum, groupAdmin, LocalDate.now(), authorName, ClientApi.getInstance().getColor().toString());
     }
 
     private Coordinates askForCoordinates() throws IOException {

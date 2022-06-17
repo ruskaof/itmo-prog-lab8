@@ -32,6 +32,8 @@ public class StudyGroupTable implements Table<StudyGroup> {
     private static final int PARAMETER_OFFSET_ADMIN_LOCATION_Y = 12;
     private static final int PARAMETER_OFFSET_ADMIN_LOCATION_NAME = 13;
     private static final int PARAMETER_OFFSET_AUTHOR = 14;
+    private static final int PARAMETER_OFFSET_COLOR = 15;
+
     private final Connection connection;
 
 
@@ -60,11 +62,11 @@ public class StudyGroupTable implements Table<StudyGroup> {
                     + "admin_location_x real NOT NULL,"
                     + "admin_location_y bigint NOT NULL,"
                     + "admin_location_name varchar(100),"
-                    + "author_username varchar (100) NOT NULL)");
+                    + "author_username varchar (100) NOT NULL,"
+                    + "color varchar (20) NOT NULL)");
         }
     }
 
-    // рубрика "в котлине было бы в 100 раз короче"
     @Override
     public StudyGroup mapRowToObject(ResultSet resultSet) throws SQLException {
         final StudyGroup studyGroup = new StudyGroup(
@@ -87,8 +89,8 @@ public class StudyGroupTable implements Table<StudyGroup> {
                         )
                 ),
                 resultSet.getTimestamp("creation_date").toLocalDateTime().toLocalDate(),
-                resultSet.getString("author_username")
-        );
+                resultSet.getString("author_username"),
+                resultSet.getString("color"));
 
         studyGroup.setId(resultSet.getInt("id"));
 
@@ -98,7 +100,7 @@ public class StudyGroupTable implements Table<StudyGroup> {
     @Override
     public int add(StudyGroup element) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
-                "INSERT INTO study_groups VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
+                "INSERT INTO study_groups VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
         )) {
             makePreparedStatementOfStudyGroup(preparedStatement, element);
             try (
@@ -141,6 +143,7 @@ public class StudyGroupTable implements Table<StudyGroup> {
             preparedStatement.setNull(PARAMETER_OFFSET_ADMIN_LOCATION_NAME, Types.VARCHAR);
         }
         preparedStatement.setString(PARAMETER_OFFSET_AUTHOR, studyGroup.getAuthorName());
+        preparedStatement.setString(PARAMETER_OFFSET_COLOR, studyGroup.getColor());
     }
 
     @Override
@@ -199,6 +202,7 @@ public class StudyGroupTable implements Table<StudyGroup> {
                 + ",admin_location_y=?"
                 + ",admin_location_name=?"
                 + ",author_username=? "
+                + ",color=?"
                 + "WHERE id =" + id;
 
         try (

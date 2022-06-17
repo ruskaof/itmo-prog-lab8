@@ -1,7 +1,6 @@
 package com.ruskaof.client.presentation.controllers;
 
 import com.ruskaof.client.data.StudyGroupRow;
-import com.ruskaof.common.util.DataCantBeSentException;
 import com.ruskaof.common.util.Pair;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,12 +19,12 @@ public class InfoScreenController {
 
 
     @FXML
-    TableView<Pair<String, String>> infoTW;
+    private TableView<Pair<String, String>> infoTW;
     private StudyGroupRow object;
     private ObservableList<Pair<String, String>> dataForTable;
 
     @FXML
-    public void initialize() throws DataCantBeSentException {
+    public void initialize() {
 
         final TableColumn<Pair<String, String>, String> column = new TableColumn<>("parameter name");
         column.setCellValueFactory(new PropertyValueFactory<>("first"));
@@ -40,7 +39,7 @@ public class InfoScreenController {
 
     }
 
-    public void setListOfObjectData() throws DataCantBeSentException {
+    public void setListOfObjectData() {
         final List<Pair<String, String>> list = new ArrayList<>();
         list.add(new Pair<>("id", Integer.toString(object.getId())));
         list.add(new Pair<>("name", object.getName()));

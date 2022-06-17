@@ -20,6 +20,8 @@ public interface DataManager {
 
     boolean checkIfUsernameUnique(String username);
 
+    String getUserColor(String username);
+
     boolean checkIfMin(StudyGroup studyGroup);
 
     void clearOwnedData(String username);

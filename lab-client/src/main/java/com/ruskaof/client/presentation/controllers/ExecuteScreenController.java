@@ -3,7 +3,6 @@ package com.ruskaof.client.presentation.controllers;
 import com.ruskaof.client.ClientApi;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 
@@ -12,9 +11,7 @@ import java.io.IOException;
 
 public class ExecuteScreenController {
     @FXML
-    AnchorPane execute;
-    @FXML
-    HBox hbox;
+    private HBox hbox;
 
 
     @FXML

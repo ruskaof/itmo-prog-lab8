@@ -13,16 +13,22 @@ public class ValidateCommand extends Command implements LoginNeedlessCommand {
     @Override
     public CommandResultDto execute(DataManager dataManager, HistoryManager historyManager) {
         return new ValidateCommandResult(
-                dataManager.validateUser(this.getUsername(), this.getPassword())
-        );
+                dataManager.validateUser(this.getUsername(), this.getPassword()),
+                dataManager.getUserColor(this.getUsername()));
     }
 
     public static class ValidateCommandResult extends CommandResultDto {
         private final boolean loginAndPasswordCorrect;
+        private final String color;
 
-        public ValidateCommandResult(boolean loginAndPasswordCorrect) {
+        public ValidateCommandResult(boolean loginAndPasswordCorrect, String color) {
             super(true);
             this.loginAndPasswordCorrect = loginAndPasswordCorrect;
+            this.color = color;
+        }
+
+        public String getColor() {
+            return color;
         }
 
         public boolean isLoginAndPasswordCorrect() {

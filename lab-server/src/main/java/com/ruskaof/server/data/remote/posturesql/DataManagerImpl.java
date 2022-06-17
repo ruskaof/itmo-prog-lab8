@@ -7,7 +7,12 @@ import com.ruskaof.common.util.Encryptor;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -33,7 +38,7 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
-            final User encryptedUser = new User(user.getId(), Encryptor.encryptThisString(user.getPassword()), user.getName());
+            final User encryptedUser = new User(user.getId(), Encryptor.encryptThisString(user.getPassword()), user.getName(), user.getColor());
 
             final int generatedId;
 
@@ -74,7 +79,9 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         Lock readLock = lock.readLock();
         try {
             readLock.lock();
-            return users.stream().anyMatch(it -> it.getName().equals(username) && it.getPassword().equals(Encryptor.encryptThisString(password)));
+            boolean result = users.stream().anyMatch(it -> it.getName().equals(username) && it.getPassword().equals(Encryptor.encryptThisString(password)));
+            com.ruskaof.server.util.Logger.log("validation for " + username + " " + password + " : " + result);
+            return result;
         } finally {
             readLock.unlock();
         }
@@ -86,6 +93,23 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
         try {
             readLock.lock();
             return users.stream().noneMatch(it -> it.getName().matches(username));
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    @Override
+    public String getUserColor(String username) {
+        Lock readLock = lock.readLock();
+        try {
+            readLock.lock();
+
+            Optional<User> optionalS = users.stream().filter(it -> it.getName().equals(username)).findAny();
+            if (optionalS.isPresent()) {
+                return optionalS.get().getColor();
+            } else {
+                return "#000000";
+            }
         } finally {
             readLock.unlock();
         }
@@ -129,7 +153,6 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             readLock.unlock();
         }
     }
-
 
 
     @Override

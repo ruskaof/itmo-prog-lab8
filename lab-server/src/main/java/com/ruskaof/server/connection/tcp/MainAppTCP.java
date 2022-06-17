@@ -11,11 +11,11 @@ import java.net.ServerSocket;
 public class MainAppTCP implements MainApp {
     private final CommandHandler commandHandler;
 
+    private ServerSocket server;
+
     public MainAppTCP(CommandHandler commandHandler) {
         this.commandHandler = commandHandler;
     }
-
-    private ServerSocket server;
 
 
     @Override
@@ -34,7 +34,7 @@ public class MainAppTCP implements MainApp {
 
     private void initSerer() throws IOException {
         server = new ServerSocket();
-        server.bind(new InetSocketAddress("0.0.0.0", 0));
+        server.bind(new InetSocketAddress("0.0.0.0", 7813));
         Logger.log("The server was built on the port: " + server.getLocalPort());
     }
 

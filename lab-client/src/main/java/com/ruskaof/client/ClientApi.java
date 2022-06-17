@@ -5,6 +5,7 @@ import com.ruskaof.client.connection.CommandSenderTCP;
 import com.ruskaof.client.data.StudyGroupRow;
 import com.ruskaof.client.logic.Console;
 import com.ruskaof.client.util.Localisation;
+import com.ruskaof.client.util.Localisator;
 import com.ruskaof.common.commands.AddCommand;
 import com.ruskaof.common.commands.AddIfMinCommand;
 import com.ruskaof.common.commands.RegisterCommand;
@@ -14,62 +15,69 @@ import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.commands.ValidateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
-import com.ruskaof.common.util.DataCantBeSentException;
 import javafx.scene.control.Alert;
+import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 public final class ClientApi {
     private static final long UPDATE_PERIOD = 3000;
-    private static volatile List<StudyGroupRow> currentData;
-    private static CommandSender commandSender;
-    private static CommandSender updater;
-    private static boolean serverInfoWasInitialised = false;
-    private static int serverPort;
-    private static String serverIp;
-    private static ClientApi instance;
-    private static String login;
-    private static String password;
+    private static volatile ClientApi instance;
+    private Locale locale;
+    private volatile List<StudyGroupRow> currentData = new ArrayList<>();
+    private CommandSender commandSender;
+    private CommandSender updater;
+    private boolean serverInfoWasInitialised = false;
+    private int serverPort;
+    private String serverIp;
+    private String login;
+    private String password;
+    private Color color;
 
-
-    private static Locale locale;
 
 
     private ClientApi() {
 
     }
 
-    public static Locale getLocale() {
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+
+
+    public Locale getLocale() {
         return locale;
     }
 
-    public static String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public static void setLocalisation(Localisation localisation) {
+    public void setLocalisation(Localisation localisation) {
         switch (localisation) {
             case SPANISH:
-                ClientApi.locale = new Locale("es");
+                locale = new Locale("es");
                 break;
 
 
             case FRENCH:
-                ClientApi.locale = Locale.FRENCH;
+                locale = Locale.FRENCH;
                 break;
 
             case RUSSIAN:
-                ClientApi.locale = new Locale("ru");
+                locale = new Locale("ru");
                 break;
 
             case ROMANIAN:
-                ClientApi.locale = new Locale("ro");
+                locale = new Locale("ro");
                 break;
 
 
@@ -79,19 +87,23 @@ public final class ClientApi {
     }
 
 
-    public static String getLogin() {
+    public String getLogin() {
         return login;
     }
 
     public static ClientApi getInstance() {
         if (instance == null) {
-            instance = new ClientApi();
+            synchronized (ClientApi.class) {
+                if (instance == null) {
+                    instance = new ClientApi();
+                }
+            }
         }
         return instance;
     }
 
 
-    public static void startUpdating() throws IOException {
+    public void startUpdating() throws IOException {
         updater = new CommandSenderTCP(serverPort, serverIp);
         final Thread updatingThread = new Thread(() -> {
             while (!Thread.interrupted()) {
@@ -100,9 +112,10 @@ public final class ClientApi {
                     currentData =
                             ((ShowCommand.ShowCommandResult) updater.sendCommand(new CommandFromClientDto(new ShowCommand(login, password)))).getData()
                                     .stream().map(StudyGroupRow::mapStudyGroupToRow).collect(Collectors.toList());
-                } catch (DataCantBeSentException e) {
-                    e.printStackTrace();
                 } catch (InterruptedException e) {
+                    break;
+                } catch (IOException e) {
+                    System.out.println("Server disconnect");
                     break;
                 }
             }
@@ -119,48 +132,72 @@ public final class ClientApi {
         serverInfoWasInitialised = true;
     }
 
-    public List<StudyGroupRow> getCurrentData() throws DataCantBeSentException {
+    public List<StudyGroupRow> getCurrentData() {
         return currentData;
     }
 
-    public void updateData() throws DataCantBeSentException {
+    public void updateData() {
         checkConnection();
-        currentData = (
-                (ShowCommand.ShowCommandResult)
-                        commandSender.sendCommand(
-                                new CommandFromClientDto(new ShowCommand(password, login))
-                        )
-        ).getData().stream().map(StudyGroupRow::mapStudyGroupToRow).collect(Collectors.toList());
+        try {
+            currentData =
+                    ((ShowCommand.ShowCommandResult) commandSender.sendCommand(new CommandFromClientDto(new ShowCommand(login, password)))).getData()
+                            .stream().map(StudyGroupRow::mapStudyGroupToRow).collect(Collectors.toList());
+        } catch (IOException e) {
+            notifyDisconnect();
+        } catch (ClassCastException e) {
+            System.out.println("Received unknown info from server");
+        }
     }
 
     /**
      * @return true if login and password are correct
      */
-    public boolean setLoginAndPasswordAndStartUpdating(String newLogin, String newPassword) throws DataCantBeSentException, IOException {
+    public boolean setLoginAndPassword(String newLogin, String newPassword) {
         checkConnection();
         login = newLogin;
         password = newPassword;
-        final boolean result = (
-                (ValidateCommand.ValidateCommandResult)
-                        commandSender.sendCommand(
-                                new CommandFromClientDto(
-                                        new ValidateCommand(newLogin, newPassword)
-                                )
-                        )
-        ).isLoginAndPasswordCorrect();
+        final boolean result;
+        try {
+            ValidateCommand.ValidateCommandResult validateCommandResult = (ValidateCommand.ValidateCommandResult)
+                    commandSender.sendCommand(
+                            new CommandFromClientDto(
+                                    new ValidateCommand(newLogin, newPassword)
+                            )
+                    );
+            result = validateCommandResult
+                    .isLoginAndPasswordCorrect();
+            System.out.println(result);
+            color = Color.valueOf(validateCommandResult.getColor());
+        } catch (IOException e) {
+            notifyDisconnect();
+            return false;
+        }
         return result;
     }
 
-    public boolean registerUser() throws DataCantBeSentException {
-        return ((RegisterCommand.RegisterCommandResult)
-                commandSender.sendCommand(
-                        new CommandFromClientDto(new RegisterCommand(login, password))
-                )
-        ).wasRegistered();
+    public boolean registerUser(String newLogin, String newPassword) {
+        try {
+            RegisterCommand.RegisterCommandResult registerCommandResult = ((RegisterCommand.RegisterCommandResult)
+                    commandSender.sendCommand(
+                            new CommandFromClientDto(new RegisterCommand(newLogin, newPassword))
+                    )
+            );
+            color = Color.valueOf(registerCommandResult.getColor());
+            return registerCommandResult.wasRegistered();
+        } catch (IOException e) {
+            notifyDisconnect();
+            return false;
+        }
     }
 
-    public void update(StudyGroup newStudyGroup) throws DataCantBeSentException {
-        commandSender.sendCommand(new CommandFromClientDto(new UpdateCommand(login, password, newStudyGroup)));
+    public void update(StudyGroup newStudyGroup) {
+        try {
+            System.out.println("updating");
+            commandSender.sendCommand(new CommandFromClientDto(new UpdateCommand(login, password, newStudyGroup)));
+            System.out.println("gotovo");
+        } catch (IOException e) {
+            notifyDisconnect();
+        }
     }
 
     private void checkConnection() {
@@ -169,12 +206,20 @@ public final class ClientApi {
         }
     }
 
-    public void add(StudyGroup newStudyGroup) throws DataCantBeSentException {
-        commandSender.sendCommand(new CommandFromClientDto(new AddCommand(login, password, newStudyGroup)));
+    public void add(StudyGroup newStudyGroup) {
+        try {
+            commandSender.sendCommand(new CommandFromClientDto(new AddCommand(login, password, newStudyGroup)));
+        } catch (IOException e) {
+            notifyDisconnect();
+        }
     }
 
-    public void addIfMin(StudyGroup newStudyGroup) throws DataCantBeSentException {
-        commandSender.sendCommand(new CommandFromClientDto(new AddIfMinCommand(login, password, newStudyGroup)));
+    public void addIfMin(StudyGroup newStudyGroup) {
+        try {
+            commandSender.sendCommand(new CommandFromClientDto(new AddIfMinCommand(login, password, newStudyGroup)));
+        } catch (IOException e) {
+            notifyDisconnect();
+        }
     }
 
     public static String readFileAsString(String fileName) {
@@ -188,21 +233,31 @@ public final class ClientApi {
         return text;
     }
 
-    public void removeById(int id) throws DataCantBeSentException {
-        commandSender.sendCommand(new CommandFromClientDto(new RemoveByIdCommand(login, password, id)));
+    public void removeById(int id) {
+        try {
+            commandSender.sendCommand(new CommandFromClientDto(new RemoveByIdCommand(login, password, id)));
+        } catch (IOException e) {
+            notifyDisconnect();
+        }
     }
 
     public void executeScript(File selectedFile) throws IOException {
-
         new Console().start(readFileAsString(selectedFile.getAbsolutePath()), getLogin(), commandSender);
     }
 
     public void notifyDisconnect() {
-
         Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-        errorAlert.setHeaderText("Disconnected from server");
+        errorAlert.setHeaderText(new Localisator().get("error.disconnection"));
         errorAlert.showAndWait();
 
-        System.exit(1);
+        try {
+            commandSender = new CommandSenderTCP(serverPort, serverIp);
+        } catch (IOException e) {
+            notifyDisconnect();
+        }
+    }
+
+    public Color getColor() {
+        return color;
     }
 }

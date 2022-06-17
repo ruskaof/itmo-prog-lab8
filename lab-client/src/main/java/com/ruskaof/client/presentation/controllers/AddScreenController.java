@@ -1,6 +1,7 @@
 package com.ruskaof.client.presentation.controllers;
 
 import com.ruskaof.client.ClientApi;
+import com.ruskaof.client.util.Localisator;
 import com.ruskaof.common.data.Coordinates;
 import com.ruskaof.common.data.Country;
 import com.ruskaof.common.data.FormOfEducation;
@@ -8,7 +9,6 @@ import com.ruskaof.common.data.Location;
 import com.ruskaof.common.data.Person;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
-import com.ruskaof.common.util.DataCantBeSentException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -17,7 +17,6 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
 
@@ -55,25 +54,21 @@ public class AddScreenController {
 
     @FXML
     public void add(ActionEvent event) throws IOException {
-        if (checkFieldsAndAdd()) {
-            try {
-                ClientApi.getInstance().add(createStudyGroupByFields());
-                Navigator.navigateToMainScreen(event, getClass());
-            } catch (DataCantBeSentException e) {
-                errorLabel.setText("There was some problem...");
-            }
+        if (checkFields()) {
+
+            ClientApi.getInstance().add(createStudyGroupByFields());
+            Navigator.navigateToMainScreen(event, getClass());
+
         }
     }
 
     @FXML
     public void addIfMin(ActionEvent event) throws IOException {
-        if (checkFieldsAndAdd()) {
-            try {
-                ClientApi.getInstance().addIfMin(createStudyGroupByFields());
-                Navigator.navigateToMainScreen(event, getClass());
-            } catch (DataCantBeSentException e) {
-                errorLabel.setText("There was some problem...");
-            }
+        if (checkFields()) {
+
+            ClientApi.getInstance().addIfMin(createStudyGroupByFields());
+            Navigator.navigateToMainScreen(event, getClass());
+
         }
     }
 
@@ -101,49 +96,41 @@ public class AddScreenController {
         semesterCombo.getItems().add("null");
     }
 
-    private boolean checkFieldsAndAdd() {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("labels");
+    private boolean checkFields() {
+        Localisator localisator = new Localisator();
+        boolean toRet = true;
         if (!checkString(nameField.getText())) {
-            errorLabel.setText(resourceBundle.getString("error.string_field"));
-            return false;
+            errorLabel.setText(localisator.get("error.string_field"));
+            toRet = false;
+        } else if (!checkLong(xField.getText(), (l) -> l > X_FIELD_LIMITATION)) {
+            errorLabel.setText(localisator.get("error.x_field"));
+            toRet = false;
+        } else if (!checkDouble(yField.getText(), (d) -> d <= Y_FIELD_LIMITATION)) {
+            errorLabel.setText(localisator.get("error.y_field"));
+            toRet = false;
+        } else if (!checkLong(studentsCountField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE)) {
+            errorLabel.setText(localisator.get("error.students_count"));
+            toRet = false;
+        } else if (!checkString(adminNameField.getText())) {
+            errorLabel.setText(localisator.get("error.admin_name"));
+            toRet = false;
+        } else if (!checkLong(adminHeightField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE)) {
+            errorLabel.setText(localisator.get("error.admin_height"));
+            toRet = false;
+        } else if (!checkFloat(adminXField.getText(), (f) -> true)) {
+            errorLabel.setText(localisator.get("error.admin_x"));
+            toRet = false;
+        } else if (!checkLong(adminYField.getText(), (l) -> true)) {
+            errorLabel.setText(localisator.get("error.admin_y"));
+            toRet = false;
+        } else if (!checkString(adminLocationNameField.getText())) {
+            errorLabel.setText(localisator.get("error.admin_location"));
+            toRet = false;
+        } else if (adminNationalityCombo.getValue() == null || formOfEducationCombo.getValue() == null || semesterCombo == null) {
+            errorLabel.setText(localisator.get("error.you_must_choose"));
+            toRet = false;
         }
-        if (!checkLong(xField.getText(), (l) -> l > -X_FIELD_LIMITATION)) {
-            errorLabel.setText(resourceBundle.getString("error.x_field"));
-            return false;
-        }
-        if (!checkDouble(yField.getText(), (d) -> d <= Y_FIELD_LIMITATION)) {
-            errorLabel.setText(resourceBundle.getString("error.y_field"));
-            return false;
-        }
-        if (!checkLong(studentsCountField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE)) {
-            errorLabel.setText(resourceBundle.getString("error.students_count"));
-            return false;
-        }
-        if (!checkString(adminNameField.getText())) {
-            errorLabel.setText(resourceBundle.getString("error.admin_name"));
-            return false;
-        }
-        if (!checkLong(adminHeightField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE)) {
-            errorLabel.setText(resourceBundle.getString("error.admin_height"));
-            return false;
-        }
-        if (!checkFloat(adminXField.getText(), (f) -> true)) {
-            errorLabel.setText(resourceBundle.getString("error.admin_x"));
-            return false;
-        }
-        if (!checkLong(adminYField.getText(), (l) -> true)) {
-            errorLabel.setText(resourceBundle.getString("error.admin_y"));
-            return false;
-        }
-        if (!checkString(adminLocationNameField.getText())) {
-            errorLabel.setText(resourceBundle.getString("error.admin_location"));
-            return false;
-        }
-        if (adminNationalityCombo.getValue() == null || formOfEducationCombo.getValue() == null || semesterCombo == null) {
-            errorLabel.setText(resourceBundle.getString("error.you_must_choose"));
-            return false;
-        }
-        return true;
+        return toRet;
     }
 
     private StudyGroup createStudyGroupByFields() {
@@ -167,8 +154,8 @@ public class AddScreenController {
                         )
                 ),
                 LocalDate.now(),
-                ClientApi.getInstance().getLogin()
-        );
+                ClientApi.getInstance().getLogin(),
+                ClientApi.getInstance().getColor().toString());
     }
 
 

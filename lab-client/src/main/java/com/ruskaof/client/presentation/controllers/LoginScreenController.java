@@ -1,7 +1,7 @@
 package com.ruskaof.client.presentation.controllers;
 
 import com.ruskaof.client.ClientApi;
-import com.ruskaof.common.util.DataCantBeSentException;
+import com.ruskaof.client.util.Localisator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
 
 public class LoginScreenController {
     @FXML
@@ -24,16 +23,17 @@ public class LoginScreenController {
     private Button registerBTN;
 
 
-    public void login(ActionEvent event) throws IOException, DataCantBeSentException {
+    public void login(ActionEvent event) throws IOException {
 
         if (
-                ClientApi.getInstance().setLoginAndPasswordAndStartUpdating(loginField.getText(), passwordField.getText())
+                ClientApi.getInstance().setLoginAndPassword(loginField.getText(), passwordField.getText())
         ) {
             Navigator.navigateToMainScreen(event, getClass());
-            ClientApi.startUpdating();
+            ClientApi.getInstance().startUpdating();
 
         } else {
-            errorLabel.setText(ResourceBundle.getBundle("labels", ClientApi.getLocale()).getString("error.incorrect_login"));
+            Localisator localisator = new Localisator();
+            errorLabel.setText(localisator.get("error.incorrect_login"));
             errorLabel.setVisible(true);
         }
 
@@ -46,15 +46,15 @@ public class LoginScreenController {
     }
 
     private void setLocalisation() {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("labels", ClientApi.getLocale());
-        loginField.setPromptText(resourceBundle.getString("label.login"));
-        passwordField.setPromptText(resourceBundle.getString("label.password"));
-        enterBTN.setText(resourceBundle.getString("button.enter"));
-        registerBTN.setText(resourceBundle.getString("button.register"));
+        Localisator localisator = new Localisator();
+        loginField.setPromptText(localisator.login);
+        passwordField.setPromptText(localisator.password);
+        enterBTN.setText(localisator.enter);
+        registerBTN.setText(localisator.register);
     }
 
 
-    public void register(ActionEvent event) throws IOException, DataCantBeSentException {
+    public void register(ActionEvent event) throws IOException {
         Navigator.navigateToRegisterScreen(event, getClass());
     }
 }

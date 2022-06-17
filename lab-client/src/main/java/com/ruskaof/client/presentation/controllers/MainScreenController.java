@@ -1,12 +1,12 @@
 package com.ruskaof.client.presentation.controllers;
 
 import com.ruskaof.client.ClientApi;
+import com.ruskaof.client.util.Localisator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-
-import java.util.ResourceBundle;
 
 public class MainScreenController {
     @FXML
@@ -26,6 +26,8 @@ public class MainScreenController {
     private TableViewScreenController tableViewController;
     @FXML
     private VisualisationScreenController visualisationController;
+    @FXML
+    private Label loginLabel;
 
     public TableViewScreenController getTableViewScreenController() {
         return tableViewController;
@@ -39,13 +41,15 @@ public class MainScreenController {
     @FXML
     void initialize() {
         setLocalisation();
+        loginLabel.setText("logined with: " + ClientApi.getInstance().getLogin());
+        loginLabel.setTextFill(ClientApi.getInstance().getColor());
     }
 
     private void setLocalisation() {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("labels", ClientApi.getLocale());
-        tableBTN.setText(resourceBundle.getString("button.table"));
-        objectsBTN.setText(resourceBundle.getString("button.objects"));
-        scriptBTN.setText(resourceBundle.getString("button.script"));
+        Localisator localisator = new Localisator();
+        tableBTN.setText(localisator.get("button.table"));
+        objectsBTN.setText(localisator.get("button.objects"));
+        scriptBTN.setText(localisator.get("button.script"));
     }
 
     @FXML
@@ -68,6 +72,8 @@ public class MainScreenController {
 
         visualisation.setVisible(true);
         visualisation.setManaged(true);
+
+        visualisationController.initializee();
     }
 
     @FXML

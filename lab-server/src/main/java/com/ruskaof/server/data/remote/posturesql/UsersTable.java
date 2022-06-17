@@ -24,7 +24,8 @@ public class UsersTable implements Table<User> {
             statement.execute("CREATE TABLE IF NOT EXISTS users ("
                     + "    id serial PRIMARY KEY,"
                     + "    login varchar(100) NOT NULL UNIQUE,"
-                    + "    password varchar(100) NOT NULL)");
+                    + "    password varchar(100) NOT NULL,"
+                    + "    color varchar(16) NOT NULL )");
         }
     }
 
@@ -35,7 +36,8 @@ public class UsersTable implements Table<User> {
         return new User(
                 resultSet.getLong("id"),
                 resultSet.getString("password"),
-                resultSet.getString("login")
+                resultSet.getString("login"),
+                resultSet.getString("color")
         );
 
     }
@@ -43,7 +45,7 @@ public class UsersTable implements Table<User> {
     @Override
     public int add(User element) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
-                "INSERT INTO users VALUES (default, ?, ?) RETURNING id"
+                "INSERT INTO users VALUES (default, ?, ?, ?) RETURNING id"
         )) {
             makePreparedStatement(preparedStatement, element);
             try (
@@ -79,5 +81,6 @@ public class UsersTable implements Table<User> {
         int currentParameterOffset = 0;
         preparedStatement.setString(++currentParameterOffset, user.getName());
         preparedStatement.setString(++currentParameterOffset, user.getPassword());
+        preparedStatement.setString(++currentParameterOffset, user.getColor());
     }
 }

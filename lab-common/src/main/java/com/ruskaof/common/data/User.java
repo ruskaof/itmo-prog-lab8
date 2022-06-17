@@ -6,11 +6,13 @@ public class User implements Comparable<User> {
     private long id;
     private final String password;
     private final String name;
+    private final String color;
 
-    public User(long id, String password, String name) {
+    public User(long id, String password, String name, String color) {
         this.id = id;
         this.password = password;
         this.name = name;
+        this.color = color;
     }
 
     public long getId() {
@@ -58,5 +60,9 @@ public class User implements Comparable<User> {
                 + ", password='" + password + '\''
                 + ", name='" + name + '\''
                 + '}';
+    }
+
+    public String getColor() {
+        return color;
     }
 }
