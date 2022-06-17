@@ -9,7 +9,7 @@ public class AddCommand extends Command {
     private final StudyGroup studyGroupToAdd;
 
     public AddCommand(String username, String password, StudyGroup studyGroupToAdd) {
-        super(username, password);
+        super(username, password, "add");
         this.studyGroupToAdd = studyGroupToAdd;
     }
 
@@ -19,8 +19,8 @@ public class AddCommand extends Command {
             DataManager dataManager,
             HistoryManager historyManager
     ) {
-
+        historyManager.addNote(getName());
         dataManager.addStudyGroup(studyGroupToAdd);
-        return new CommandResultDto(true);
+        return new CommandResultDto(true, "Study group was added successfully");
     }
 }

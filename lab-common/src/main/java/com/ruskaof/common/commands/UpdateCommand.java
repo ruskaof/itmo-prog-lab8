@@ -6,11 +6,12 @@ import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
 public class UpdateCommand extends Command implements PrivateAccessedStudyGroupCommand {
-    private final int idToUpdate;
+    private int idToUpdate;
     private final StudyGroup newStudyGroup;
+    private String idToSet;
 
-    public UpdateCommand(String username, String password, StudyGroup newStudyGroup) {
-        super(username, password);
+    public UpdateCommand(String username, String password, StudyGroup newStudyGroup, String idToSet) {
+        super(username, password, "update");
         this.idToUpdate = newStudyGroup.getId();
         this.newStudyGroup = newStudyGroup;
     }
@@ -21,9 +22,18 @@ public class UpdateCommand extends Command implements PrivateAccessedStudyGroupC
             DataManager dataManager,
             HistoryManager historyManager
     ) {
-        dataManager.updateStudyGroupById(idToUpdate, newStudyGroup);
-
-        return new CommandResultDto(true);
+        if (idToSet == null) {
+            dataManager.updateStudyGroupById(idToUpdate, newStudyGroup);
+            return new CommandResultDto(true, "Updated study group successfully");
+        } else {
+            try {
+                idToUpdate = Integer.parseInt(idToSet);
+                dataManager.updateStudyGroupById(idToUpdate, newStudyGroup);
+                return new CommandResultDto(true, "Updated study group successfully");
+            } catch (Exception e) {
+                return new CommandResultDto(false, "Invalid argument");
+            }
+        }
     }
 
 

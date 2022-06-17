@@ -11,10 +11,12 @@ import java.util.Objects;
 public abstract class Command implements Serializable {
     private final String username;
     private final String password;
+    private final String name;
 
-    public Command(String username, String password) {
+    public Command(String username, String password, String name) {
         this.username = username;
         this.password = password;
+        this.name = name;
     }
 
     @Override
@@ -32,6 +34,10 @@ public abstract class Command implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(username, password);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getUsername() {

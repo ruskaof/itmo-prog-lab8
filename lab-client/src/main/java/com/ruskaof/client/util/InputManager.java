@@ -9,12 +9,10 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class InputManager {
-    private final Scanner scanner;
     private final Stack<BufferedReader> currentFilesReaders = new Stack<>();
     private final Stack<File> currentFiles = new Stack<>();
 
-    public InputManager(InputStream inputStream) {
-        this.scanner = new Scanner(inputStream);
+    public InputManager() {
     }
 
 
@@ -29,7 +27,7 @@ public class InputManager {
                 return input;
             }
         } else {
-            return scanner.nextLine();
+            return null;
         }
     }
 

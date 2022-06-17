@@ -10,7 +10,7 @@ public class AddIfMinCommand extends Command {
     private final StudyGroup studyGroupToAdd;
 
     public AddIfMinCommand(String username, String password, StudyGroup studyGroupToAdd) {
-        super(username, password);
+        super(username, password, "add_if_min");
         this.studyGroupToAdd = studyGroupToAdd;
     }
 
@@ -20,11 +20,12 @@ public class AddIfMinCommand extends Command {
             DataManager dataManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(getName());
         if (dataManager.checkIfMin(studyGroupToAdd)) {
             dataManager.addStudyGroup(studyGroupToAdd);
-            return new CommandResultDto(true);
+            return new CommandResultDto(true, "Study group was added successfully");
         } else {
-            return new CommandResultDto(false);
+            return new CommandResultDto(false, "Study group was not added because it was not min");
         }
     }
 }

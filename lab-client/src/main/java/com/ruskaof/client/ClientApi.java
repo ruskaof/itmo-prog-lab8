@@ -4,8 +4,10 @@ import com.ruskaof.client.connection.CommandSender;
 import com.ruskaof.client.connection.CommandSenderTCP;
 import com.ruskaof.client.data.StudyGroupRow;
 import com.ruskaof.client.logic.Console;
+import com.ruskaof.client.util.InputManager;
 import com.ruskaof.client.util.Localisation;
 import com.ruskaof.client.util.Localisator;
+import com.ruskaof.client.util.OutputManager;
 import com.ruskaof.common.commands.AddCommand;
 import com.ruskaof.common.commands.AddIfMinCommand;
 import com.ruskaof.common.commands.RegisterCommand;
@@ -193,7 +195,7 @@ public final class ClientApi {
     public void update(StudyGroup newStudyGroup) {
         try {
             System.out.println("updating");
-            commandSender.sendCommand(new CommandFromClientDto(new UpdateCommand(login, password, newStudyGroup)));
+            commandSender.sendCommand(new CommandFromClientDto(new UpdateCommand(login, password, newStudyGroup, null)));
             System.out.println("gotovo");
         } catch (IOException e) {
             notifyDisconnect();
@@ -241,8 +243,8 @@ public final class ClientApi {
         }
     }
 
-    public void executeScript(File selectedFile) throws IOException {
-        new Console().start(readFileAsString(selectedFile.getAbsolutePath()), getLogin(), commandSender);
+    public String executeScript(File selectedFile) throws IOException {
+        return new Console(new InputManager(), getLogin(), getPassword()).start(commandSender, selectedFile.getAbsolutePath());
     }
 
     public void notifyDisconnect() {

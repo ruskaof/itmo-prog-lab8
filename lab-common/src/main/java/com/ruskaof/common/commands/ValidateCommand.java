@@ -7,7 +7,7 @@ import com.ruskaof.common.util.HistoryManager;
 public class ValidateCommand extends Command implements LoginNeedlessCommand {
 
     public ValidateCommand(String username, String password) {
-        super(username, password);
+        super(username, password, "validate");
     }
 
     @Override
@@ -22,7 +22,7 @@ public class ValidateCommand extends Command implements LoginNeedlessCommand {
         private final String color;
 
         public ValidateCommandResult(boolean loginAndPasswordCorrect, String color) {
-            super(true);
+            super(true, "");
             this.loginAndPasswordCorrect = loginAndPasswordCorrect;
             this.color = color;
         }

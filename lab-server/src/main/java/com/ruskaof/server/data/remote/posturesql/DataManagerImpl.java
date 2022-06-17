@@ -269,4 +269,9 @@ public class DataManagerImpl implements com.ruskaof.common.util.DataManager {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public String getStringInfo() {
+        return "There are " + mainData.size() + " elements in data";
+    }
 }

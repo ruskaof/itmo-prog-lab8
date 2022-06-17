@@ -2,18 +2,11 @@ package com.ruskaof.client.util;
 
 import java.io.PrintStream;
 
-public class OutputManager {
-    private final PrintStream printStream;
+public interface OutputManager {
 
-    public OutputManager(PrintStream printStream) {
-        this.printStream = printStream;
-    }
+    void println(String string);
 
-    public void println(String string) {
-        printStream.println(string);
-    }
+    void print(String string);
 
-    public void print(String string) {
-        printStream.print(string);
-    }
+    String getContaining();
 }

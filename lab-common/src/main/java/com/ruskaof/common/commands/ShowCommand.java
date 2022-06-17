@@ -11,7 +11,7 @@ import java.util.List;
 public class ShowCommand extends Command {
 
     public ShowCommand(String username, String password) {
-        super(username, password);
+        super(username, password, "show");
     }
 
     @Override
@@ -19,6 +19,7 @@ public class ShowCommand extends Command {
             DataManager dataManager,
             HistoryManager historyManager
     ) {
+        historyManager.addNote(getName());
         return new ShowCommandResult(true, dataManager.showSortedByName());
     }
 
@@ -26,7 +27,7 @@ public class ShowCommand extends Command {
         private final List<StudyGroup> data;
 
         public ShowCommandResult(boolean wasExecutedCorrectly, List<StudyGroup> data) {
-            super(wasExecutedCorrectly);
+            super(wasExecutedCorrectly, data.toString());
             this.data = data;
         }
 

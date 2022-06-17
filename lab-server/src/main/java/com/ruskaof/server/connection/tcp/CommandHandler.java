@@ -30,7 +30,7 @@ public class CommandHandler {
             return command.execute(dataManager, historyManager);
         } else {
             Logger.log("The client was not the owner of a study group they wanted to update or was not validated");
-            return new CommandResultDto(false);
+            return new CommandResultDto(false, "You are not the owner so command was not executed");
         }
 //        if (dataManager.validateUser(command.getUsername(), command.getPassword())) {
 //            if (commandFromClientDto.getCommand() instanceof PrivateAccessedStudyGroupCommand) {

@@ -16,7 +16,7 @@ import java.util.Random;
 public class RegisterCommand extends Command implements LoginNeedlessCommand {
 
     public RegisterCommand(String loginToRegister, String passwordToRegister) {
-        super(loginToRegister, passwordToRegister);
+        super(loginToRegister, passwordToRegister, "register");
     }
 
     private Color generateColor() {
@@ -43,7 +43,7 @@ public class RegisterCommand extends Command implements LoginNeedlessCommand {
         private final String  color;
 
         public RegisterCommandResult(boolean wasRegistered, String color) {
-            super(wasRegistered);
+            super(wasRegistered, "");
             this.wasRegistered = wasRegistered;
             this.color = color;
         }

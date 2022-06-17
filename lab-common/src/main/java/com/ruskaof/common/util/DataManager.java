@@ -47,4 +47,6 @@ public interface DataManager {
     boolean validateOwner(String username, int studyGroupId);
 
     void initialiseData();
+
+    String getStringInfo();
 }
