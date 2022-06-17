@@ -9,6 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
 public class MainAppTCP implements MainApp {
+    private final int port = 7813;
     private final CommandHandler commandHandler;
 
     private ServerSocket server;
@@ -34,7 +35,7 @@ public class MainAppTCP implements MainApp {
 
     private void initSerer() throws IOException {
         server = new ServerSocket();
-        server.bind(new InetSocketAddress("0.0.0.0", 7813));
+        server.bind(new InetSocketAddress("0.0.0.0", port));
         Logger.log("The server was built on the port: " + server.getLocalPort());
     }
 
