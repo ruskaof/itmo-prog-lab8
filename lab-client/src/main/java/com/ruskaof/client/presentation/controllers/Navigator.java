@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public final class Navigator {
@@ -24,7 +25,7 @@ public final class Navigator {
         stage.setScene(scene);
     }
 
-    public static void navigateToMainScreen(ActionEvent event, Class<?> clazz, SortingOrder sortingOrder, Field sortingField, double leftValue, double rightValue, Field filteringField) throws IOException {
+    public static void navigateToMainScreen(ActionEvent event, Class<?> clazz, SortingOrder sortingOrder, Field sortingField, double leftValue, double rightValue, Field filteringField, LocalDate leftDate, LocalDate rightDate) throws IOException {
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(clazz.getResource("/screen_main.fxml")));
         final Parent root = loader.load();
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -35,6 +36,8 @@ public final class Navigator {
         ((MainScreenController) loader.getController()).getTableViewScreenController().setFilterField(filteringField);
         ((MainScreenController) loader.getController()).getTableViewScreenController().setSortingField(sortingField);
         ((MainScreenController) loader.getController()).getTableViewScreenController().setSortingOrder(sortingOrder);
+        ((MainScreenController) loader.getController()).getTableViewScreenController().setFilterDates(leftDate, rightDate);
+        ;
     }
 
     public static void navigateToRegisterScreen(ActionEvent event, Class<?> clazz) throws IOException {

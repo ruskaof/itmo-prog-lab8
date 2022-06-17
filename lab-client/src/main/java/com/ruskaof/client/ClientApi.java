@@ -7,7 +7,6 @@ import com.ruskaof.client.logic.Console;
 import com.ruskaof.client.util.InputManager;
 import com.ruskaof.client.util.Localisation;
 import com.ruskaof.client.util.Localisator;
-import com.ruskaof.client.util.OutputManager;
 import com.ruskaof.common.commands.AddCommand;
 import com.ruskaof.common.commands.AddIfMinCommand;
 import com.ruskaof.common.commands.RegisterCommand;

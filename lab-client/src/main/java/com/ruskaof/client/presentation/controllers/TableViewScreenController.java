@@ -38,11 +38,35 @@ public class TableViewScreenController {
     private static final StringConverter<Integer> SAFE_INTEGER_STRING_CONVERTER = new StringConverter<Integer>() {
         @Override
         public String toString(Integer object) {
-            return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).format(object);
+            if (object == null) {
+                return null;
+            }
+            return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).format(object.intValue());
         }
 
         @Override
         public Integer fromString(String string) {
+            try {
+                return Integer.parseInt(string);
+            } catch (IllegalArgumentException e) {
+                return 1;
+            }
+        }
+    };
+    private static final StringConverter<Integer> SAFE_NULLABLE_INTEGER_STRING_CONVERTER = new StringConverter<Integer>() {
+        @Override
+        public String toString(Integer object) {
+            if (object == null) {
+                return null;
+            }
+            return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).format(object.intValue());
+        }
+
+        @Override
+        public Integer fromString(String string) {
+            if (string.isEmpty()) {
+                return null;
+            }
             try {
                 return Integer.parseInt(string);
             } catch (IllegalArgumentException e) {
@@ -111,6 +135,21 @@ public class TableViewScreenController {
             }
         }
     };
+    private static final StringConverter<String> NULLABLE_STRING_CONVERTER = new StringConverter<String>() {
+        @Override
+        public String toString(String object) {
+            return object;
+        }
+
+        @Override
+        public String fromString(String string) {
+            if (string.isEmpty()) {
+                return null;
+            } else {
+                return string;
+            }
+        }
+    };
     @FXML
     private TableView<StudyGroupRow> table;
     private Field sortingField = Field.ID;
@@ -122,37 +161,53 @@ public class TableViewScreenController {
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             int toRet = 0;
             switch (sortingField) {
-                case ID: toRet = compareValues(o1.getId(), o2.getId());
+                case ID:
+                    toRet = compareValues(o1.getId(), o2.getId());
                     break;
-                case NAME: toRet = compareValues(o1.getName(), o2.getName());
+                case NAME:
+                    toRet = compareValues(o1.getName(), o2.getName());
                     break;
-                case X: toRet = compareValues(o1.getX(), o2.getX());
+                case X:
+                    toRet = compareValues(o1.getX(), o2.getX());
                     break;
-                case Y: toRet = compareValues(o1.getY(), o2.getY());
+                case Y:
+                    toRet = compareValues(o1.getY(), o2.getY());
                     break;
-                case CREATION_DATE: toRet = compareValues(o1.getCreationDate(), o2.getCreationDate());
+                case CREATION_DATE:
+                    toRet = compareValues(o1.getCreationDate(), o2.getCreationDate());
                     break;
-                case STUDENTS_COUNT: toRet = compareValues(o1.getStudentsCount(), o2.getStudentsCount());
+                case STUDENTS_COUNT:
+                    toRet = compareValues(o1.getStudentsCount(), o2.getStudentsCount());
                     break;
-                case FORM_OF_EDUCATION: toRet = compareValues(o1.getFormOfEducation(), o2.getFormOfEducation());
+                case FORM_OF_EDUCATION:
+                    toRet = compareValues(o1.getFormOfEducation(), o2.getFormOfEducation());
                     break;
-                case SEMESTER: toRet = compareValues(o1.getSemester(), o2.getSemester());
+                case SEMESTER:
+                    toRet = compareValues(o1.getSemester(), o2.getSemester());
                     break;
-                case ADMIN_NAME: toRet = compareValues(o1.getAdminName(), o2.getAdminName());
+                case ADMIN_NAME:
+                    toRet = compareValues(o1.getAdminName(), o2.getAdminName());
                     break;
-                case ADMIN_HEIGHT: toRet = compareValues(o1.getAdminHeight(), o2.getAdminHeight());
+                case ADMIN_HEIGHT:
+                    toRet = compareValues(o1.getAdminHeight(), o2.getAdminHeight());
                     break;
-                case ADMIN_NATIONALITY: toRet = compareValues(o1.getAdminNationality(), o2.getAdminNationality());
+                case ADMIN_NATIONALITY:
+                    toRet = compareValues(o1.getAdminNationality(), o2.getAdminNationality());
                     break;
-                case ADMIN_X: toRet = compareValues(o1.getAdminX(), o2.getAdminX());
+                case ADMIN_X:
+                    toRet = compareValues(o1.getAdminX(), o2.getAdminX());
                     break;
-                case ADMIN_Y: toRet = compareValues(o1.getAdminY(), o2.getAdminY());
+                case ADMIN_Y:
+                    toRet = compareValues(o1.getAdminY(), o2.getAdminY());
                     break;
-                case ADMIN_LOCATION_NAME: toRet = compareValues(o1.getAdminLocationName(), o2.getAdminLocationName());
+                case ADMIN_LOCATION_NAME:
+                    toRet = compareValues(o1.getAdminLocationName(), o2.getAdminLocationName());
                     break;
-                case AUTHOR_NAME: toRet = compareValues(o1.getAuthorName(), o2.getAuthorName());
+                case AUTHOR_NAME:
+                    toRet = compareValues(o1.getAuthorName(), o2.getAuthorName());
                     break;
-                default: break;
+                default:
+                    break;
             }
             return toRet;
         }
@@ -163,6 +218,8 @@ public class TableViewScreenController {
     private List<StudyGroupRow> data;
     private double leftValue;
     private double rightValue;
+    private LocalDate leftDate;
+    private LocalDate rightDate;
     @FXML
     private Button reloadBTN;
     @FXML
@@ -191,12 +248,20 @@ public class TableViewScreenController {
         table.getColumns().add(newColumn);
     }
 
+    private static void addNullableIntColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<Integer> onCommitCellModifier, boolean editable) {
+        TableColumn<StudyGroupRow, Integer> newColumn = makeStandardColumnConfig(columnName, fieldName, editable);
+        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, Integer>forTableColumn(SAFE_NULLABLE_INTEGER_STRING_CONVERTER));
+        newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
+        table.getColumns().add(newColumn);
+    }
+
     private static void addSemesterColumn(TableView<StudyGroupRow> table, OnCommitCellModifier<String> onCommitCellModifier) {
         TableColumn<StudyGroupRow, String> newColumn = makeStandardColumnConfig("semester", "semester", true);
         newColumn.setCellFactory(ComboBoxTableCell.forTableColumn("THIRD",
                 "FIFTH",
                 "SIXTH",
-                "SEVENTH"));
+                "SEVENTH",
+                ""));
         newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
         table.getColumns().add(newColumn);
     }
@@ -207,7 +272,8 @@ public class TableViewScreenController {
                 "SPAIN",
                 "INDIA",
                 "THAILAND",
-                "NORTH_KOREA"));
+                "NORTH_KOREA",
+                ""));
         newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
         table.getColumns().add(newColumn);
     }
@@ -248,10 +314,14 @@ public class TableViewScreenController {
         stage.setScene(scene);
     }
 
-    private static void addStringColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<String> onCommitCellModifier, boolean editable) {
+    private static void addStringColumn(TableView<StudyGroupRow> table, String fieldName, String columnName, OnCommitCellModifier<String> onCommitCellModifier, boolean editable, boolean nullable) {
         TableColumn<StudyGroupRow, String> newColumn = makeStandardColumnConfig(columnName, fieldName, true);
         newColumn.setEditable(editable);
-        newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow>forTableColumn());
+        if (nullable) {
+            newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow, String>forTableColumn(NULLABLE_STRING_CONVERTER));
+        } else {
+            newColumn.setCellFactory(TextFieldTableCell.<StudyGroupRow>forTableColumn());
+        }
         newColumn.setOnEditCommit(event -> onCommitCellModifier.modifyColumn(event.getRowValue(), event.getNewValue()));
         table.getColumns().add(newColumn);
     }
@@ -294,27 +364,40 @@ public class TableViewScreenController {
     }
 
     public void setFilterField(Field filterField) {
-        this.filterField = filterField;
+        if (filterField != null) {
+            data = data.stream().filter(this::filterValue).collect(Collectors.toList());
+            this.filterField = filterField;
+            table.setItems(FXCollections.observableArrayList(data));
+            table.refresh();
+        }
     }
 
     private boolean filterValue(StudyGroupRow studyGroupRow) {
         boolean toRet = true;
         switch (filterField) {
-            case X: toRet = studyGroupRow.getX() <= rightValue && studyGroupRow.getX() >= leftValue;
+            case X:
+                toRet = studyGroupRow.getX() <= rightValue && studyGroupRow.getX() >= leftValue;
                 break;
-            case Y: toRet = studyGroupRow.getY() <= rightValue && studyGroupRow.getY() >= leftValue;
+            case Y:
+                toRet = studyGroupRow.getY() <= rightValue && studyGroupRow.getY() >= leftValue;
                 break;
-            case ID: toRet = studyGroupRow.getId() <= rightValue && studyGroupRow.getId() >= leftValue;
+            case ID:
+                toRet = studyGroupRow.getId() <= rightValue && studyGroupRow.getId() >= leftValue;
                 break;
-            case STUDENTS_COUNT: toRet = studyGroupRow.getStudentsCount() <= rightValue && studyGroupRow.getStudentsCount() >= leftValue;
+            case STUDENTS_COUNT:
+                toRet = studyGroupRow.getStudentsCount() <= rightValue && studyGroupRow.getStudentsCount() >= leftValue;
                 break;
-            case ADMIN_HEIGHT: toRet = studyGroupRow.getAdminHeight() <= rightValue && studyGroupRow.getAdminHeight() >= leftValue;
+            case ADMIN_HEIGHT:
+                toRet = studyGroupRow.getAdminHeight() <= rightValue && studyGroupRow.getAdminHeight() >= leftValue;
                 break;
-            case ADMIN_X: toRet = studyGroupRow.getAdminX() <= rightValue && studyGroupRow.getAdminX() >= leftValue;
+            case ADMIN_X:
+                toRet = studyGroupRow.getAdminX() <= rightValue && studyGroupRow.getAdminX() >= leftValue;
                 break;
-            case ADMIN_Y: toRet = studyGroupRow.getAdminY() <= rightValue && studyGroupRow.getAdminY() >= leftValue;
+            case ADMIN_Y:
+                toRet = studyGroupRow.getAdminY() <= rightValue && studyGroupRow.getAdminY() >= leftValue;
                 break;
-            default: break;
+            default:
+                break;
         }
         return toRet;
     }
@@ -335,22 +418,24 @@ public class TableViewScreenController {
     }
 
     public void setSortingField(Field sortingField) {
-        System.out.println(leftValue);
-        System.out.println(rightValue);
-        this.sortingField = sortingField;
-        reload();
-        data = data.stream().filter(this::filterValue).sorted(comparator).collect(Collectors.toList());
-        table.setItems(FXCollections.observableArrayList(data));
-        table.refresh();
+        if (sortingField != null) {
+            this.sortingField = sortingField;
+            data = data.stream().sorted(comparator).collect(Collectors.toList());
+            table.setItems(FXCollections.observableArrayList(data));
+            table.refresh();
+        }
     }
 
     public void setSortingOrder(SortingOrder sortingOrder) {
-        this.sortingOrder = sortingOrder;
-        reload();
-        data = data.stream().filter(this::filterValue).sorted(comparator).collect(Collectors.toList());
-        table.setItems(FXCollections.observableArrayList(data));
-        table.refresh();
+        if (sortingOrder != null) {
+            this.sortingOrder = sortingOrder;
+            data = data.stream().filter(this::filterValue).sorted(comparator).collect(Collectors.toList());
+            table.setItems(FXCollections.observableArrayList(data));
+            table.refresh();
+        }
     }
+
+
 
     @FXML
     public void onSortFilterBTN(ActionEvent event) throws IOException {
@@ -370,20 +455,20 @@ public class TableViewScreenController {
     @FXML
     public void initialize() {
         TableViewScreenController.addIntColumn(table, "id", "id", StudyGroupRow::setId, false);
-        TableViewScreenController.addStringColumn(table, "name", "name", StudyGroupRow::setName, true);
+        TableViewScreenController.addStringColumn(table, "name", "name", StudyGroupRow::setName, true, false);
         TableViewScreenController.addLongColumn(table, "x", "x", StudyGroupRow::setX);
         TableViewScreenController.addDoubleColumn(table, StudyGroupRow::setY);
         TableViewScreenController.addDateColumn(table);
-        TableViewScreenController.addIntColumn(table, "studentsCount", "studentsCount", StudyGroupRow::setStudentsCount, true);
+        TableViewScreenController.addNullableIntColumn(table, "studentsCount", "studentsCount", StudyGroupRow::setStudentsCount, true);
         TableViewScreenController.addFormOfEduColumn(table, StudyGroupRow::setFormOfEducation);
         TableViewScreenController.addSemesterColumn(table, StudyGroupRow::setSemester);
-        TableViewScreenController.addStringColumn(table, "adminName", "adminName", StudyGroupRow::setAdminName, true);
+        TableViewScreenController.addStringColumn(table, "adminName", "adminName", StudyGroupRow::setAdminName, true, false);
         TableViewScreenController.addIntColumn(table, "adminHeight", "adminHeight", StudyGroupRow::setAdminHeight, true);
         TableViewScreenController.addAdminNationalityColumn(table, "adminNationality", "adminNationality", StudyGroupRow::setAdminNationality);
         TableViewScreenController.addFloatColumn(table, StudyGroupRow::setAdminX);
         TableViewScreenController.addLongColumn(table, "adminY", "adminY", StudyGroupRow::setAdminY);
-        TableViewScreenController.addStringColumn(table, "adminLocationName", "adminLocationName", StudyGroupRow::setAdminLocationName, false);
-        TableViewScreenController.addStringColumn(table, "authorName", "authorName", StudyGroupRow::setAuthorName, false);
+        TableViewScreenController.addStringColumn(table, "adminLocationName", "adminLocationName", StudyGroupRow::setAdminLocationName, true, true);
+        TableViewScreenController.addStringColumn(table, "authorName", "authorName", StudyGroupRow::setAuthorName, false, false);
         setLocalisation();
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.setEditable(true);
@@ -396,6 +481,18 @@ public class TableViewScreenController {
         addBTN.setText(localisator.get("button.add"));
         sortFilterBTN.setText(localisator.get("button.sort_filter"));
         removeSelectedBTN.setText(localisator.get("button.remove_selected"));
+    }
+
+    public void setFilterDates(LocalDate leftDate, LocalDate rightDate) {
+        this.leftDate = leftDate;
+        this.rightDate = rightDate;
+
+        if (leftDate != null) {
+            data = data.stream().filter(it -> it.getCreationDate().isBefore(rightDate) && it.getCreationDate().isAfter(leftDate)).collect(Collectors.toList());
+            table.setItems(FXCollections.observableArrayList(data));
+            table.refresh();
+        }
+
     }
 
     @FunctionalInterface

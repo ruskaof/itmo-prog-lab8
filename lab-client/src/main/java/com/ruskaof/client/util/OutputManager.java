@@ -1,7 +1,5 @@
 package com.ruskaof.client.util;
 
-import java.io.PrintStream;
-
 public interface OutputManager {
 
     void println(String string);
@@ -10,3 +8,4 @@ public interface OutputManager {
 
     String getContaining();
 }
+

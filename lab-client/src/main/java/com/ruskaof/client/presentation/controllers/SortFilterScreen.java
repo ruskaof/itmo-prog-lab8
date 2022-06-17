@@ -3,11 +3,10 @@ package com.ruskaof.client.presentation.controllers;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -24,6 +23,16 @@ public class SortFilterScreen {
     private TextField leftField;
     @FXML
     private Label errorLabel;
+    @FXML
+    private CheckBox sortingCB;
+    @FXML
+    private CheckBox filteringCB;
+    @FXML
+    private CheckBox datingCB;
+    @FXML
+    private DatePicker dateLeft;
+    @FXML
+    private DatePicker dateRight;
 
     @FXML
     public void initialize() {
@@ -40,22 +49,56 @@ public class SortFilterScreen {
 
     @FXML
     public void okClick(ActionEvent event) throws IOException {
-        if (sortingOrderCB.getValue() != null && sortingFieldCB.getValue() != null && filteringFieldCB.getValue() != null) {
-            try {
-                Navigator.navigateToMainScreen(event,
-                        this.getClass(),
-                        SortingOrder.valueOf(sortingOrderCB.getValue()),
-                        Field.valueOf(sortingFieldCB.getValue()),
-                        Double.parseDouble(leftField.getText()),
-                        Double.parseDouble(rightField.getText()),
-                        Field.valueOf(filteringFieldCB.getValue()));
-
-            } catch (IllegalArgumentException e) {
-                errorLabel.setText("The values in fields must be numbers");
+        SortingOrder sortingOrder = null;
+        Field sortingField = null;
+        if (sortingCB.isSelected()) {
+            if (sortingOrderCB.getValue() != null && sortingFieldCB.getValue() != null) {
+                sortingOrder = SortingOrder.valueOf(sortingOrderCB.getValue());
+                sortingField = Field.valueOf(sortingFieldCB.getValue());
+            } else {
+                errorLabel.setText("Choose sorting order and field");
+                return;
+            }
+        }
+        double leftValue = 0D;
+        double rightValue = 0D;
+        Field filteringField = null;
+        if (filteringCB.isSelected()) {
+            if (filteringFieldCB.getValue() != null) {
+                try {
+                    leftValue = Double.parseDouble(leftField.getText());
+                    rightValue = Double.parseDouble(rightField.getText());
+                    filteringField = Field.valueOf(filteringFieldCB.getValue());
+                } catch (Exception e) {
+                    errorLabel.setText("Incorrect numbers typed");
+                    return;
+                }
+            } else {
+                errorLabel.setText("Chose filtering field");
+                return;
+            }
+        }
+        LocalDate leftDate = null;
+        LocalDate rightDate = null;
+        if (datingCB.isSelected()) {
+            if (dateLeft.getValue() != null && dateRight.getValue() != null) {
+                leftDate = dateLeft.getValue();
+                rightDate = dateRight.getValue();
             }
         } else {
-            errorLabel.setText("Please choose all options in combo boxes");
+            errorLabel.setText("chose dates");
+            return;
         }
+
+        Navigator.navigateToMainScreen(event,
+                this.getClass(),
+                sortingOrder,
+                sortingField,
+                leftValue,
+                rightValue,
+                filteringField, leftDate, rightDate);
+
+
     }
 
 }

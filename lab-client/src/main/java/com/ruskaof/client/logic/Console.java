@@ -5,13 +5,24 @@ import com.ruskaof.client.connection.CommandSender;
 import com.ruskaof.client.util.DataObjectsMaker;
 import com.ruskaof.client.util.InputManager;
 import com.ruskaof.client.util.OutputManager;
-import com.ruskaof.common.commands.*;
+import com.ruskaof.common.commands.AddCommand;
+import com.ruskaof.common.commands.AddIfMinCommand;
+import com.ruskaof.common.commands.ClearCommand;
+import com.ruskaof.common.commands.Command;
+import com.ruskaof.common.commands.FilterLessThanSemesterEnumCommand;
+import com.ruskaof.common.commands.HelpCommand;
+import com.ruskaof.common.commands.HistoryCommand;
+import com.ruskaof.common.commands.InfoCommand;
+import com.ruskaof.common.commands.MinByIdCommand;
+import com.ruskaof.common.commands.PrintAscendingCommand;
+import com.ruskaof.common.commands.RemoveByIdCommand;
+import com.ruskaof.common.commands.RemoveGreaterCommand;
+import com.ruskaof.common.commands.ShowCommand;
+import com.ruskaof.common.commands.UpdateCommand;
 import com.ruskaof.common.data.StudyGroup;
 import com.ruskaof.common.dto.CommandFromClientDto;
-import com.ruskaof.common.dto.CommandResultDto;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Arrays;
@@ -130,7 +141,7 @@ public class Console {
     }
 
     private class StringOM implements OutputManager {
-        StringBuilder stringBuilder = new StringBuilder();
+        private StringBuilder stringBuilder = new StringBuilder();
 
         @Override
         public void println(String string) {

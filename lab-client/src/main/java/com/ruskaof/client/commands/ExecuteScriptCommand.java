@@ -19,7 +19,7 @@ public class ExecuteScriptCommand {
             inputManager.connectToFile(new File(arg));
             new CommandResultDto(true, "Your file was executed");
         } catch (IOException | UnsupportedOperationException e) {
-            new CommandResultDto( false, "could not execute");
+            new CommandResultDto(false, "could not execute");
         }
     }
 }

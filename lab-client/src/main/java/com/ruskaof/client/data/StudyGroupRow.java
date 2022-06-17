@@ -35,7 +35,7 @@ public class StudyGroupRow {
 
 
     //CHECKSTYLE:OFF
-    public StudyGroupRow(int id, String name, long x, double y, LocalDate creationDate, int studentsCount, String formOfEducation, String semester, String adminName, int adminHeight, String adminNationality, float adminX, long adminY, String adminLocationName, String authorName, String color) {
+    public StudyGroupRow(int id, String name, long x, double y, LocalDate creationDate, Integer studentsCount, String formOfEducation, String semester, String adminName, int adminHeight, String adminNationality, float adminX, long adminY, String adminLocationName, String authorName, String color) {
         this.id = id;
         this.name = name;
         this.x = x;
@@ -97,7 +97,11 @@ public class StudyGroupRow {
     }
 
     public void setSemester(String semester) {
-        this.semester = semester;
+        if (semester.isEmpty()) {
+            this.semester = null;
+        } else {
+            this.semester = semester;
+        }
         ClientApi.getInstance().update(this.mapToStudyGroup());
 
     }
@@ -117,7 +121,11 @@ public class StudyGroupRow {
     }
 
     public void setAdminNationality(String adminNationality) {
-        this.adminNationality = adminNationality;
+        if (adminNationality.isEmpty()){
+            this.adminNationality = null;
+        } else {
+            this.adminNationality = adminNationality;
+        }
         ClientApi.getInstance().update(this.mapToStudyGroup());
 
     }

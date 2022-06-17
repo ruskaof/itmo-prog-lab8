@@ -88,6 +88,7 @@ public class AddScreenController {
         adminNationalityCombo.getItems().add("INDIA");
         adminNationalityCombo.getItems().add("THAILAND");
         adminNationalityCombo.getItems().add("NORTH_KOREA");
+        adminNationalityCombo.getItems().add("null");
 
         semesterCombo.getItems().add("THIRD");
         semesterCombo.getItems().add("FIFTH");
@@ -99,31 +100,31 @@ public class AddScreenController {
     private boolean checkFields() {
         Localisator localisator = new Localisator();
         boolean toRet = true;
-        if (!checkString(nameField.getText())) {
+        if (!checkString(nameField.getText(), false)) {
             errorLabel.setText(localisator.get("error.string_field"));
             toRet = false;
-        } else if (!checkLong(xField.getText(), (l) -> l > X_FIELD_LIMITATION)) {
+        } else if (!checkLong(xField.getText(), (l) -> l > X_FIELD_LIMITATION, false)) {
             errorLabel.setText(localisator.get("error.x_field"));
             toRet = false;
         } else if (!checkDouble(yField.getText(), (d) -> d <= Y_FIELD_LIMITATION)) {
             errorLabel.setText(localisator.get("error.y_field"));
             toRet = false;
-        } else if (!checkLong(studentsCountField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE)) {
+        } else if (!checkLong(studentsCountField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE, true)) {
             errorLabel.setText(localisator.get("error.students_count"));
             toRet = false;
-        } else if (!checkString(adminNameField.getText())) {
+        } else if (!checkString(adminNameField.getText(), false)) {
             errorLabel.setText(localisator.get("error.admin_name"));
             toRet = false;
-        } else if (!checkLong(adminHeightField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE)) {
+        } else if (!checkLong(adminHeightField.getText(), (l) -> l > 0 && l <= Integer.MAX_VALUE, false)) {
             errorLabel.setText(localisator.get("error.admin_height"));
             toRet = false;
         } else if (!checkFloat(adminXField.getText(), (f) -> true)) {
             errorLabel.setText(localisator.get("error.admin_x"));
             toRet = false;
-        } else if (!checkLong(adminYField.getText(), (l) -> true)) {
+        } else if (!checkLong(adminYField.getText(), (l) -> true, false)) {
             errorLabel.setText(localisator.get("error.admin_y"));
             toRet = false;
-        } else if (!checkString(adminLocationNameField.getText())) {
+        } else if (!checkString(adminLocationNameField.getText(), true)) {
             errorLabel.setText(localisator.get("error.admin_location"));
             toRet = false;
         } else if (adminNationalityCombo.getValue() == null || formOfEducationCombo.getValue() == null || semesterCombo == null) {
@@ -140,17 +141,17 @@ public class AddScreenController {
                         Long.parseLong(xField.getText()),
                         Double.parseDouble(yField.getText())
                 ),
-                Integer.parseInt(studentsCountField.getText()),
+                studentsCountField.getText().isEmpty() ? null : Integer.parseInt(studentsCountField.getText()),
                 FormOfEducation.valueOf(formOfEducationCombo.getValue()),
                 semesterCombo.getValue().equals("null") ? null : Semester.valueOf(semesterCombo.getValue()),
                 new Person(
                         adminNameField.getText(),
                         Integer.parseInt(adminXField.getText()),
-                        Country.valueOf(adminNationalityCombo.getValue()),
+                        adminNationalityCombo.getValue().equals("null") ? null : Country.valueOf(adminNationalityCombo.getValue()),
                         new Location(
                                 Float.parseFloat(adminXField.getText()),
                                 Long.parseLong(adminYField.getText()),
-                                adminLocationNameField.getText()
+                                adminLocationNameField.getText().isEmpty() ? null : adminLocationNameField.getText()
                         )
                 ),
                 LocalDate.now(),
@@ -159,7 +160,10 @@ public class AddScreenController {
     }
 
 
-    private boolean checkLong(String l, Predicate<Long> checkFunc) {
+    private boolean checkLong(String l, Predicate<Long> checkFunc, boolean nullable) {
+        if (l.isEmpty() && nullable) {
+            return true;
+        }
         try {
             return checkFunc.test(Long.parseLong(l));
         } catch (Exception e) {
@@ -183,8 +187,12 @@ public class AddScreenController {
         }
     }
 
-    private boolean checkString(String s) {
-        return s.length() > 0 && s.length() < STRING_LENGTH_LIMITATION;
+    private boolean checkString(String s, boolean nullable) {
+        if (nullable) {
+            return s.length() >= 0 && s.length() < STRING_LENGTH_LIMITATION;
+        } else {
+            return s.length() > 0 && s.length() < STRING_LENGTH_LIMITATION;
+        }
     }
 
 
