@@ -31,9 +31,11 @@ public class RegisterScreenController {
 
                 ClientApi.getInstance().startUpdating();
                 Navigator.navigateToMainScreen(event, getClass());
-            }  else {
-                errorLabel.setText(localisator.get("error.passwords_not_same"));
+            } else {
+                errorLabel.setText(localisator.get("error.login_already_present"));
             }
+        } else {
+            errorLabel.setText(localisator.get("error.passwords_not_same"));
         }
     }
 

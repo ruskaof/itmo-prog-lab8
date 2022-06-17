@@ -6,6 +6,7 @@ import com.ruskaof.client.util.Localisator;
 import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -30,6 +31,7 @@ public class VisualisationScreenController {
     private static final double ANIM_DURATION = 1000D;
     private static final double ANGLE_OF_ROTATION = 360D;
     private static final double LINE_WIDTH = 3;
+    private static final int TIME_TO_RELOAD = 3000;
 
     @FXML
     private Button reloadBTN;
@@ -55,6 +57,34 @@ public class VisualisationScreenController {
         setClickable();
         setLocalisation();
     }
+
+    @FXML
+    public void initialize() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(TIME_TO_RELOAD);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                    Platform.runLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            refresh();
+
+                        }
+                    });
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
 
     private void setLocalisation() {
         final Localisator localisator = new Localisator();
