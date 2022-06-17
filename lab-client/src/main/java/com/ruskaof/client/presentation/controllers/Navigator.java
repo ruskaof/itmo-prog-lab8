@@ -63,7 +63,8 @@ public final class Navigator {
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(clazz.getResource("/screen_info.fxml")));
         final Parent root = loader.load();
         ((InfoScreenController) loader.getController()).setObject(object);
-        ((InfoScreenController) loader.getController()).setListOfObjectData();
+        ((InfoScreenController) loader.getController()).reload();
+//        ((InfoScreenController) loader.getController()).setListOfObjectData();
         System.out.println(object);
         final Stage stage = (Stage) ((Node) source).getScene().getWindow();
         final Scene scene = new Scene(root);
