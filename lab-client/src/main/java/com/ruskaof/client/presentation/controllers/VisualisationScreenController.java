@@ -73,17 +73,17 @@ public class VisualisationScreenController {
     }
 
     private void drawGroups() {
+        for (StudyGroupRow studyGroupRow : currentData) {
+            if (!updatedData.contains(studyGroupRow)) {
+                removeGroup(studyGroupRow.getId());
+            }
+        }
         for (StudyGroupRow studyGroupRow : updatedData) {
             if (!currentData.contains(studyGroupRow)) {
                 drawGroup(convertX(studyGroupRow.getX()), convertY(studyGroupRow.getY()), Color.valueOf(studyGroupRow.getColor()), studyGroupRow.getId());
             }
         }
 
-        for (StudyGroupRow studyGroupRow : currentData) {
-            if (!updatedData.contains(studyGroupRow)) {
-                removeGroup(studyGroupRow.getId());
-            }
-        }
     }
 
     private void removeGroup(int id) {
