@@ -34,6 +34,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TableViewScreenController {
+
     private static final StringConverter<Integer> SAFE_INTEGER_STRING_CONVERTER = new StringConverter<Integer>() {
         @Override
         public String toString(Integer object) {

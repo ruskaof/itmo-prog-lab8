@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class StudyGroupRow {
+    private static final long X_FIELD_LIMITATION = -896;
+    private static final double Y_FIELD_LIMITATION = 135;
+    private static final int STRING_LENGTH_LIMITATION = 100;
     private int id;
     private String name;
     private long x;
@@ -29,6 +32,7 @@ public class StudyGroupRow {
     private String adminLocationName;
     private String authorName;
     private String color;
+
 
     //CHECKSTYLE:OFF
     public StudyGroupRow(int id, String name, long x, double y, LocalDate creationDate, int studentsCount, String formOfEducation, String semester, String adminName, int adminHeight, String adminNationality, float adminX, long adminY, String adminLocationName, String authorName, String color) {
@@ -65,22 +69,19 @@ public class StudyGroupRow {
     }
 
     public void setX(long x) {
-        this.x = x;
-        ClientApi.getInstance().update(this.mapToStudyGroup());
+        if (x >= X_FIELD_LIMITATION) {
+            this.x = x;
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        }
     }
 
     public void setY(double y) {
-        this.y = y;
-        ClientApi.getInstance().update(this.mapToStudyGroup());
-
+        if (y <= Y_FIELD_LIMITATION) {
+            this.y = y;
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        }
     }
 
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-
-        ClientApi.getInstance().update(this.mapToStudyGroup());
-
-    }
 
     public void setStudentsCount(Integer studentsCount) {
         this.studentsCount = studentsCount;
@@ -102,8 +103,10 @@ public class StudyGroupRow {
     }
 
     public void setAdminName(String adminName) {
-        this.adminName = adminName;
-        ClientApi.getInstance().update(this.mapToStudyGroup());
+        if (adminName.length() <= STRING_LENGTH_LIMITATION) {
+            this.adminName = adminName;
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        }
 
     }
 
@@ -132,9 +135,10 @@ public class StudyGroupRow {
     }
 
     public void setAdminLocationName(String adminLocationName) {
-        this.adminLocationName = adminLocationName;
-        ClientApi.getInstance().update(this.mapToStudyGroup());
-
+        if (this.adminLocationName.length() <= STRING_LENGTH_LIMITATION) {
+            this.adminLocationName = adminLocationName;
+            ClientApi.getInstance().update(this.mapToStudyGroup());
+        }
     }
 
     public void setAuthorName(String authorName) {
