@@ -9,6 +9,7 @@ import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -32,6 +33,8 @@ public class VisualisationScreenController {
     private static final double ANGLE_OF_ROTATION = 360D;
     private static final double LINE_WIDTH = 3;
     private static final int TIME_TO_RELOAD = 3000;
+    private static final double OBJECT_WIDTH_C = 2.6;
+    private static final double OFFSET_FOR_OBJ = 2.2;
 
     @FXML
     private Button reloadBTN;
@@ -119,18 +122,18 @@ public class VisualisationScreenController {
     private void removeGroup(int id) {
         final Drawing drawing = drawings.get(id);
         drawings.remove(id);
+        makeFade(drawing.circle1);
+        makeFade(drawing.circle2);
+        makeFade(drawing.rectangle1);
+        makeFade(drawing.rectangle2);
+    }
+
+    private void makeFade(Node node) {
         FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
-        fadeTransition.setNode(drawing.circle);
-        fadeTransition.setOnFinished((it) -> pane.getChildren().remove(drawing.circle));
-        FadeTransition fadeTransition2 = new FadeTransition();
-        fadeTransition2.setFromValue(1);
-        fadeTransition2.setToValue(0);
-        fadeTransition2.setNode(drawing.rectangle);
-        fadeTransition2.setOnFinished((it) -> pane.getChildren().remove(drawing.rectangle));
-        fadeTransition.play();
-        fadeTransition2.play();
+        fadeTransition.setNode(node);
+        fadeTransition.setOnFinished((it) -> pane.getChildren().remove(node));
     }
 
     private void setClickable() {
@@ -159,38 +162,51 @@ public class VisualisationScreenController {
     }
 
     private void drawGroup(double normalX, double normalY, Color color, int id) {
-        Circle circle = new Circle(normalX, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH, color);
-        circle.setRadius(CIRCLE_RADIUS);
-        Rectangle rectangle = studyGroupRect(normalX, normalY, color);
+        Circle circle1 = new Circle(normalX + OBJECT_WIDTH / OBJECT_WIDTH_C / 2, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH, color);
+        Circle circle2 = new Circle(normalX - OBJECT_WIDTH / 2, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH, color);
+        circle1.setRadius(CIRCLE_RADIUS);
+        circle2.setRadius(CIRCLE_RADIUS);
 
+        Rectangle rectangle1 = new Rectangle(normalX - OBJECT_WIDTH / 2, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH / OBJECT_WIDTH_C, OBJECT_WIDTH);
+        Rectangle rectangle2 = new Rectangle(normalX - OBJECT_WIDTH / 2 + OBJECT_WIDTH / OFFSET_FOR_OBJ, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH / OBJECT_WIDTH_C, OBJECT_WIDTH);
+
+        rectangle1.setFill(color);
+        rectangle2.setFill(color);
+
+
+        makeRotate(rectangle1);
+        makeScalable(rectangle1);
+        makeRotate(rectangle2);
+        makeScalable(rectangle2);
+
+        drawings.put(id, new Drawing(rectangle1, rectangle2, circle1, circle2));
+
+        pane.getChildren().add(circle1);
+        pane.getChildren().add(rectangle1);
+        pane.getChildren().add(circle2);
+        pane.getChildren().add(rectangle2);
+    }
+
+    private void makeScalable(Node node) {
         ScaleTransition scaleTransition = new ScaleTransition();
         scaleTransition.setFromX(0);
         scaleTransition.setFromY(0);
         scaleTransition.setToX(1);
         scaleTransition.setToY(1);
-        scaleTransition.setNode(rectangle);
+        scaleTransition.setNode(node);
         scaleTransition.play();
 
+    }
+
+    private void makeRotate(Node node) {
         RotateTransition rotateTransition = new RotateTransition();
         rotateTransition.setDuration(Duration.millis(ANIM_DURATION));
-        rotateTransition.setNode(rectangle);
+        rotateTransition.setNode(node);
         rotateTransition.setByAngle(ANGLE_OF_ROTATION);
         rotateTransition.setCycleCount(1);
         rotateTransition.setAutoReverse(false);
         rotateTransition.play();
 
-        RotateTransition rotateTransition2 = new RotateTransition();
-        rotateTransition2.setDuration(Duration.millis(ANIM_DURATION));
-        rotateTransition2.setNode(circle);
-        rotateTransition2.setByAngle(ANGLE_OF_ROTATION);
-        rotateTransition2.setCycleCount(1);
-        rotateTransition2.setAutoReverse(false);
-        rotateTransition2.play();
-
-        drawings.put(id, new Drawing(rectangle, circle));
-
-        pane.getChildren().add(circle);
-        pane.getChildren().add(rectangle);
     }
 
     private Rectangle studyGroupRect(double normalX, double normalY, Color color) {
@@ -208,13 +224,18 @@ public class VisualisationScreenController {
     }
 
     class Drawing {
-        private final Rectangle rectangle;
-        private final Circle circle;
+        private final Rectangle rectangle1;
+        private final Rectangle rectangle2;
+        private final Circle circle1;
+
+        private final Circle circle2;
 
 
-        Drawing(Rectangle rectangle, Circle circle) {
-            this.rectangle = rectangle;
-            this.circle = circle;
+        Drawing(Rectangle rectangle1, Rectangle rectangle2, Circle circle1, Circle circle2) {
+            this.rectangle1 = rectangle1;
+            this.circle1 = circle1;
+            this.rectangle2 = rectangle2;
+            this.circle2 = circle2;
         }
 
         @Override
@@ -226,12 +247,12 @@ public class VisualisationScreenController {
                 return false;
             }
             Drawing drawing = (Drawing) o;
-            return Objects.equals(rectangle, drawing.rectangle) && Objects.equals(circle, drawing.circle);
+            return Objects.equals(rectangle1, drawing.rectangle1) && Objects.equals(rectangle2, drawing.rectangle2) && Objects.equals(circle1, drawing.circle1) && Objects.equals(circle2, drawing.circle2);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(rectangle, circle);
+            return Objects.hash(rectangle1, rectangle2, circle1, circle2);
         }
     }
 }
