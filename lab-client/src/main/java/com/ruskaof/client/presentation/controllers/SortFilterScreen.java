@@ -1,9 +1,14 @@
 package com.ruskaof.client.presentation.controllers;
 
+import com.ruskaof.client.util.Localisator;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -45,10 +50,18 @@ public class SortFilterScreen {
                 Field.ADMIN_HEIGHT.toString(),
                 Field.ADMIN_X.toString(),
                 Field.ADMIN_Y.toString()));
+        setLocalisation();
     }
-
+    private void setLocalisation() {
+        Localisator localisator = new Localisator();
+        sortingCB.setText(localisator.takeAccount);
+        filteringCB.setText(localisator.takeAccount);
+        datingCB.setText(localisator.takeAccount);
+    }
+    //CHECKSTYLE:OFF
     @FXML
     public void okClick(ActionEvent event) throws IOException {
+        Localisator localisator = new Localisator();
         SortingOrder sortingOrder = null;
         Field sortingField = null;
         if (sortingCB.isSelected()) {
@@ -56,7 +69,7 @@ public class SortFilterScreen {
                 sortingOrder = SortingOrder.valueOf(sortingOrderCB.getValue());
                 sortingField = Field.valueOf(sortingFieldCB.getValue());
             } else {
-                errorLabel.setText("Choose sorting order and field");
+                errorLabel.setText(localisator.get("error.chose_order_field"));
                 return;
             }
         }
@@ -70,11 +83,11 @@ public class SortFilterScreen {
                     rightValue = Double.parseDouble(rightField.getText());
                     filteringField = Field.valueOf(filteringFieldCB.getValue());
                 } catch (Exception e) {
-                    errorLabel.setText("Incorrect numbers typed");
+                    errorLabel.setText(localisator.get("error.incorrect_numbers"));
                     return;
                 }
             } else {
-                errorLabel.setText("Chose filtering field");
+                errorLabel.setText(localisator.get("error.chose_filter_field"));
                 return;
             }
         }
@@ -84,21 +97,12 @@ public class SortFilterScreen {
             if (dateLeft.getValue() != null && dateRight.getValue() != null) {
                 leftDate = dateLeft.getValue();
                 rightDate = dateRight.getValue();
+            } else {
+                errorLabel.setText(localisator.get("error.chose_dates"));
+                return;
             }
-        } else {
-            errorLabel.setText("chose dates");
-            return;
         }
-
-        Navigator.navigateToMainScreen(event,
-                this.getClass(),
-                sortingOrder,
-                sortingField,
-                leftValue,
-                rightValue,
-                filteringField, leftDate, rightDate);
-
-
+        Navigator.navigateToMainScreen(event, this.getClass(), sortingOrder, sortingField, leftValue, rightValue, filteringField, leftDate, rightDate);
     }
-
+    //CHECKSTYLE:ON
 }

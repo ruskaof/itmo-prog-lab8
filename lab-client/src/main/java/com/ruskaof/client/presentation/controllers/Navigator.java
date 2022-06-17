@@ -25,6 +25,7 @@ public final class Navigator {
         stage.setScene(scene);
     }
 
+    //CHECKSTYLE:OFF
     public static void navigateToMainScreen(ActionEvent event, Class<?> clazz, SortingOrder sortingOrder, Field sortingField, double leftValue, double rightValue, Field filteringField, LocalDate leftDate, LocalDate rightDate) throws IOException {
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(clazz.getResource("/screen_main.fxml")));
         final Parent root = loader.load();
@@ -32,13 +33,15 @@ public final class Navigator {
         final Scene scene = new Scene(root);
         new CSSBuilder(scene).addButtonCSS().addTextFieldCSS();
         stage.setScene(scene);
+        ((MainScreenController) loader.getController()).getTableViewScreenController().updateData();
         ((MainScreenController) loader.getController()).getTableViewScreenController().setLeftAndRightValues(leftValue, rightValue);
         ((MainScreenController) loader.getController()).getTableViewScreenController().setFilterField(filteringField);
         ((MainScreenController) loader.getController()).getTableViewScreenController().setSortingField(sortingField);
         ((MainScreenController) loader.getController()).getTableViewScreenController().setSortingOrder(sortingOrder);
         ((MainScreenController) loader.getController()).getTableViewScreenController().setFilterDates(leftDate, rightDate);
-        ;
     }
+    //CHECKSTYLE:ON
+
 
     public static void navigateToRegisterScreen(ActionEvent event, Class<?> clazz) throws IOException {
         final Parent root = FXMLLoader.load(Objects.requireNonNull(clazz.getResource("/screen_register.fxml")));

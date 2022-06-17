@@ -47,8 +47,8 @@ public class TableViewScreenController {
         @Override
         public Integer fromString(String string) {
             try {
-                return Integer.parseInt(string);
-            } catch (IllegalArgumentException e) {
+                return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).parse(string).intValue();
+            } catch (IllegalArgumentException | ParseException e) {
                 return 1;
             }
         }
@@ -68,8 +68,8 @@ public class TableViewScreenController {
                 return null;
             }
             try {
-                return Integer.parseInt(string);
-            } catch (IllegalArgumentException e) {
+                return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).parse(string).intValue();
+            } catch (IllegalArgumentException | ParseException e) {
                 return 1;
             }
         }
@@ -99,8 +99,8 @@ public class TableViewScreenController {
         @Override
         public Long fromString(String string) {
             try {
-                return Long.parseLong(string);
-            } catch (IllegalArgumentException e) {
+                return NumberFormat.getInstance(ClientApi.getInstance().getLocale()).parse(string).longValue();
+            } catch (IllegalArgumentException | ParseException e) {
                 return 1L;
             }
         }
@@ -114,8 +114,8 @@ public class TableViewScreenController {
         @Override
         public Double fromString(String string) {
             try {
-                return Double.parseDouble(string);
-            } catch (IllegalArgumentException e) {
+                return  NumberFormat.getInstance(ClientApi.getInstance().getLocale()).parse(string).doubleValue();
+            } catch (IllegalArgumentException | ParseException e) {
                 return 1D;
             }
         }
@@ -129,8 +129,8 @@ public class TableViewScreenController {
         @Override
         public Float fromString(String string) {
             try {
-                return Float.parseFloat(string);
-            } catch (IllegalArgumentException e) {
+                return  NumberFormat.getInstance(ClientApi.getInstance().getLocale()).parse(string).floatValue();
+            } catch (IllegalArgumentException | ParseException e) {
                 return 1F;
             }
         }
@@ -363,10 +363,10 @@ public class TableViewScreenController {
         });
     }
 
-    public void setFilterField(Field filterField) {
-        if (filterField != null) {
+    public void setFilterField(Field newFilterField) {
+        if (newFilterField != null) {
             data = data.stream().filter(this::filterValue).collect(Collectors.toList());
-            this.filterField = filterField;
+            this.filterField = newFilterField;
             table.setItems(FXCollections.observableArrayList(data));
             table.refresh();
         }
@@ -429,7 +429,7 @@ public class TableViewScreenController {
     public void setSortingOrder(SortingOrder sortingOrder) {
         if (sortingOrder != null) {
             this.sortingOrder = sortingOrder;
-            data = data.stream().filter(this::filterValue).sorted(comparator).collect(Collectors.toList());
+            data = data.stream().sorted(comparator).collect(Collectors.toList());
             table.setItems(FXCollections.observableArrayList(data));
             table.refresh();
         }
@@ -483,16 +483,20 @@ public class TableViewScreenController {
         removeSelectedBTN.setText(localisator.get("button.remove_selected"));
     }
 
-    public void setFilterDates(LocalDate leftDate, LocalDate rightDate) {
-        this.leftDate = leftDate;
-        this.rightDate = rightDate;
+    public void setFilterDates(LocalDate newLeftDate, LocalDate newRightDate) {
+        this.leftDate = newLeftDate;
+        this.rightDate = newRightDate;
 
-        if (leftDate != null) {
-            data = data.stream().filter(it -> it.getCreationDate().isBefore(rightDate) && it.getCreationDate().isAfter(leftDate)).collect(Collectors.toList());
+        if (newLeftDate != null) {
+            data = data.stream().filter(it -> it.getCreationDate().isBefore(newRightDate) && it.getCreationDate().isAfter(newLeftDate)).collect(Collectors.toList());
             table.setItems(FXCollections.observableArrayList(data));
             table.refresh();
         }
 
+    }
+
+    public void updateData() {
+        data = ClientApi.getInstance().getCurrentData();
     }
 
     @FunctionalInterface

@@ -121,7 +121,7 @@ public class StudyGroupRow {
     }
 
     public void setAdminNationality(String adminNationality) {
-        if (adminNationality.isEmpty()){
+        if (adminNationality.isEmpty()) {
             this.adminNationality = null;
         } else {
             this.adminNationality = adminNationality;

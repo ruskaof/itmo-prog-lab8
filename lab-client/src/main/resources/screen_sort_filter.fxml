@@ -38,9 +38,9 @@
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
                   <DatePicker fx:id="dateLeft" />
-                  <Label text="&lt;=" />
+                  <Label text="&lt;" />
                   <Label text="creation_date" />
-                  <Label text="&lt;=" />
+                  <Label text="&lt;" />
                   <DatePicker fx:id="dateRight" />
                   <CheckBox fx:id="datingCB" mnemonicParsing="false" text="CheckBox" />
                </children>

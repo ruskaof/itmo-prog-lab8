@@ -13,6 +13,7 @@ public class Localisator {
     public final String login = convertToUTF(resourceBundle.getString("label.login"));
     public final String password = convertToUTF(resourceBundle.getString("label.password"));
     public final String enter = convertToUTF(resourceBundle.getString("button.enter"));
+    public final String takeAccount = convertToUTF(resourceBundle.getString("label.take_account"));
 
     public String get(String key) {
 
