@@ -10,7 +10,7 @@ public class MinByIdCommand extends Command {
     private final String arg;
 
     public MinByIdCommand(String username, String password, String arg) {
-        super(username,password, "min_by_id");
+        super(username, password, "min_by_id");
         this.arg = arg;
     }
 

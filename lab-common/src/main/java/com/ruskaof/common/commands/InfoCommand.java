@@ -4,8 +4,6 @@ import com.ruskaof.common.dto.CommandResultDto;
 import com.ruskaof.common.util.DataManager;
 import com.ruskaof.common.util.HistoryManager;
 
-import java.io.Serializable;
-
 
 public class InfoCommand extends Command {
 
