@@ -96,7 +96,7 @@ public class VisualisationScreenController {
 
     private boolean objectIsClickedOn(StudyGroupRow object, double x, double y) {
         final double normalizedSize = object.getStudentsCount() / 10D;
-        final double size = normalizedSize*OBJECT_WIDTH;
+        final double size = normalizedSize * OBJECT_WIDTH;
         return (x <= object.getX() + size / 2 && x >= object.getX() - size / 2)
                 && (y <= object.getY() + size / 2 && y >= object.getY() - size / 2);
     }
@@ -166,11 +166,11 @@ public class VisualisationScreenController {
 
     private void drawGroup(double normalX, double normalY, Color color, int id, Integer studentsCount) {
         final double normalizedSize = studentsCount / 10D;
-        final double size = normalizedSize*OBJECT_WIDTH;
+        final double size = normalizedSize * OBJECT_WIDTH;
         Circle circle1 = new Circle(normalX + size / OBJECT_WIDTH_C / 2, normalY - size / 2, size, color);
         Circle circle2 = new Circle(normalX - size / 2, normalY - size / 2, size, color);
-        circle1.setRadius(CIRCLE_RADIUS*normalizedSize);
-        circle2.setRadius(CIRCLE_RADIUS*normalizedSize);
+        circle1.setRadius(CIRCLE_RADIUS * normalizedSize);
+        circle2.setRadius(CIRCLE_RADIUS * normalizedSize);
 
         Rectangle rectangle1 = new Rectangle(normalX - size / 2, normalY - size / 2, size / OBJECT_WIDTH_C, size);
         Rectangle rectangle2 = new Rectangle(normalX - size / 2 + size / OFFSET_FOR_OBJ, normalY - size / 2, size / OBJECT_WIDTH_C, size);

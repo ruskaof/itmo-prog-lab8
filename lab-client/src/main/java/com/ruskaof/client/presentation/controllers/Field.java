@@ -25,6 +25,7 @@ public enum Field {
             }
             return studyGroupRow.getName().length() >= leftValue && studyGroupRow.getName().length() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             return o1.getName().compareTo(o2.getName());
@@ -46,6 +47,7 @@ public enum Field {
         public boolean filter(double leftValue, double rightValue, StudyGroupRow studyGroupRow) {
             return studyGroupRow.getY() >= leftValue && studyGroupRow.getY() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             return Double.compare(o1.getY(), o2.getY());
@@ -73,6 +75,7 @@ public enum Field {
             }
             return studyGroupRow.getStudentsCount() >= leftValue && studyGroupRow.getStudentsCount() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             return o1.getCreationDate().compareTo(o2.getCreationDate());
@@ -86,6 +89,7 @@ public enum Field {
             }
             return studyGroupRow.getFormOfEducation().toString().length() >= leftValue && studyGroupRow.getFormOfEducation().toString().length() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             return o1.getFormOfEducation().compareTo(o2.getFormOfEducation());
@@ -99,6 +103,7 @@ public enum Field {
             }
             return studyGroupRow.getSemester().toString().length() >= leftValue && studyGroupRow.getSemester().toString().length() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             if (o1.getSemester() == null) {
@@ -118,6 +123,7 @@ public enum Field {
             }
             return studyGroupRow.getAdminName().toString().length() >= leftValue && studyGroupRow.getAdminName().toString().length() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             if (o1.getAdminName() == null) {
@@ -147,6 +153,7 @@ public enum Field {
             }
             return studyGroupRow.getAdminNationality().toString().length() >= leftValue && studyGroupRow.getAdminNationality().toString().length() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             if (o1.getAdminNationality() == null) {
@@ -162,6 +169,7 @@ public enum Field {
         public boolean filter(double leftValue, double rightValue, StudyGroupRow studyGroupRow) {
             return studyGroupRow.getAdminX() >= leftValue && studyGroupRow.getAdminX() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             return Float.compare(o1.getAdminX(), o2.getAdminX());
@@ -171,6 +179,7 @@ public enum Field {
         public boolean filter(double leftValue, double rightValue, StudyGroupRow studyGroupRow) {
             return studyGroupRow.getAdminY() >= leftValue && studyGroupRow.getAdminY() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             return Long.compare(o1.getAdminY(), o2.getAdminY());
@@ -184,6 +193,7 @@ public enum Field {
             }
             return studyGroupRow.getAdminLocationName().toString().length() >= leftValue && studyGroupRow.getAdminLocationName().toString().length() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             if (o1.getAdminLocationName() == null) {
@@ -195,7 +205,7 @@ public enum Field {
             return o1.getAdminLocationName().compareTo(o2.getAdminLocationName());
         }
     },
-    AUTHOR_NAME{
+    AUTHOR_NAME {
         @Override
         public boolean filter(double leftValue, double rightValue, StudyGroupRow studyGroupRow) {
             if (studyGroupRow.getAuthorName() == null) {
@@ -203,6 +213,7 @@ public enum Field {
             }
             return studyGroupRow.getAuthorName().toString().length() >= leftValue && studyGroupRow.getAuthorName().toString().length() <= rightValue;
         }
+
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
             return o1.getAuthorName().compareTo(o2.getAuthorName());
@@ -210,5 +221,6 @@ public enum Field {
     };
 
     public abstract boolean filter(double leftValue, double rightValue, StudyGroupRow studyGroupRow);
+
     public abstract int compare(StudyGroupRow o1, StudyGroupRow o2);
 }
