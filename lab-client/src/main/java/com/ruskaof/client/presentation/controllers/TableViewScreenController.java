@@ -475,7 +475,7 @@ public class TableViewScreenController {
         reload();
     }
 
-    private void setLocalisation() {
+    public void setLocalisation() {
         Localisator localisator = new Localisator();
         reloadBTN.setText(localisator.get("button.reload"));
         addBTN.setText(localisator.get("button.add"));

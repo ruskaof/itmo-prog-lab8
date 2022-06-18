@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 public class Localisator {
     private ResourceBundle resourceBundle = ResourceBundle.getBundle("labels", ClientApi.getInstance().getLocale());
 
-    public final String disconnection = convertToUTF(resourceBundle.getString("error.disconnection"));
+    public final String disconnection = convertToUTF(resourceBundle.getString("error.reconnection"));
     public final String register = convertToUTF(resourceBundle.getString("button.register"));
     public final String login = convertToUTF(resourceBundle.getString("label.login"));
     public final String password = convertToUTF(resourceBundle.getString("label.password"));

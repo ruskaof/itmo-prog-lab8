@@ -1,12 +1,17 @@
 package com.ruskaof.client.presentation.controllers;
 
 import com.ruskaof.client.ClientApi;
+import com.ruskaof.client.util.Localisation;
 import com.ruskaof.client.util.Localisator;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+
+import java.util.Objects;
 
 public class MainScreenController {
     @FXML
@@ -21,6 +26,8 @@ public class MainScreenController {
     private Button objectsBTN;
     @FXML
     private Button scriptBTN;
+    @FXML
+    private ComboBox<String> languageCB;
 
     @FXML
     private TableViewScreenController tableViewController;
@@ -43,9 +50,43 @@ public class MainScreenController {
         setLocalisation();
         loginLabel.setText("logined with: " + ClientApi.getInstance().getLogin());
         loginLabel.setTextFill(ClientApi.getInstance().getColor());
+        languageCB.setItems(FXCollections.observableArrayList(
+                "русский",
+                "Română",
+                "Français",
+                "español"
+        ));
     }
 
-    private void setLocalisation() {
+    @FXML
+    private void onLangChange() {
+        ClientApi.getInstance().setLocalisation(Objects.requireNonNull(parseLocal(languageCB.getValue())));
+        setLocalisation();
+        visualisationController.setLocalisation();
+        tableViewController.setLocalisation();
+    }
+
+    private Localisation parseLocal(String s) {
+        Localisation toRet = null;
+        switch (s) {
+            case "русский":
+                toRet = Localisation.RUSSIAN;
+                break;
+            case "Română":
+                toRet = Localisation.ROMANIAN;
+                break;
+            case "Français":
+                toRet = Localisation.FRENCH;
+                break;
+            case "español":
+                toRet = Localisation.SPANISH;
+                break;
+            default: break;
+        }
+        return toRet;
+    }
+
+    public void setLocalisation() {
         Localisator localisator = new Localisator();
         tableBTN.setText(localisator.get("button.table"));
         objectsBTN.setText(localisator.get("button.objects"));

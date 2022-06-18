@@ -43,8 +43,8 @@ public class VisualisationScreenController {
     @FXML
     private Canvas canvas;
     private GraphicsContext gc;
-    private List<StudyGroupRow> currentData = new ArrayList<>();
-    private List<StudyGroupRow> updatedData = new ArrayList<>();
+    private volatile List<StudyGroupRow> currentData = new ArrayList<>();
+    private volatile List<StudyGroupRow> updatedData = new ArrayList<>();
     private HashMap<Integer, Drawing> drawings = new HashMap<>();
 
     @FXML
@@ -67,11 +67,6 @@ public class VisualisationScreenController {
             @Override
             public void run() {
                 while (true) {
-                    try {
-                        Thread.sleep(TIME_TO_RELOAD);
-                    } catch (InterruptedException e) {
-                        break;
-                    }
                     Platform.runLater(new Runnable() {
 
                         @Override
@@ -81,6 +76,11 @@ public class VisualisationScreenController {
 
                         }
                     });
+                    try {
+                        Thread.sleep(TIME_TO_RELOAD);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
                 }
             }
         });
@@ -89,7 +89,7 @@ public class VisualisationScreenController {
     }
 
 
-    private void setLocalisation() {
+    public void setLocalisation() {
         final Localisator localisator = new Localisator();
         reloadBTN.setText(localisator.get("button.reload"));
     }
@@ -134,6 +134,7 @@ public class VisualisationScreenController {
         fadeTransition.setToValue(0);
         fadeTransition.setNode(node);
         fadeTransition.setOnFinished((it) -> pane.getChildren().remove(node));
+        fadeTransition.play();
     }
 
     private void setClickable() {
@@ -227,7 +228,6 @@ public class VisualisationScreenController {
         private final Rectangle rectangle1;
         private final Rectangle rectangle2;
         private final Circle circle1;
-
         private final Circle circle2;
 
 

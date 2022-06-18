@@ -248,13 +248,13 @@ public final class ClientApi {
 
     public void notifyDisconnect() {
         Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-        errorAlert.setHeaderText(new Localisator().get("error.disconnection"));
+        errorAlert.setHeaderText(new Localisator().get("error.reconnection"));
         errorAlert.showAndWait();
-
         try {
             commandSender = new CommandSenderTCP(serverPort, serverIp);
         } catch (IOException e) {
-            notifyDisconnect();
+            errorAlert.setHeaderText(new Localisator().get("error.disconnection"));
+            errorAlert.showAndWait();
         }
     }
 
