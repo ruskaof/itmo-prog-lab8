@@ -33,6 +33,7 @@ public class MainScreenController {
     private TableViewScreenController tableViewController;
     @FXML
     private VisualisationScreenController visualisationController;
+
     @FXML
     private Label loginLabel;
 

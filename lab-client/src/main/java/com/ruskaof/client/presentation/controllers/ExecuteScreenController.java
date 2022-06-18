@@ -36,6 +36,10 @@ public class ExecuteScreenController {
 
     @FXML
     void initialize() {
+        setLocalisation();
+    }
+
+    public void setLocalisation() {
         Localisator localisator = new Localisator();
         executeBTN.setText(localisator.get("button.execute"));
     }

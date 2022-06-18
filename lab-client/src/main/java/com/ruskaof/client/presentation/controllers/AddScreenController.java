@@ -11,6 +11,7 @@ import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -50,6 +51,12 @@ public class AddScreenController {
     private TextField adminLocationNameField;
     @FXML
     private Label errorLabel;
+    @FXML
+    private Button addBTN;
+    @FXML
+    private Button addIfMinBTN;
+    @FXML
+    private Button cancelBTN;
 
 
     @FXML
@@ -95,6 +102,14 @@ public class AddScreenController {
         semesterCombo.getItems().add("SIXTH");
         semesterCombo.getItems().add("SEVENTH");
         semesterCombo.getItems().add("null");
+        setLocalisation();
+    }
+
+    private void setLocalisation() {
+        Localisator localisator = new Localisator();
+        addBTN.setText(localisator.get("button.add"));
+        addIfMinBTN.setText(localisator.get("button.add_if_min"));
+        cancelBTN.setText(localisator.get("button.cancel"));
     }
 
     private boolean checkFields() {

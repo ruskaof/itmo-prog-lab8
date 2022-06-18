@@ -1,81 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-      minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="438.0"
-      xmlns="http://javafx.com/javafx/8.0.171"
-      fx:controller="com.ruskaof.client.presentation.controllers.AddScreenController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="438.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ruskaof.client.presentation.controllers.AddScreenController">
    <children>
       <HBox alignment="CENTER">
          <children>
-            <TextField fx:id="nameField" prefHeight="25.0" prefWidth="373.0" promptText="name"/>
+            <TextField fx:id="nameField" prefHeight="25.0" prefWidth="373.0" promptText="name" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <TextField prefHeight="25.0" prefWidth="373.0" promptText="x" fx:id="xField"/>
+            <TextField prefHeight="25.0" prefWidth="373.0" promptText="x" fx:id="xField" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <TextField fx:id="yField" prefHeight="25.0" prefWidth="373.0" promptText="y"/>
+            <TextField fx:id="yField" prefHeight="25.0" prefWidth="373.0" promptText="y" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <TextField fx:id="studentsCountField" prefHeight="25.0" prefWidth="373.0" promptText="students count"/>
+            <TextField fx:id="studentsCountField" prefHeight="25.0" prefWidth="373.0" promptText="students count" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <ComboBox fx:id="formOfEducationCombo" prefWidth="373.0" promptText="form of education"/>
+            <ComboBox fx:id="formOfEducationCombo" prefWidth="373.0" promptText="form of education" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <ComboBox fx:id="semesterCombo" prefWidth="373.0" promptText="semester"/>
+            <ComboBox fx:id="semesterCombo" prefWidth="373.0" promptText="semester" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <TextField fx:id="adminNameField" prefHeight="25.0" prefWidth="373.0" promptText="admin name"/>
+            <TextField fx:id="adminNameField" prefHeight="25.0" prefWidth="373.0" promptText="admin name" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <TextField fx:id="adminHeightField" prefHeight="25.0" prefWidth="373.0" promptText="admin height"/>
+            <TextField fx:id="adminHeightField" prefHeight="25.0" prefWidth="373.0" promptText="admin height" />
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="185.0">
          <children>
-            <ComboBox fx:id="adminNationalityCombo" prefHeight="25.0" prefWidth="373.0" promptText="admin nationality"/>
+            <ComboBox fx:id="adminNationalityCombo" prefHeight="25.0" prefWidth="373.0" promptText="admin nationality" />
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="235.0">
          <children>
-            <TextField fx:id="adminXField" prefHeight="25.0" prefWidth="373.0" promptText="admin x"/>
+            <TextField fx:id="adminXField" prefHeight="25.0" prefWidth="373.0" promptText="admin x" />
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="260.0">
          <children>
-            <TextField fx:id="adminYField" prefHeight="25.0" prefWidth="373.0" promptText="admin y"/>
+            <TextField fx:id="adminYField" prefHeight="25.0" prefWidth="373.0" promptText="admin y" />
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="285.0">
          <children>
-            <TextField fx:id="adminLocationNameField" prefHeight="25.0" prefWidth="373.0"
-                       promptText="admin location name"/>
-            <HBox alignment="CENTER"/>
+            <TextField fx:id="adminLocationNameField" prefHeight="25.0" prefWidth="373.0" promptText="admin location name" />
+            <HBox alignment="CENTER" />
          </children>
       </HBox>
       <HBox alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" onAction="#add" text="Add"/>
-            <Button mnemonicParsing="false" onAction="#addIfMin" text="AddIfMin"/>
-            <Button mnemonicParsing="false" onAction="#cancel" text="Cancel"/>
+            <Button fx:id="addBTN" mnemonicParsing="false" onAction="#add" text="Add" />
+            <Button fx:id="addIfMinBTN" mnemonicParsing="false" onAction="#addIfMin" text="AddIfMin" />
+            <Button fx:id="cancelBTN" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
          </children>
       </HBox>
-      <Label fx:id="errorLabel"/>
+      <Label fx:id="errorLabel" />
    </children>
 </VBox>
