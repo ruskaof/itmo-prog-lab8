@@ -62,23 +62,27 @@ public class Console {
             final String commandName = parsedInp[0];
             Serializable commandArg = parsedInp[1];
             String commandArg2 = ""; // only for update command in this case
-            if (listOfCommands.contains(commandName)) {
-                if ("add".equals(commandName) || "add_if_min".equals(commandName) || "remove_greater".equals(commandName)) {
-                    commandArg = dataObjectsMaker.makeStudyGroup();
-                }
-                if ("update".equals(commandName)) {
-                    commandArg2 = (String) commandArg;
-                    commandArg = dataObjectsMaker.makeStudyGroup();
-                }
-                if ("execute_script".equals(commandName)) {
-                    new ExecuteScriptCommand((String) commandArg).execute(inputManager);
+            try {
+                if (listOfCommands.contains(commandName)) {
+                    if ("add".equals(commandName) || "add_if_min".equals(commandName) || "remove_greater".equals(commandName)) {
+                        commandArg = dataObjectsMaker.makeStudyGroup();
+                    }
+                    if ("update".equals(commandName)) {
+                        commandArg2 = (String) commandArg;
+                        commandArg = dataObjectsMaker.makeStudyGroup();
+                    }
+                    if ("execute_script".equals(commandName)) {
+                        new ExecuteScriptCommand((String) commandArg).execute(inputManager);
+                    } else {
+                        outputManager.println(
+                                commandSender.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2))).getStrResult()
+                        );
+                    }
                 } else {
-                    outputManager.println(
-                            commandSender.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2))).getStrResult()
-                    );
+                    outputManager.println("The command was not found. Please use \"help\" to know about commands.");
                 }
-            } else {
-                outputManager.println("The command was not found. Please use \"help\" to know about commands.");
+            } catch (IllegalStateException e) {
+                break;
             }
         } while (true);
 

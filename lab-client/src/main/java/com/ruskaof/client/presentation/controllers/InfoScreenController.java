@@ -158,7 +158,7 @@ public class InfoScreenController {
 
     @FXML
     public void onOkClick(ActionEvent event) throws IOException {
-        Navigator.navigateToMainScreen(event, this.getClass());
+        Navigator.navigateToMainScreenToVisualisation(event, this.getClass());
     }
 
     public void setObject(StudyGroupRow newObject) {

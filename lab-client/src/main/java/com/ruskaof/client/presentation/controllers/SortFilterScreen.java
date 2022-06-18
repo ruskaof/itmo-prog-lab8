@@ -43,13 +43,7 @@ public class SortFilterScreen {
     public void initialize() {
         sortingOrderCB.setItems(FXCollections.observableArrayList(Arrays.stream(SortingOrder.values()).map(Enum::toString).collect(Collectors.toList())));
         sortingFieldCB.setItems(FXCollections.observableArrayList(Arrays.stream(Field.values()).map(Enum::toString).collect(Collectors.toList())));
-        filteringFieldCB.setItems(FXCollections.observableArrayList(Field.ID.toString(),
-                Field.X.toString(),
-                Field.Y.toString(),
-                Field.STUDENTS_COUNT.toString(),
-                Field.ADMIN_HEIGHT.toString(),
-                Field.ADMIN_X.toString(),
-                Field.ADMIN_Y.toString()));
+        filteringFieldCB.setItems(FXCollections.observableArrayList(Arrays.stream(Field.values()).map(Enum::toString).collect(Collectors.toList())));
         setLocalisation();
     }
     private void setLocalisation() {

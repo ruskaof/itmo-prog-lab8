@@ -9,6 +9,7 @@ import com.ruskaof.common.data.Person;
 import com.ruskaof.common.data.Semester;
 import com.ruskaof.common.data.StudyGroup;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.function.Function;
@@ -32,7 +33,7 @@ public class DataObjectsMaker {
 
 
 
-    public StudyGroup makeStudyGroup() throws IOException {
+    public StudyGroup makeStudyGroup() throws IOException, IllegalStateException{
         outputManager.println("Enter studyGroup data");
         String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String)",
                 ERROR_MESSAGE, "The string must not be empty and shorter than 100 chars", x -> x, false);
@@ -52,7 +53,7 @@ public class DataObjectsMaker {
                 formOfEducation, semesterEnum, groupAdmin, LocalDate.now(), authorName, ClientApi.getInstance().getColor().toString());
     }
 
-    private Coordinates askForCoordinates() throws IOException {
+    private Coordinates askForCoordinates() throws IOException, IllegalStateException {
         outputManager.println("Enter coordinates data");
         final long xLimitation = -896;
         final double yLimitation = 135;
@@ -63,7 +64,7 @@ public class DataObjectsMaker {
         return new Coordinates(x, y);
     }
 
-    private Person askForGroupAdmin() throws IOException {
+    private Person askForGroupAdmin() throws IOException, IllegalStateException {
         outputManager.println("Enter groupAdminData");
 
         String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String)",
@@ -72,7 +73,7 @@ public class DataObjectsMaker {
         Integer height = asker.ask(arg -> (arg) > 0, "Enter height (Integer)",
                 ERROR_MESSAGE, "The integer must be >0. Try again", Integer::parseInt, false);
 
-        Country nationality = asker.ask(arg -> true, "Enter country (RUSSIA, SPAIN, INDIA, THAILAND, NORTH_KOREA) (can be null)",
+        Country nationality = asker.ask(arg -> true, "Enter country (THIRD, SPAIN, INDIA, THAILAND, NORTH_KOREA) (can be null)",
                 ERROR_MESSAGE, ERROR_MESSAGE, Country::valueOf, true);
 
         Location location = askForLocation();
@@ -80,7 +81,7 @@ public class DataObjectsMaker {
         return new Person(name, height, nationality, location);
     }
 
-    private Location askForLocation() throws IOException {
+    private Location askForLocation() throws IOException, IllegalStateException {
         outputManager.println("Enter location data");
         String name = asker.ask(arg -> (arg).length() > 0 && arg.length() < MAX_STRING_LENGTH, "Enter name (String) (can be null)",
                 ERROR_MESSAGE, "The string must not be empty and shorter than 100 chars. Try again", x -> x, true);
@@ -108,7 +109,7 @@ public class DataObjectsMaker {
                          String errorMessage,
                          String wrongValueMessage,
                          Function<String, T> converter,
-                         boolean nullable) throws IOException {
+                         boolean nullable) throws IOException, IllegalStateException {
             outputManager.println(askMessage);
             String input;
             T value;
@@ -119,6 +120,9 @@ public class DataObjectsMaker {
                         return null;
                     }
 
+                    if (input == null) {
+                        throw new IllegalStateException("file ended");
+                    }
                     value = converter.apply(input);
 
                 } catch (IllegalArgumentException e) {

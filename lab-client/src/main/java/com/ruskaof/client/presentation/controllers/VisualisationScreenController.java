@@ -95,8 +95,10 @@ public class VisualisationScreenController {
     }
 
     private boolean objectIsClickedOn(StudyGroupRow object, double x, double y) {
-        return (x <= object.getX() + OBJECT_WIDTH / 2 && x >= object.getX() - OBJECT_WIDTH / 2)
-                && (y <= object.getY() + OBJECT_HEIGHT / 2 && y >= object.getY() - OBJECT_HEIGHT / 2);
+        final double normalizedSize = object.getStudentsCount() / 10D;
+        final double size = normalizedSize*OBJECT_WIDTH;
+        return (x <= object.getX() + size / 2 && x >= object.getX() - size / 2)
+                && (y <= object.getY() + size / 2 && y >= object.getY() - size / 2);
     }
 
     private void refresh() {
@@ -113,7 +115,7 @@ public class VisualisationScreenController {
         }
         for (StudyGroupRow studyGroupRow : updatedData) {
             if (!currentData.contains(studyGroupRow)) {
-                drawGroup(convertX(studyGroupRow.getX()), convertY(studyGroupRow.getY()), Color.valueOf(studyGroupRow.getColor()), studyGroupRow.getId());
+                drawGroup(convertX(studyGroupRow.getX()), convertY(studyGroupRow.getY()), Color.valueOf(studyGroupRow.getColor()), studyGroupRow.getId(), studyGroupRow.getStudentsCount());
             }
         }
 
@@ -162,14 +164,16 @@ public class VisualisationScreenController {
         gc.strokeLine(canvas.getWidth() / 2, 0, canvas.getWidth() / 2, canvas.getHeight());
     }
 
-    private void drawGroup(double normalX, double normalY, Color color, int id) {
-        Circle circle1 = new Circle(normalX + OBJECT_WIDTH / OBJECT_WIDTH_C / 2, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH, color);
-        Circle circle2 = new Circle(normalX - OBJECT_WIDTH / 2, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH, color);
-        circle1.setRadius(CIRCLE_RADIUS);
-        circle2.setRadius(CIRCLE_RADIUS);
+    private void drawGroup(double normalX, double normalY, Color color, int id, Integer studentsCount) {
+        final double normalizedSize = studentsCount / 10D;
+        final double size = normalizedSize*OBJECT_WIDTH;
+        Circle circle1 = new Circle(normalX + size / OBJECT_WIDTH_C / 2, normalY - size / 2, size, color);
+        Circle circle2 = new Circle(normalX - size / 2, normalY - size / 2, size, color);
+        circle1.setRadius(CIRCLE_RADIUS*normalizedSize);
+        circle2.setRadius(CIRCLE_RADIUS*normalizedSize);
 
-        Rectangle rectangle1 = new Rectangle(normalX - OBJECT_WIDTH / 2, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH / OBJECT_WIDTH_C, OBJECT_WIDTH);
-        Rectangle rectangle2 = new Rectangle(normalX - OBJECT_WIDTH / 2 + OBJECT_WIDTH / OFFSET_FOR_OBJ, normalY - OBJECT_HEIGHT / 2, OBJECT_WIDTH / OBJECT_WIDTH_C, OBJECT_WIDTH);
+        Rectangle rectangle1 = new Rectangle(normalX - size / 2, normalY - size / 2, size / OBJECT_WIDTH_C, size);
+        Rectangle rectangle2 = new Rectangle(normalX - size / 2 + size / OFFSET_FOR_OBJ, normalY - size / 2, size / OBJECT_WIDTH_C, size);
 
         rectangle1.setFill(color);
         rectangle2.setFill(color);

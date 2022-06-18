@@ -155,66 +155,15 @@ public class TableViewScreenController {
     private Field sortingField = Field.ID;
     private SortingOrder sortingOrder = SortingOrder.ASCENDING;
 
-    //CHECKSTYLE:OFF
     private final Comparator<StudyGroupRow> comparator = new Comparator<StudyGroupRow>() {
         @Override
         public int compare(StudyGroupRow o1, StudyGroupRow o2) {
-            int toRet = 0;
-            switch (sortingField) {
-                case ID:
-                    toRet = compareValues(o1.getId(), o2.getId());
-                    break;
-                case NAME:
-                    toRet = compareValues(o1.getName(), o2.getName());
-                    break;
-                case X:
-                    toRet = compareValues(o1.getX(), o2.getX());
-                    break;
-                case Y:
-                    toRet = compareValues(o1.getY(), o2.getY());
-                    break;
-                case CREATION_DATE:
-                    toRet = compareValues(o1.getCreationDate(), o2.getCreationDate());
-                    break;
-                case STUDENTS_COUNT:
-                    toRet = compareValues(o1.getStudentsCount(), o2.getStudentsCount());
-                    break;
-                case FORM_OF_EDUCATION:
-                    toRet = compareValues(o1.getFormOfEducation(), o2.getFormOfEducation());
-                    break;
-                case SEMESTER:
-                    toRet = compareValues(o1.getSemester(), o2.getSemester());
-                    break;
-                case ADMIN_NAME:
-                    toRet = compareValues(o1.getAdminName(), o2.getAdminName());
-                    break;
-                case ADMIN_HEIGHT:
-                    toRet = compareValues(o1.getAdminHeight(), o2.getAdminHeight());
-                    break;
-                case ADMIN_NATIONALITY:
-                    toRet = compareValues(o1.getAdminNationality(), o2.getAdminNationality());
-                    break;
-                case ADMIN_X:
-                    toRet = compareValues(o1.getAdminX(), o2.getAdminX());
-                    break;
-                case ADMIN_Y:
-                    toRet = compareValues(o1.getAdminY(), o2.getAdminY());
-                    break;
-                case ADMIN_LOCATION_NAME:
-                    toRet = compareValues(o1.getAdminLocationName(), o2.getAdminLocationName());
-                    break;
-                case AUTHOR_NAME:
-                    toRet = compareValues(o1.getAuthorName(), o2.getAuthorName());
-                    break;
-                default:
-                    break;
-            }
-            return toRet;
+            return sortingField.compare(o1, o2);
         }
     };
-    //CHECKSTYLE:ON
 
     private Field filterField = Field.ID;
+
     private List<StudyGroupRow> data;
     private double leftValue;
     private double rightValue;
@@ -229,7 +178,6 @@ public class TableViewScreenController {
     @FXML
     private Button removeSelectedBTN;
     private Predicate<StudyGroupRow> filterPred;
-
 
     public static LocalDate convertToLocalDate(Date dateToConvert) {
         return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -365,41 +313,15 @@ public class TableViewScreenController {
 
     public void setFilterField(Field newFilterField) {
         if (newFilterField != null) {
-            data = data.stream().filter(this::filterValue).collect(Collectors.toList());
             this.filterField = newFilterField;
+            data = data.stream().filter(this::filterValue).collect(Collectors.toList());
             table.setItems(FXCollections.observableArrayList(data));
             table.refresh();
         }
     }
 
     private boolean filterValue(StudyGroupRow studyGroupRow) {
-        boolean toRet = true;
-        switch (filterField) {
-            case X:
-                toRet = studyGroupRow.getX() <= rightValue && studyGroupRow.getX() >= leftValue;
-                break;
-            case Y:
-                toRet = studyGroupRow.getY() <= rightValue && studyGroupRow.getY() >= leftValue;
-                break;
-            case ID:
-                toRet = studyGroupRow.getId() <= rightValue && studyGroupRow.getId() >= leftValue;
-                break;
-            case STUDENTS_COUNT:
-                toRet = studyGroupRow.getStudentsCount() <= rightValue && studyGroupRow.getStudentsCount() >= leftValue;
-                break;
-            case ADMIN_HEIGHT:
-                toRet = studyGroupRow.getAdminHeight() <= rightValue && studyGroupRow.getAdminHeight() >= leftValue;
-                break;
-            case ADMIN_X:
-                toRet = studyGroupRow.getAdminX() <= rightValue && studyGroupRow.getAdminX() >= leftValue;
-                break;
-            case ADMIN_Y:
-                toRet = studyGroupRow.getAdminY() <= rightValue && studyGroupRow.getAdminY() >= leftValue;
-                break;
-            default:
-                break;
-        }
-        return toRet;
+        return filterField.filter(leftValue, rightValue, studyGroupRow);
     }
 
     private <T extends Comparable<T>> int compareValues(T o1, T o2) {
@@ -499,8 +421,12 @@ public class TableViewScreenController {
         data = ClientApi.getInstance().getCurrentData();
     }
 
+    public void refreshTable() {
+        table.refresh();
+    }
     @FunctionalInterface
     interface OnCommitCellModifier<T> {
+
         void modifyColumn(StudyGroupRow studyGroupRow, T newValue);
     }
 

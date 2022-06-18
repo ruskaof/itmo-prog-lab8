@@ -65,7 +65,6 @@ public final class Navigator {
         ((InfoScreenController) loader.getController()).setObject(object);
         ((InfoScreenController) loader.getController()).reload();
 //        ((InfoScreenController) loader.getController()).setListOfObjectData();
-        System.out.println(object);
         final Stage stage = (Stage) ((Node) source).getScene().getWindow();
         final Scene scene = new Scene(root);
         new CSSBuilder(scene).addButtonCSS().addTextFieldCSS();
@@ -77,6 +76,16 @@ public final class Navigator {
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         final Scene scene = new Scene(root);
         new CSSBuilder(scene).addButtonCSS().addTextFieldCSS();
+        stage.setScene(scene);
+    }
+
+    public static void navigateToMainScreenToVisualisation(ActionEvent event, Class<? extends InfoScreenController> aClass) throws IOException {
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(aClass.getResource("/screen_main.fxml")));
+        final Parent root = loader.load();
+        ((MainScreenController) loader.getController()).navigateToVisualisation(event);
+        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        final Scene scene = new Scene(root);
+        new CSSBuilder(scene).addButtonCSS();
         stage.setScene(scene);
     }
 

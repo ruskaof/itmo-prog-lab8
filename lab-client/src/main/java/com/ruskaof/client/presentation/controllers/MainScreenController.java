@@ -65,6 +65,7 @@ public class MainScreenController {
         setLocalisation();
         visualisationController.setLocalisation();
         tableViewController.setLocalisation();
+        tableViewController.refreshTable();
     }
 
     private Localisation parseLocal(String s) {
